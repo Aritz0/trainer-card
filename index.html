@@ -166,6 +166,110 @@ body{
   .team-grid{grid-template-columns:repeat(3,1fr)}
   .slot img{width:56px;height:56px}
 }
+
+/* ── MODAL POPUP ── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.75);
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+  padding:16px;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+
+.modal{
+  background:var(--navy);
+  border:3px solid var(--gold);
+  border-radius:8px;
+  box-shadow:0 0 0 2px #000, 6px 6px 0 rgba(0,0,0,.6);
+  width:100%;max-width:380px;
+  overflow:hidden;
+  transform:scale(.85) translateY(20px);
+  transition:transform .2s;
+}
+.modal-overlay.open .modal{transform:none}
+
+.modal-header{
+  background:#060e33;
+  border-bottom:2px solid var(--gold);
+  padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;
+}
+.modal-header .msprite{
+  width:64px;height:64px;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.8));
+}
+.modal-header .minfo{flex:1}
+.modal-header .mname{
+  color:var(--gold);
+  font-size:clamp(7px,1.5vw,11px);
+  letter-spacing:1px;
+  margin-bottom:5px;
+}
+.modal-header .mtypes{display:flex;gap:4px;flex-wrap:wrap}
+
+.modal-close{
+  background:var(--red);border:none;color:#fff;
+  font-family:var(--pixel);font-size:9px;
+  padding:5px 8px;border-radius:3px;cursor:pointer;
+  flex-shrink:0;
+  transition:background .15s;
+}
+.modal-close:hover{background:#ff3333}
+
+.modal-body{padding:14px}
+
+.modal-section{margin-bottom:12px}
+.modal-section:last-child{margin-bottom:0}
+
+.modal-section-title{
+  color:#8899ff;
+  font-size:clamp(5px,.9vw,8px);
+  letter-spacing:1px;
+  margin-bottom:7px;
+  display:flex;align-items:center;gap:5px;
+}
+.modal-section-title::before{content:'▶';color:var(--gold);font-size:6px}
+
+.moves-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px;
+}
+.move-pill{
+  background:#0a1d44;
+  border:1px solid #2244aa;
+  border-radius:4px;
+  padding:6px 7px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+}
+.move-type-badge{
+  font-size:5px;padding:2px 5px;border-radius:3px;
+  color:#fff;text-transform:uppercase;letter-spacing:.5px;
+  font-family:var(--pixel);
+}
+.move-name{
+  color:#cce0ff;font-family:var(--vt);font-size:16px;
+  letter-spacing:.5px;line-height:1;
+}
+.move-pp{
+  color:var(--gold);font-family:var(--pixel);font-size:5px;
+  letter-spacing:.5px;
+}
+
+.habil-box, .item-box{
+  background:#0a1d44;
+  border:1px solid #2244aa;
+  border-radius:3px;
+  padding:6px 10px;
+  color:#fff;
+  font-family:var(--vt);
+  font-size:16px;
+  display:flex;align-items:center;gap:6px;
+}
+.habil-box .icon, .item-box .icon{font-size:16px}
 </style>
 </head>
 <body>
@@ -219,57 +323,168 @@ body{
 
 </div>
 
+<!-- MODAL POPUP -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <img class="msprite" id="modal-sprite" src="" alt="">
+      <div class="minfo">
+        <div class="mname" id="modal-name"></div>
+        <div class="mtypes" id="modal-types"></div>
+      </div>
+      <button class="modal-close" id="modal-close">✕ CERRAR</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">ATAQUES</div>
+        <div class="moves-grid" id="modal-moves"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">HABILIDAD</div>
+        <div class="habil-box"><span class="icon">🔮</span><span id="modal-ability"></span></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">OBJETO</div>
+        <div class="item-box"><span class="icon">🎒</span><span id="modal-item"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── EQUIPO ──────────────────────────────────────────────
+// ── MAPA español → slug inglés para PokeAPI ─────────────
+const MOVE_API = {
+  "Cascada":        "waterfall",
+  "Puño Hielo":     "ice-punch",
+  "Terremoto":      "earthquake",
+  "Relajo":         "slack-off",
+  "Drenadoras":     "leech-seed",
+  "Tóxico":         "toxic",
+  "Protección":     "protect",
+  "Energibola":     "energy-ball",
+  "Trueno":         "thunder",
+  "Red Viscosa":    "sticky-web",
+  "Zumbido":        "bug-buzz",
+  "Electrotela":    "electroweb",
+  "Martillo Coloso":"gigaton-hammer",
+  "Carantoña":      "play-rough",
+  "Danza Espada":   "swords-dance",
+  "Sorpresa":       "sucker-punch",
+  "Fuego Fatuo":    "will-o-wisp",
+  "Lanzallamas":    "flamethrower",
+  "Bola Sombra":    "shadow-ball",
+  "Paz Mental":     "calm-mind",
+  "A Bocajarro":    "superpower",
+  "Psicocorte":     "psycho-cut",
+  "Desarme":        "knock-off",
+  "Avalancha":      "avalanche",
+};
+
 const TEAM = [
   {
     name:"SWAMPERT", types:["water","ground"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/260.gif",
-    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/260.png"
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/260.png",
+    moves:["Cascada","Puño Hielo","Terremoto","Relajo"],
+    ability:"Humedad", item:"Chaleco Asalto"
   },
   {
     name:"ROSERADE", types:["grass","poison"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/407.gif",
-    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/407.png"
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/407.png",
+    moves:["Drenadoras","Tóxico","Protección","Energibola"],
+    ability:"Punto Tóxico", item:"Lodo Negro"
   },
   {
     name:"GALVANTULA", types:["bug","electric"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/596.gif",
-    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/596.png"
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/596.png",
+    moves:["Trueno","Red Viscosa","Zumbido","Electrotela"],
+    ability:"Ojo Compuesto", item:"Gafas Elección"
   },
   {
-    // Tinkaton gen IX – no existe en gen V, sprite pixel estático
     name:"TINKATON", types:["fairy","steel"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png",
-    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png"
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png",
+    moves:["Martillo Coloso","Carantoña","Danza Espada","Sorpresa"],
+    ability:"Rompemoldes", item:"Periscopio"
   },
   {
-    // Chandelure shiny gen V animado
     name:"CHANDELURE✨", types:["ghost","fire"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/609.gif",
-    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/609.png"
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/609.png",
+    moves:["Fuego Fatuo","Lanzallamas","Bola Sombra","Paz Mental"],
+    ability:"Absorbe Fuego", item:"Hechizo"
   },
   {
-    // Malamar gen VI – no existe en gen V, sprite pixel estático
     name:"MALAMAR", types:["dark","psychic"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png",
-    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png"
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png",
+    moves:["A Bocajarro","Psicocorte","Desarme","Avalancha"],
+    ability:"Respondón", item:"Restos"
   },
 ];
 
-// ── SLOTS ───────────────────────────────────────────────
+// ── CACHE de movimientos ya cargados ────────────────────
+const MOVE_CACHE = {};
+
+async function fetchMove(nameEs){
+  if(MOVE_CACHE[nameEs]) return MOVE_CACHE[nameEs];
+  const slug = MOVE_API[nameEs];
+  if(!slug) return { pp:'?', type:'normal' };
+  try {
+    const res  = await fetch(`https://pokeapi.co/api/v2/move/${slug}`);
+    const data = await res.json();
+    const info = { pp: data.pp, type: data.type.name };
+    MOVE_CACHE[nameEs] = info;
+    return info;
+  } catch {
+    return { pp:'?', type:'normal' };
+  }
+}
+
+// ── MODAL ────────────────────────────────────────────────
+const overlay = document.getElementById('modal-overlay');
+
+async function openModal(p){
+  document.getElementById('modal-sprite').src = p.src;
+  document.getElementById('modal-name').textContent = `${p.name}  Nv.${p.level}`;
+  document.getElementById('modal-types').innerHTML  = p.types.map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
+  document.getElementById('modal-ability').textContent = p.ability;
+  document.getElementById('modal-item').textContent    = p.item;
+  overlay.classList.add('open');
+
+  // Mostrar ataques con skeleton mientras carga
+  const grid = document.getElementById('modal-moves');
+  grid.innerHTML = p.moves.map(m=>`
+    <div class="move-pill" id="mp-${m.replace(/\s/g,'_')}">
+      <div class="move-type-badge t-normal">···</div>
+      <span class="move-name">${m}</span>
+      <span class="move-pp">PP: …</span>
+    </div>`).join('');
+
+  // Cargar PP y tipo desde la API en paralelo
+  await Promise.all(p.moves.map(async m => {
+    const info = await fetchMove(m);
+    const el   = document.getElementById(`mp-${m.replace(/\s/g,'_')}`);
+    if(!el) return;
+    el.querySelector('.move-type-badge').className = `move-type-badge t-${info.type}`;
+    el.querySelector('.move-type-badge').textContent = info.type.toUpperCase();
+    el.querySelector('.move-pp').textContent = `PP: ${info.pp}`;
+  }));
+}
+
+document.getElementById('modal-close').addEventListener('click', ()=> overlay.classList.remove('open'));
+overlay.addEventListener('click', e => { if(e.target===overlay) overlay.classList.remove('open'); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') overlay.classList.remove('open'); });
+
+// ── SLOTS ────────────────────────────────────────────────
 function buildSlot(p){
   const div = document.createElement('div');
   div.className = 'slot';
 
-  const tip = document.createElement('div');
-  tip.className = 'tip';
-  tip.innerHTML = `${p.name}<br>${p.types.map(t=>t.toUpperCase()).join(' / ')}<br>Nv.${p.level}`;
-  div.appendChild(tip);
-
   const img = document.createElement('img');
-  img.alt = p.name;
-  img.src = p.src;
+  img.alt = p.name; img.src = p.src;
   img.onerror = () => { img.onerror=null; img.src=p.fallback; };
   div.appendChild(img);
 
@@ -279,25 +494,19 @@ function buildSlot(p){
   ty.innerHTML = p.types.map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
   div.appendChild(ty);
 
+  div.addEventListener('click', ()=> openModal(p));
   return div;
 }
 
-// ── RELOJ ───────────────────────────────────────────────
+// ── RELOJ ────────────────────────────────────────────────
 const DIAS = ['DOM','LUN','MAR','MIE','JUE','VIE','SÁB'];
 function updateClock(){
   const now = new Date();
-  const h   = String(now.getHours()).padStart(2,'0');
-  const m   = String(now.getMinutes()).padStart(2,'0');
-  const s   = String(now.getSeconds()).padStart(2,'0');
-  const dia = DIAS[now.getDay()];
-  const dd  = String(now.getDate()).padStart(2,'0');
-  const mm  = String(now.getMonth()+1).padStart(2,'0');
-  const yyyy= now.getFullYear();
-  document.getElementById('st-hours').textContent = `${h}:${m}:${s}`;
-  document.getElementById('st-day').textContent   = `${dia} ${dd}/${mm}/${yyyy}`;
+  document.getElementById('st-hours').textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  document.getElementById('st-day').textContent   = `${DIAS[now.getDay()]} ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
 }
 
-// ── INIT ────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('team-grid');
   TEAM.forEach(p => grid.appendChild(buildSlot(p)));
