@@ -6,6 +6,88 @@
 <title>Pokémon MMORPG</title>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
+
+/* =========================
+ESTILO ORIGINAL MEJORADO
+========================= */
+
+body{
+background:
+linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.7)),
+url('https://images.alphacoders.com/677/677583.png');
+background-size:cover;
+background-attachment:fixed;
+background-position:center;
+}
+
+header{
+backdrop-filter:blur(10px);
+background:rgba(5,10,30,.88);
+border-bottom:4px solid #f5c842;
+box-shadow:0 5px 25px rgba(0,0,0,.5);
+}
+
+.card{
+background:rgba(8,15,40,.88);
+backdrop-filter:blur(8px);
+border:3px solid #355dff;
+box-shadow:0 0 20px rgba(0,0,0,.5);
+}
+
+.pokemon-card{
+background:rgba(13,22,55,.95);
+transition:.25s;
+position:relative;
+overflow:hidden;
+}
+
+.pokemon-card:hover{
+transform:translateY(-6px) scale(1.02);
+box-shadow:0 0 25px rgba(80,120,255,.45);
+}
+
+.pokemon-card::before{
+content:'';
+position:absolute;
+inset:0;
+background:linear-gradient(transparent,rgba(255,255,255,.05));
+pointer-events:none;
+}
+
+.top-btn{
+background:linear-gradient(180deg,#355dff,#1d2f88);
+font-size:24px;
+border:2px solid #6ea0ff;
+transition:.2s;
+}
+
+.top-btn:hover{
+transform:scale(1.06);
+background:linear-gradient(180deg,#4b73ff,#2c43bb);
+}
+
+.modal{
+background:rgba(10,18,45,.97);
+backdrop-filter:blur(10px);
+box-shadow:0 0 35px rgba(0,0,0,.8);
+}
+
+#combat-window{
+background:
+linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.7)),
+url('https://wallpapercave.com/wp/wp3741670.png');
+background-size:cover;
+background-position:center;
+}
+
+.friend-card{
+background:#132252;
+padding:10px;
+border-radius:10px;
+border:2px solid #355dff;
+margin-bottom:10px;
+}
+
 *{
 margin:0;
 padding:0;
@@ -205,6 +287,22 @@ image-rendering:pixelated;
 
 <div class="container">
 
+<div class="grid">
+
+<div class="card">
+<h2 style="color:#f5c842;">👤 TARJETA ENTRENADOR</h2>
+<div style="margin-top:10px;font-size:28px;" id="trainer-profile"></div>
+</div>
+
+<div class="card">
+<h2 style="color:#44ff88;">👥 AMIGOS</h2>
+<div id="friends-list"></div>
+<input type="text" id="friend-input" placeholder="Añadir amigo">
+<button class="auth-btn" onclick="addFriend()">Añadir amigo</button>
+</div>
+
+</div>
+
 <div class="card">
 <h2 id="trainer-name">Entrenador</h2>
 <p>💰 <span id="money-view">10000 ₽</span></p>
@@ -345,6 +443,7 @@ function register(){
 const username=document.getElementById('username').value;
 
 currentUser={
+friends:[],
 name:username,
 money:10000,
 badges:0,
@@ -367,11 +466,24 @@ renderUI();
 }
 
 function renderUI(){
+
+renderFriends();
 const u=currentUser;
 
 if(!u) return;
 
 document.getElementById('trainer-name').textContent=u.name;
+
+const profile=document.getElementById('trainer-profile');
+
+profile.innerHTML=`
+<div>🏆 ${u.name}</div>
+<div>💰 ${u.money} ₽</div>
+<div>🎒 Poké Balls: ${u.inventory.pokeball}</div>
+<div>🏅 Medallas: ${u.badges}</div>
+<div>📍 Zona: ${CURRENT_ZONE.name}</div>
+<div>📖 Pokédex: ${getCapturedCount()} capturados</div>
+`;
 document.getElementById('money-view').textContent=u.money+' ₽';
 document.getElementById('badge-view').textContent=u.badges;
 
@@ -660,6 +772,49 @@ pokemon.src=getSpr(evo.to);
 
 alert('¡Tu Pokémon evolucionó!');
 }
+}
+
+function addFriend(){
+
+const val=document.getElementById('friend-input').value;
+
+if(!val) return;
+
+if(!currentUser.friends.includes(val)){
+currentUser.friends.push(val);
+}
+
+save();
+renderFriends();
+
+document.getElementById('friend-input').value='';
+}
+
+function renderFriends(){
+
+if(!currentUser) return;
+
+const box=document.getElementById('friends-list');
+
+if(!box) return;
+
+if(currentUser.friends.length===0){
+box.innerHTML='<p style="opacity:.7;">No tienes amigos añadidos.</p>';
+return;
+}
+
+box.innerHTML=currentUser.friends.map(f=>`
+<div class="friend-card">
+🧑‍🤝‍🧑 ${f}
+</div>
+`).join('');
+}
+
+function getCapturedCount(){
+
+const dex=JSON.parse(localStorage.getItem('fullDex')||'[]');
+
+return dex.filter(p=>p.captured).length;
 }
 
 window.onload=()=>{
