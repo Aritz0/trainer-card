@@ -505,112 +505,92 @@ function updateClock(){
   document.getElementById('st-day').textContent   = `${DIAS[now.getDay()]} ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
 }
 
-// ── POKEMON ALEATORIOS CRUZANDO LA PANTALLA ───────────────
-// Lista de IDs de pokemon de gen 1-5 para cruzar
-const WALK_IDS = [
-  25,52,54,56,79,113,133,143,175,196,197,
-  198,225,228,231,234,239,240,249,250,
-  280,300,302,303,311,312,315,325,327,
-  393,399,403,417,427,431,447,448,
-  495,509,519,529,531,546,548,551,572,577,585,
-  587,590,592,595,597,599,613,619,621,626,629
-];
-
-function spawnWalkingPokemon(){
-  const id  = WALK_IDS[Math.floor(Math.random() * WALK_IDS.length)];
-  const el  = document.createElement('div');
-  const goRight = Math.random() > 0.5;
-  const top = 10 + Math.random() * 80; // % de altura
-  const size = 40 + Math.floor(Math.random() * 28);
-  const dur  = 8 + Math.random() * 10;
-
-  el.style.cssText = `
-    position:fixed;
-    top:${top}vh;
-    ${goRight ? 'left:-80px' : 'right:-80px'};
-    width:${size}px;height:${size}px;
-    z-index:50;pointer-events:none;
-    image-rendering:pixelated;
-    transition:none;
-    animation:walkPoke${goRight?'R':'L'} ${dur}s linear forwards;
-  `;
-
-  const img = document.createElement('img');
-  img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
-  img.onerror = () => { img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`; };
-  img.style.cssText = `width:100%;height:100%;object-fit:contain;image-rendering:pixelated;transform:scaleX(${goRight ? 1 : -1})`;
-  el.appendChild(img);
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), dur * 1000 + 500);
-}
-
-// Spawn cada 6-14 segundos
-function scheduleWalk(){
-  spawnWalkingPokemon();
-  setTimeout(scheduleWalk, 6000 + Math.random() * 8000);
-}
-
 // ── PC POKÉMON (botón flotante) ──────────────────────────
-// Pool de 30 pokemon random del PC (gen 1-5)
+// Pokémon del usuario organizados en 4 cajas
+// shiny:true → usa sprite shiny
 const PC_BOXES = [
-  // Box 1 – Hoenn
-  [4,7,1,152,155,158],
-  // Box 2 – varios
-  [143,94,131,149,248,245],
-  // Box 3 – gen 5
-  [495,501,504,506,509,519],
-  // Box 4 – favoritos
-  [25,133,39,129,132,52],
-  // Box 5 – legendarios
-  [144,145,146,150,151,249],
+  // CAJA 1 – Starters & Legendarios
+  [
+    { id:248,  name:"TYRANITAR"  },
+    { id:487,  name:"DARKRAI",   special:491 }, // darkrai id correcto
+    { id:389,  name:"TORTERRA"   },
+    { id:392,  name:"INFERNAPE"  },
+    { id:395,  name:"EMPOLEON"   },
+    { id:384,  name:"RAYQUAZA"   },
+  ],
+  // CAJA 2 – Starters & Fan favs
+  [
+    { id:158,  name:"TOTODILE"   },
+    { id:258,  name:"MUDKIP"     },
+    { id:94,   name:"GENGAR"     },
+    { id:451,  name:"SKORUPI",   shiny:true },
+    { id:79,   name:"SLOWPOKE"   },
+    { id:373,  name:"SALAMENCE"  },
+  ],
+  // CAJA 3 – Modernos & Competitivo
+  [
+    { id:887,  name:"DRAGAPULT"  },
+    { id:376,  name:"METAGROSS"  },
+    { id:396,  name:"STARLY"     },
+    { id:445,  name:"GARCHOMP"   },
+    { id:479,  name:"ROTOM"      },
+    { id:478,  name:"FROSLASS"   },
+  ],
+  // CAJA 4 – Gen 5 y más
+  [
+    { id:545,  name:"SCOLIPEDE"  },
+    { id:552,  name:"KROKOROK"   },
+    { id:563,  name:"COFAGRIGUS" },
+    { id:612,  name:"HAXORUS",   shiny:true },
+    { id:194,  name:"WOOPER"     },
+    { id:472,  name:"GLISCOR"    },
+  ],
 ];
 
 let pcOpen = false;
 let currentBox = 0;
 
 function buildPC(){
-  // Botón PC flotante
   const btn = document.createElement('button');
   btn.id = 'pc-btn';
-  btn.innerHTML = `<span>💾</span> PC`;
+  btn.innerHTML = `💾 PC`;
   btn.style.cssText = `
     position:fixed;bottom:24px;right:24px;z-index:200;
     background:#0d1244;border:3px solid #f5c842;border-radius:6px;
     color:#f5c842;font-family:'Press Start 2P',monospace;font-size:9px;
-    padding:10px 14px;cursor:pointer;
+    padding:10px 16px;cursor:pointer;
     box-shadow:3px 3px 0 rgba(0,0,0,.5);
-    display:flex;align-items:center;gap:6px;
     transition:background .15s,transform .15s;
+    letter-spacing:1px;
   `;
   btn.onmouseover = () => btn.style.background='#1a2fa8';
   btn.onmouseout  = () => btn.style.background='#0d1244';
   btn.onclick = togglePC;
   document.body.appendChild(btn);
 
-  // Ventana PC
   const win = document.createElement('div');
   win.id = 'pc-window';
   win.style.cssText = `
-    position:fixed;bottom:80px;right:24px;z-index:199;
-    width:340px;
-    background:#0d1244;border:4px solid #f5c842;border-radius:8px;
-    box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.6);
+    position:fixed;bottom:76px;right:24px;z-index:199;
+    width:360px;
+    background:#0a0e2a;border:4px solid #f5c842;border-radius:8px;
+    box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.7);
     font-family:'Press Start 2P',monospace;
     display:none;overflow:hidden;
   `;
 
   win.innerHTML = `
-    <div id="pc-header" style="background:#060e33;border-bottom:3px solid #f5c842;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="background:#060e33;border-bottom:3px solid #f5c842;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
       <span style="color:#f5c842;font-size:8px;letter-spacing:1px;">📦 PC DE BILL</span>
       <button onclick="togglePC()" style="background:#cc2222;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:7px;padding:4px 8px;border-radius:3px;cursor:pointer;">✕</button>
     </div>
-    <div style="padding:10px 12px 6px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="background:#080e28;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1a2a66;">
       <button onclick="changeBox(-1)" style="background:#1a2fa8;border:2px solid #f5c842;color:#f5c842;font-family:'Press Start 2P',monospace;font-size:8px;padding:5px 9px;border-radius:3px;cursor:pointer;">◀</button>
-      <span id="pc-box-name" style="color:#aabfff;font-size:7px;letter-spacing:1px;">CAJA 1</span>
+      <span id="pc-box-name" style="color:#f5c842;font-size:7px;letter-spacing:1px;">CAJA 1</span>
       <button onclick="changeBox(1)" style="background:#1a2fa8;border:2px solid #f5c842;color:#f5c842;font-family:'Press Start 2P',monospace;font-size:8px;padding:5px 9px;border-radius:3px;cursor:pointer;">▶</button>
     </div>
-    <div id="pc-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 12px 12px;"></div>
-    <div id="pc-info" style="border-top:2px solid #1a2fa8;padding:8px 12px;min-height:36px;"></div>
+    <div id="pc-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px;background:#0a0e2a;"></div>
+    <div id="pc-info" style="border-top:2px solid #1a2a66;padding:8px 12px;min-height:38px;background:#080e28;"></div>
   `;
   document.body.appendChild(win);
   renderPCBox();
@@ -621,7 +601,7 @@ function togglePC(){
   document.getElementById('pc-window').style.display = pcOpen ? 'block' : 'none';
 }
 
-const PC_BOX_NAMES = ['CAJA HOENN','CAJA KANTO II','CAJA UNOVA','CAJA FAVORITOS','CAJA LEGENDARIOS'];
+const PC_BOX_NAMES = ['CAJA 1','CAJA 2','CAJA 3','CAJA 4'];
 
 function changeBox(dir){
   currentBox = (currentBox + dir + PC_BOXES.length) % PC_BOXES.length;
@@ -629,61 +609,86 @@ function changeBox(dir){
   renderPCBox();
 }
 
-async function renderPCBox(){
+function getSpriteUrl(p){
+  const id = p.special || p.id;
+  if(p.shiny){
+    // gen V shiny si existe, sino Home shiny
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${id}.gif`;
+  }
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
+}
+
+function getFallbackUrl(p){
+  const id = p.special || p.id;
+  if(p.shiny) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+}
+
+function renderPCBox(){
   const grid = document.getElementById('pc-grid');
   grid.innerHTML = '';
-  const ids = PC_BOXES[currentBox];
-  for(const id of ids){
+  PC_BOXES[currentBox].forEach(p => {
     const slot = document.createElement('div');
     slot.style.cssText = `
-      background:#0a1d44;border:2px solid #1e44aa;border-radius:5px;
+      background:#0d1744;border:2px solid ${p.shiny ? '#ffdd55' : '#1e44aa'};border-radius:5px;
       display:flex;flex-direction:column;align-items:center;
-      padding:6px 4px;cursor:pointer;
+      padding:6px 4px;cursor:pointer;position:relative;
       transition:border-color .15s,transform .15s;
     `;
-    slot.onmouseover = () => { slot.style.borderColor='#f5c842'; slot.style.transform='translateY(-3px)'; showPCInfo(id); };
-    slot.onmouseout  = () => { slot.style.borderColor='#1e44aa'; slot.style.transform=''; };
+    if(p.shiny){
+      // Badge shiny
+      const badge = document.createElement('span');
+      badge.textContent='✨';
+      badge.style.cssText='position:absolute;top:2px;right:3px;font-size:9px;';
+      slot.appendChild(badge);
+    }
+    slot.onmouseover = () => { slot.style.borderColor='#f5c842'; slot.style.transform='translateY(-3px)'; showPCInfo(p); };
+    slot.onmouseout  = () => { slot.style.borderColor = p.shiny?'#ffdd55':'#1e44aa'; slot.style.transform=''; };
 
     const img = document.createElement('img');
-    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
-    img.onerror = () => { img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`; };
-    img.style.cssText = 'width:60px;height:60px;object-fit:contain;image-rendering:pixelated;';
+    img.src = getSpriteUrl(p);
+    img.onerror = () => { img.onerror=null; img.src = getFallbackUrl(p); };
+    img.style.cssText='width:64px;height:64px;object-fit:contain;image-rendering:pixelated;';
+
+    const nm = document.createElement('span');
+    nm.textContent = p.name;
+    nm.style.cssText=`color:${p.shiny?'#ffdd55':'#aabbff'};font-size:4.5px;margin-top:3px;text-align:center;letter-spacing:.3px;`;
 
     slot.appendChild(img);
+    slot.appendChild(nm);
     grid.appendChild(slot);
-  }
-  document.getElementById('pc-info').innerHTML = `<span style="color:#555;font-size:6px;">Pasa el ratón sobre un Pokémon</span>`;
+  });
+  document.getElementById('pc-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un Pokémon</span>`;
 }
 
 const PC_INFO_CACHE = {};
-async function showPCInfo(id){
+async function showPCInfo(p){
   const info = document.getElementById('pc-info');
-  if(PC_INFO_CACHE[id]){
-    info.innerHTML = PC_INFO_CACHE[id]; return;
-  }
-  info.innerHTML = `<span style="color:#555;font-size:6px;">Cargando...</span>`;
+  const id = p.special || p.id;
+  if(PC_INFO_CACHE[id]){ info.innerHTML=PC_INFO_CACHE[id]; return; }
+  info.innerHTML = `<span style="color:#444;font-size:6px;">Cargando...</span>`;
   try {
     const res  = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     const data = await res.json();
-    const name = data.name.toUpperCase();
+    const name = p.name;
     const types = data.types.map(t=>`<span style="font-size:5px;padding:2px 5px;border-radius:3px;color:#fff;background:${typeColor(t.type.name)};text-transform:uppercase;">${t.type.name}</span>`).join(' ');
-    const hp  = data.stats.find(s=>s.stat.name==='hp')?.base_stat ?? '?';
-    const atk = data.stats.find(s=>s.stat.name==='attack')?.base_stat ?? '?';
-    const spd = data.stats.find(s=>s.stat.name==='speed')?.base_stat ?? '?';
-    const html = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <span style="color:#f5c842;font-size:7px;">${name}</span>
+    const hp  = data.stats.find(s=>s.stat.name==='hp')?.base_stat??'?';
+    const atk = data.stats.find(s=>s.stat.name==='attack')?.base_stat??'?';
+    const spd = data.stats.find(s=>s.stat.name==='speed')?.base_stat??'?';
+    const html=`<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+      <span style="color:#f5c842;font-size:7px;">${name}${p.shiny?' ✨':''}</span>
       ${types}
       <span style="color:#aabfff;font-size:6px;">PS:${hp}</span>
       <span style="color:#ffaaaa;font-size:6px;">AT:${atk}</span>
       <span style="color:#aaffaa;font-size:6px;">VE:${spd}</span>
     </div>`;
-    PC_INFO_CACHE[id] = html;
-    info.innerHTML = html;
-  } catch { info.innerHTML = `<span style="color:#555;font-size:6px;">Error al cargar</span>`; }
+    PC_INFO_CACHE[id]=html;
+    info.innerHTML=html;
+  } catch { info.innerHTML=`<span style="color:#444;font-size:6px;">Error</span>`; }
 }
 
 function typeColor(t){
-  const m = {water:'#3a7eee',grass:'#3da820',ground:'#b07a30',fire:'#e85010',
+  const m={water:'#3a7eee',grass:'#3da820',ground:'#b07a30',fire:'#e85010',
     ice:'#3dbcbc',electric:'#c8a800',bug:'#7a9a10',rock:'#887832',ghost:'#5c3a88',
     poison:'#882288',steel:'#7a8fa0',fairy:'#cc5599',dark:'#3a3a44',
     flying:'#6688cc',fighting:'#8a3010',psychic:'#cc2255',dragon:'#4418d8',normal:'#7a7a66'};
@@ -696,24 +701,11 @@ document.addEventListener('DOMContentLoaded', () => {
   TEAM.forEach(p => grid.appendChild(buildSlot(p)));
   updateClock();
   setInterval(updateClock, 1000);
-
-  // Primer pokemon a los 3 segundos, luego cada X segundos
-  setTimeout(scheduleWalk, 3000);
-
-  // PC
   buildPC();
 });
 </script>
 
 <style>
-@keyframes walkPokeR {
-  from { transform: translateX(0); }
-  to   { transform: translateX(calc(100vw + 120px)); }
-}
-@keyframes walkPokeL {
-  from { transform: translateX(0); }
-  to   { transform: translateX(calc(-100vw - 120px)); }
-}
 #pc-btn:active { transform: translate(2px,2px); }
 </style>
 </body>
