@@ -573,17 +573,35 @@ function buildSlot(p){
   div.className = 'slot';
 
   const img = document.createElement('img');
-  img.alt = p.name; img.src = p.src;
-  img.onerror = () => { img.onerror=null; img.src=p.fallback; };
+  img.alt = p.name || '?';
+  img.style.cssText = 'width:clamp(80px,11vw,140px);height:clamp(80px,11vw,140px);object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7));';
+  // Intentar src animado, luego fallback
+  img.src = p.src || '';
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = p.fallback || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id||1}.png`;
+  };
   div.appendChild(img);
 
-  const nm = document.createElement('span'); nm.className='pname'; nm.textContent=p.name; div.appendChild(nm);
-  const lv = document.createElement('span'); lv.className='plv';   lv.textContent=`Nv.${p.level}`; div.appendChild(lv);
-  const ty = document.createElement('div');  ty.className='types';
-  ty.innerHTML = p.types.map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
+  const nm = document.createElement('span');
+  nm.className = 'pname';
+  nm.textContent = p.name || '???';
+  div.appendChild(nm);
+
+  const lv = document.createElement('span');
+  lv.className = 'plv';
+  lv.textContent = `Nv.${p.level||50}`;
+  div.appendChild(lv);
+
+  const ty = document.createElement('div');
+  ty.className = 'types';
+  ty.innerHTML = (p.types||['normal']).map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
   div.appendChild(ty);
 
-  div.addEventListener('click', ()=> openModal(p));
+  div.addEventListener('click', () => {
+    if(swapMode) return; // handled by slot.onclick in swap mode
+    openModal(p);
+  });
   return div;
 }
 
@@ -714,6 +732,7 @@ function doSwap(teamIdx){
 
 function refreshTeam(){
   const grid = document.getElementById('team-grid');
+  if(!grid) return;
   grid.innerHTML = '';
   TEAM.forEach(p => grid.appendChild(buildSlot(p)));
 }
@@ -1003,14 +1022,27 @@ function renderBag(){
 }
 
 // ── INIT ─────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const grid = document.getElementById('team-grid');
-  TEAM.forEach(p => grid.appendChild(buildSlot(p)));
-  updateClock();
-  setInterval(updateClock, 1000);
-  buildPC();
-  buildBag();
-});
+function initApp(){
+  try {
+    const grid = document.getElementById('team-grid');
+    if(!grid){ console.error('team-grid not found'); return; }
+    grid.innerHTML = '';
+    TEAM.forEach((p,i) => {
+      try { grid.appendChild(buildSlot(p)); }
+      catch(e){ console.error('Error building slot',i,e); }
+    });
+    updateClock();
+    setInterval(updateClock, 1000);
+    buildPC();
+    buildBag();
+  } catch(e){ console.error('initApp error:', e); }
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
 </script>
 
 <style>
