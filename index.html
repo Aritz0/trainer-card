@@ -353,33 +353,123 @@ body{
 <script>
 // ── MAPA español → slug inglés para PokeAPI ─────────────
 const MOVE_API = {
-  "Cascada":        "waterfall",
-  "Puño Hielo":     "ice-punch",
-  "Terremoto":      "earthquake",
-  "Relajo":         "slack-off",
-  "Drenadoras":     "leech-seed",
-  "Tóxico":         "toxic",
-  "Protección":     "protect",
-  "Energibola":     "energy-ball",
-  "Trueno":         "thunder",
-  "Red Viscosa":    "sticky-web",
-  "Zumbido":        "bug-buzz",
-  "Electrotela":    "electroweb",
-  "Martillo Coloso":"gigaton-hammer",
-  "Carantoña":      "play-rough",
-  "Danza Espada":   "swords-dance",
-  "Sorpresa":       "sucker-punch",
-  "Fuego Fatuo":    "will-o-wisp",
-  "Lanzallamas":    "flamethrower",
-  "Bola Sombra":    "shadow-ball",
-  "Paz Mental":     "calm-mind",
-  "A Bocajarro":    "superpower",
-  "Psicocorte":     "psycho-cut",
-  "Desarme":        "knock-off",
-  "Avalancha":      "avalanche",
+  "Cascada":         "waterfall",
+  "Puño Hielo":      "ice-punch",
+  "Terremoto":       "earthquake",
+  "Relajo":          "slack-off",
+  "Drenadoras":      "leech-seed",
+  "Tóxico":          "toxic",
+  "Protección":      "protect",
+  "Energibola":      "energy-ball",
+  "Trueno":          "thunder",
+  "Red Viscosa":     "sticky-web",
+  "Zumbido":         "bug-buzz",
+  "Electrotela":     "electroweb",
+  "Martillo Coloso": "gigaton-hammer",
+  "Carantoña":       "play-rough",
+  "Danza Espada":    "swords-dance",
+  "Sorpresa":        "sucker-punch",
+  "Fuego Fatuo":     "will-o-wisp",
+  "Lanzallamas":     "flamethrower",
+  "Bola Sombra":     "shadow-ball",
+  "Paz Mental":      "calm-mind",
+  "A Bocajarro":     "superpower",
+  "Psicocorte":      "psycho-cut",
+  "Desarme":         "knock-off",
+  "Avalancha":       "avalanche",
+  // PC moves
+  "Triturar":        "crunch",
+  "Roca Afilada":    "stone-edge",
+  "Puño Trueno":     "thunder-punch",
+  "Maldición":       "curse",
+  "Canto Mortal":    "perish-song",
+  "Bola Aura":       "aura-sphere",
+  "Fuerza Lunar":    "moonblast",
+  "Pulso Umbría":    "dark-pulse",
+  "Vuelo":           "fly",
+  "Ventisca":        "blizzard",
+  "Ascuas":          "ember",
+  "Garra Dragón":    "dragon-claw",
+  "Danza Dragón":    "dragon-dance",
+  "Cola Férrea":     "iron-tail",
+  "Psíquico":        "psychic",
+  "Hipnosis":        "hypnosis",
+  "Surf":            "surf",
+  "Torbellino":      "whirlpool",
+  "Hidrobomba":      "hydro-pump",
+  "Masa Cosmica":    "cosmic-power",
+  "Cometa Draco":    "draco-meteor",
+  "Giro Fuego":      "fire-spin",
+  "Colmillo Rayo":   "thunder-fang",
+  "Explosión":       "explosion",
+  "Gema de la Vida": "healing-wish",
+  "Hiperrayo":       "hyper-beam",
+  "Psicoimpulso":    "zen-headbutt",
+  "Rayo":            "thunderbolt",
+  "Tajo Aéreo":      "air-slash",
+  "Golpe Bajo":      "low-sweep",
+  "Sombra Vil":      "shadow-sneak",
+  "Maquinación":     "nasty-plot",
+  "Pulso Dragón":    "dragon-pulse",
+  "Garra Umbría":    "shadow-claw",
+  "Taladradora":     "drill-run",
+  "Patada Salto":    "jump-kick",
+  "Telaraña":        "string-shot",
+  "Ácido":           "acid",
+  "Veneno X":        "toxic-spikes",
+  "Vendaval":        "hurricane",
+  "Nieve Polvo":     "powder-snow",
+  "Granizo":         "hail",
+  "Cuchillada":      "slash",
+  "Guillotina":      "guillotine",
+  "Acua Jet":        "aqua-jet",
+  "Danza Lluvia":    "rain-dance",
 };
 
-const TEAM = [
+let TEAM = [
+  {
+    name:"SWAMPERT", types:["water","ground"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/260.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/260.png",
+    moves:["Cascada","Puño Hielo","Terremoto","Relajo"],
+    ability:"Humedad", item:"Chaleco Asalto"
+  },
+  {
+    name:"ROSERADE", types:["grass","poison"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/407.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/407.png",
+    moves:["Drenadoras","Tóxico","Protección","Energibola"],
+    ability:"Punto Tóxico", item:"Lodo Negro"
+  },
+  {
+    name:"GALVANTULA", types:["bug","electric"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/596.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/596.png",
+    moves:["Trueno","Red Viscosa","Zumbido","Electrotela"],
+    ability:"Ojo Compuesto", item:"Gafas Elección"
+  },
+  {
+    name:"TINKATON", types:["fairy","steel"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png",
+    moves:["Martillo Coloso","Carantoña","Danza Espada","Sorpresa"],
+    ability:"Rompemoldes", item:"Periscopio"
+  },
+  {
+    name:"CHANDELURE✨", types:["ghost","fire"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/609.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/609.png",
+    moves:["Fuego Fatuo","Lanzallamas","Bola Sombra","Paz Mental"],
+    ability:"Absorbe Fuego", item:"Hechizo"
+  },
+  {
+    name:"MALAMAR", types:["dark","psychic"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png",
+    moves:["A Bocajarro","Psicocorte","Desarme","Avalancha"],
+    ability:"Respondón", item:"Restos"
+  },
+];
   {
     name:"SWAMPERT", types:["water","ground"], level:50,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/260.gif",
@@ -505,47 +595,128 @@ function updateClock(){
   document.getElementById('st-day').textContent   = `${DIAS[now.getDay()]} ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
 }
 
-// ── PC POKÉMON (botón flotante) ──────────────────────────
-// Pokémon del usuario organizados en 4 cajas
-// shiny:true → usa sprite shiny
+// ── PC POKÉMON ───────────────────────────────────────────
 const PC_BOXES = [
-  // CAJA 1 – Starters & Legendarios
-  [
-    { id:248,  name:"TYRANITAR"  },
-    { id:487,  name:"DARKRAI",   special:491 }, // darkrai id correcto
-    { id:389,  name:"TORTERRA"   },
-    { id:392,  name:"INFERNAPE"  },
-    { id:395,  name:"EMPOLEON"   },
-    { id:384,  name:"RAYQUAZA"   },
+  [ // CAJA 1
+    { id:248, name:"TYRANITAR",  types:["rock","dark"],    level:50, shiny:false, moves:["Triturar","Roca Afilada","Terremoto","Maldición"], ability:"Presión",       item:"Roca Pulida"   },
+    { id:491, name:"DARKRAI",    types:["dark"],            level:50, shiny:false, moves:["Canto Mortal","Bola Sombra","Pulso Umbría","Paz Mental"], ability:"Mal Sueño",   item:"Gema Oscura"   },
+    { id:389, name:"TORTERRA",   types:["grass","ground"],  level:50, shiny:false, moves:["Drenadoras","Terremoto","Triturar","Protección"], ability:"Crecehierba",  item:"Restos"        },
+    { id:392, name:"INFERNAPE",  types:["fire","fighting"], level:50, shiny:false, moves:["A Bocajarro","Lanzallamas","Danza Espada","Maquinación"], ability:"Mar Llamas",  item:"Banda Elegida" },
+    { id:395, name:"EMPOLEON",   types:["water","steel"],   level:50, shiny:false, moves:["Surf","Bola Aura","Cola Férrea","Ventisca"],      ability:"Torrente",      item:"Chaleco Asalto"},
+    { id:384, name:"RAYQUAZA",   types:["dragon","flying"], level:50, shiny:false, moves:["Cometa Draco","Vuelo","Garra Dragón","Danza Dragón"], ability:"Levitación Aérea", item:"Megapiedra"},
   ],
-  // CAJA 2 – Starters & Fan favs
-  [
-    { id:158,  name:"TOTODILE"   },
-    { id:258,  name:"MUDKIP"     },
-    { id:94,   name:"GENGAR"     },
-    { id:451,  name:"SKORUPI",   shiny:true },
-    { id:79,   name:"SLOWPOKE"   },
-    { id:373,  name:"SALAMENCE"  },
+  [ // CAJA 2
+    { id:158, name:"TOTODILE",   types:["water"],           level:50, shiny:false, moves:["Cascada","Triturar","Acua Jet","Danza Lluvia"],  ability:"Torrente",      item:"Baya Sitrus"   },
+    { id:258, name:"MUDKIP",     types:["water"],           level:50, shiny:false, moves:["Surf","Terremoto","Hidrobomba","Protección"],    ability:"Torrente",      item:"Baya Sitrus"   },
+    { id:94,  name:"GENGAR",     types:["ghost","poison"],  level:50, shiny:false, moves:["Bola Sombra","Maquinación","Tóxico","Hipnosis"], ability:"Levitación",    item:"Gafas Elegidas"},
+    { id:451, name:"SKORUPI",    types:["poison","bug"],    level:50, shiny:true,  moves:["Veneno X","Desarme","Cuchillada","Protección"],  ability:"Escudo Batalla",item:"Baya Zidra"    },
+    { id:79,  name:"SLOWPOKE",   types:["water","psychic"], level:50, shiny:false, moves:["Surf","Psíquico","Hipnosis","Relajo"],           ability:"Baboso",        item:"Restos"        },
+    { id:373, name:"SALAMENCE",  types:["dragon","flying"], level:50, shiny:false, moves:["Cometa Draco","Vuelo","Pulso Dragón","Danza Dragón"], ability:"Intimidación", item:"Megapiedra"},
   ],
-  // CAJA 3 – Modernos & Competitivo
-  [
-    { id:887,  name:"DRAGAPULT"  },
-    { id:376,  name:"METAGROSS"  },
-    { id:396,  name:"STARLY"     },
-    { id:445,  name:"GARCHOMP"   },
-    { id:479,  name:"ROTOM"      },
-    { id:478,  name:"FROSLASS"   },
+  [ // CAJA 3
+    { id:887, name:"DRAGAPULT",  types:["dragon","ghost"],  level:50, shiny:false, moves:["Sombra Vil","Garra Dragón","Pulso Dragón","Tajo Aéreo"], ability:"Infiltrador", item:"Escudo Foco"},
+    { id:376, name:"METAGROSS",  types:["steel","psychic"], level:50, shiny:false, moves:["Cola Férrea","Psíquico","Psicoimpulso","Explosión"], ability:"Mente Clara",  item:"Megapiedra"  },
+    { id:396, name:"STARLY",     types:["normal","flying"], level:50, shiny:false, moves:["Tajo Aéreo","Golpe Bajo","Vuelo","Roca Afilada"], ability:"Intimidación",  item:"Baya Sitrus"  },
+    { id:445, name:"GARCHOMP",   types:["dragon","ground"], level:50, shiny:false, moves:["Cometa Draco","Terremoto","Garra Dragón","Danza Espada"], ability:"Piel Tosca", item:"Gema Dragón"},
+    { id:479, name:"ROTOM",      types:["electric","ghost"],level:50, shiny:false, moves:["Trueno","Bola Sombra","Fuego Fatuo","Electrotela"], ability:"Levitación",   item:"Gafas Elegidas"},
+    { id:478, name:"FROSLASS",   types:["ice","ghost"],     level:50, shiny:false, moves:["Ventisca","Bola Sombra","Granizo","Maldición"],  ability:"Absorbenieve",  item:"Banda Foco"   },
   ],
-  // CAJA 4 – Gen 5 y más
-  [
-    { id:545,  name:"SCOLIPEDE"  },
-    { id:553,  name:"KROOKODILE" },
-    { id:563,  name:"COFAGRIGUS" },
-    { id:612,  name:"HAXORUS",   shiny:true },
-    { id:194,  name:"WOOPER"     },
-    { id:472,  name:"GLISCOR"    },
+  [ // CAJA 4
+    { id:545, name:"SCOLIPEDE",  types:["bug","poison"],    level:50, shiny:false, moves:["Veneno X","Danza Espada","Zumbido","Protección"], ability:"Aceleración",  item:"Baya Zidra"   },
+    { id:553, name:"KROOKODILE", types:["ground","dark"],   level:50, shiny:false, moves:["Terremoto","Triturar","Taladradora","Desarme"],  ability:"Intimidación",  item:"Gafas Elegidas"},
+    { id:563, name:"COFAGRIGUS", types:["ghost"],           level:50, shiny:false, moves:["Bola Sombra","Maldición","Gema de la Vida","Paz Mental"], ability:"Momificación", item:"Restos"},
+    { id:612, name:"HAXORUS",    types:["dragon"],          level:50, shiny:true,  moves:["Garra Dragón","Danza Dragón","Danza Espada","Cometa Draco"], ability:"Mold Breaker", item:"Baya Sitrus"},
+    { id:194, name:"WOOPER",     types:["water","ground"],  level:50, shiny:false, moves:["Terremoto","Surf","Tóxico","Protección"],       ability:"Absorbe Agua",  item:"Baya Sitrus"  },
+    { id:472, name:"GLISCOR",    types:["ground","flying"], level:50, shiny:false, moves:["Terremoto","Tajo Aéreo","Tóxico","Protección"], ability:"Hiper Cutter",  item:"Baya Tóxica"  },
   ],
 ];
+
+// Construir src/fallback para cada pokemon del PC
+PC_BOXES.forEach(box => box.forEach(p => {
+  p.src      = p.shiny
+    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${p.id}.gif`
+    : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${p.id}.gif`;
+  p.fallback = p.shiny
+    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${p.id}.png`
+    : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`;
+}));
+
+// ── SWAP: seleccionar slot del equipo para intercambiar ──
+let swapMode    = false;  // estamos seleccionando slot del equipo?
+let pendingPC   = null;   // pokemon del PC a meter
+
+function enterSwapMode(pcPoke){
+  pendingPC = pcPoke;
+  swapMode  = true;
+  // Resaltar slots del equipo
+  document.querySelectorAll('.slot').forEach((el,i) => {
+    el.style.border = '3px solid #f5c842';
+    el.style.boxShadow = '0 0 10px #f5c842';
+    el.style.cursor = 'crosshair';
+    el._origClick = el.onclick;
+    el.onclick = (e) => { e.stopPropagation(); doSwap(i); };
+  });
+  document.getElementById('pc-info').innerHTML =
+    `<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+      <span style="color:#f5c842;font-size:5.5px;">⚡ Selecciona un Pokémon del equipo</span>
+      <button onclick="cancelSwapMode()" style="background:#cc2222;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:5px;padding:3px 7px;border-radius:3px;cursor:pointer;">CANCELAR</button>
+    </div>`;
+}
+
+function cancelSwapMode(){
+  swapMode = false; pendingPC = null;
+  document.querySelectorAll('.slot').forEach(el => {
+    el.style.border = '';
+    el.style.boxShadow = '';
+    el.style.cursor = '';
+    el.onclick = null;
+  });
+  document.getElementById('pc-info').innerHTML =
+    `<span style="color:#444;font-size:6px;">Haz click en un Pokémon para intercambiarlo con el equipo</span>`;
+}
+
+function doSwap(teamIdx){
+  if(!pendingPC) return;
+  const outPoke = TEAM[teamIdx];
+
+  // Asegurar src/fallback en el que sale
+  if(!outPoke.id){
+    // Extraer id del src si no lo tiene
+    const m = outPoke.src.match(/animated\/(?:shiny\/)?(\d+)\.gif/) || outPoke.fallback.match(/\/(\d+)\.png/);
+    if(m) outPoke.id = parseInt(m[1]);
+  }
+  if(outPoke.id && !outPoke.src.includes('http')){
+    outPoke.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${outPoke.id}.gif`;
+    outPoke.fallback = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${outPoke.id}.png`;
+  }
+
+  // Intercambio
+  TEAM[teamIdx] = pendingPC;
+  const box = PC_BOXES[currentBox];
+  const pcIdx = box.findIndex(p => p === pendingPC);
+  if(pcIdx !== -1) box[pcIdx] = outPoke;
+
+  swapMode = false; pendingPC = null;
+
+  // Restaurar estilos de slots
+  document.querySelectorAll('.slot').forEach(el => {
+    el.style.border = '';
+    el.style.boxShadow = '';
+    el.style.cursor = '';
+    el.onclick = null;
+  });
+
+  refreshTeam();
+  renderPCBox();
+  document.getElementById('pc-info').innerHTML =
+    `<span style="color:#aaffaa;font-size:6px;">✔ ¡Intercambio realizado!</span>`;
+}
+
+function refreshTeam(){
+  const grid = document.getElementById('team-grid');
+  grid.innerHTML = '';
+  TEAM.forEach(p => grid.appendChild(buildSlot(p)));
+}
 
 let pcOpen = false;
 let currentBox = 0;
@@ -609,20 +780,8 @@ function changeBox(dir){
   renderPCBox();
 }
 
-function getSpriteUrl(p){
-  const id = p.special || p.id;
-  if(p.shiny){
-    // gen V shiny si existe, sino Home shiny
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${id}.gif`;
-  }
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
-}
-
-function getFallbackUrl(p){
-  const id = p.special || p.id;
-  if(p.shiny) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-}
+function getSpriteUrl(p){ return p.src; }
+function getFallbackUrl(p){ return p.fallback; }
 
 function renderPCBox(){
   const grid = document.getElementById('pc-grid');
@@ -636,7 +795,6 @@ function renderPCBox(){
       transition:border-color .15s,transform .15s;
     `;
     if(p.shiny){
-      // Badge shiny
       const badge = document.createElement('span');
       badge.textContent='✨';
       badge.style.cssText='position:absolute;top:2px;right:3px;font-size:9px;';
@@ -644,6 +802,8 @@ function renderPCBox(){
     }
     slot.onmouseover = () => { slot.style.borderColor='#f5c842'; slot.style.transform='translateY(-3px)'; showPCInfo(p); };
     slot.onmouseout  = () => { slot.style.borderColor = p.shiny?'#ffdd55':'#1e44aa'; slot.style.transform=''; };
+    // Click → entrar en modo swap
+    slot.addEventListener('click', () => enterSwapMode(p));
 
     const img = document.createElement('img');
     img.src = getSpriteUrl(p);
@@ -658,14 +818,21 @@ function renderPCBox(){
     slot.appendChild(nm);
     grid.appendChild(slot);
   });
-  document.getElementById('pc-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un Pokémon</span>`;
+  if(!swapMode)
+    document.getElementById('pc-info').innerHTML = `<span style="color:#444;font-size:6px;">Haz click en un Pokémon para intercambiarlo con el equipo</span>`;
 }
 
 const PC_INFO_CACHE = {};
 async function showPCInfo(p){
+  if(swapMode) return; // no sobreescribir mensaje de swap
   const info = document.getElementById('pc-info');
-  const id = p.special || p.id;
-  if(PC_INFO_CACHE[id]){ info.innerHTML=PC_INFO_CACHE[id]; return; }
+  const id = p.id;
+  if(PC_INFO_CACHE[id]){
+    // Enriquecer con habilidad y movimientos
+    info.innerHTML = PC_INFO_CACHE[id] +
+      `<div style="color:#aaffaa;font-size:5.5px;margin-top:3px;">🔮 ${p.ability} &nbsp;|&nbsp; ${p.moves.join(' · ')}</div>`;
+    return;
+  }
   info.innerHTML = `<span style="color:#444;font-size:6px;">Cargando...</span>`;
   try {
     const res  = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
@@ -675,15 +842,16 @@ async function showPCInfo(p){
     const hp  = data.stats.find(s=>s.stat.name==='hp')?.base_stat??'?';
     const atk = data.stats.find(s=>s.stat.name==='attack')?.base_stat??'?';
     const spd = data.stats.find(s=>s.stat.name==='speed')?.base_stat??'?';
-    const html=`<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+    const base=`<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
       <span style="color:#f5c842;font-size:7px;">${name}${p.shiny?' ✨':''}</span>
       ${types}
       <span style="color:#aabfff;font-size:6px;">PS:${hp}</span>
       <span style="color:#ffaaaa;font-size:6px;">AT:${atk}</span>
       <span style="color:#aaffaa;font-size:6px;">VE:${spd}</span>
     </div>`;
-    PC_INFO_CACHE[id]=html;
-    info.innerHTML=html;
+    PC_INFO_CACHE[id]=base;
+    info.innerHTML = base +
+      `<div style="color:#aaffaa;font-size:5.5px;margin-top:3px;">🔮 ${p.ability} &nbsp;|&nbsp; ${p.moves.join(' · ')}</div>`;
   } catch { info.innerHTML=`<span style="color:#444;font-size:6px;">Error</span>`; }
 }
 
