@@ -728,32 +728,30 @@ const BAG_ITEMS = {
 };
 
 let bagOpen = false;
-let bagTab  = "POKÉ BALLS";
+let bagCat  = 0;
+const BAG_CATS = Object.keys(BAG_ITEMS);
 
 function buildBag(){
-  // Botón bolsa
   const btn = document.createElement('button');
   btn.id = 'bag-btn';
   btn.innerHTML = `🎒 BOLSA`;
   btn.style.cssText = `
-    position:fixed;bottom:24px;right:130px;z-index:200;
+    position:fixed;bottom:24px;right:140px;z-index:200;
     background:#0d1244;border:3px solid #f5c842;border-radius:6px;
     color:#f5c842;font-family:'Press Start 2P',monospace;font-size:9px;
     padding:10px 16px;cursor:pointer;
     box-shadow:3px 3px 0 rgba(0,0,0,.5);
-    transition:background .15s,transform .15s;
-    letter-spacing:1px;
+    transition:background .15s;letter-spacing:1px;
   `;
   btn.onmouseover = () => btn.style.background='#1a2fa8';
   btn.onmouseout  = () => btn.style.background='#0d1244';
   btn.onclick = toggleBag;
   document.body.appendChild(btn);
 
-  // Ventana bolsa
   const win = document.createElement('div');
   win.id = 'bag-window';
   win.style.cssText = `
-    position:fixed;bottom:76px;right:130px;z-index:199;
+    position:fixed;bottom:76px;right:140px;z-index:199;
     width:360px;
     background:#0a0e2a;border:4px solid #f5c842;border-radius:8px;
     box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.7);
@@ -765,51 +763,50 @@ function buildBag(){
       <span style="color:#f5c842;font-size:8px;letter-spacing:1px;">🎒 BOLSA</span>
       <button onclick="toggleBag()" style="background:#cc2222;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:7px;padding:4px 8px;border-radius:3px;cursor:pointer;">✕</button>
     </div>
-    <div id="bag-tabs" style="display:flex;border-bottom:2px solid #1a2a66;background:#080e28;"></div>
-    <div id="bag-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 12px;background:#0a0e2a;max-height:220px;overflow-y:auto;"></div>
-    <div id="bag-info" style="border-top:2px solid #1a2a66;padding:7px 12px;min-height:32px;background:#080e28;"></div>
+    <div style="background:#080e28;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1a2a66;">
+      <button onclick="changeBagCat(-1)" style="background:#1a2fa8;border:2px solid #f5c842;color:#f5c842;font-family:'Press Start 2P',monospace;font-size:8px;padding:5px 9px;border-radius:3px;cursor:pointer;">◀</button>
+      <span id="bag-cat-name" style="color:#f5c842;font-size:7px;letter-spacing:1px;">POKÉ BALLS</span>
+      <button onclick="changeBagCat(1)" style="background:#1a2fa8;border:2px solid #f5c842;color:#f5c842;font-family:'Press Start 2P',monospace;font-size:8px;padding:5px 9px;border-radius:3px;cursor:pointer;">▶</button>
+    </div>
+    <div id="bag-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px;background:#0a0e2a;"></div>
+    <div id="bag-info" style="border-top:2px solid #1a2a66;padding:8px 12px;min-height:38px;background:#080e28;"></div>
   `;
   document.body.appendChild(win);
-  buildBagTabs();
   renderBag();
 }
 
-function buildBagTabs(){
-  const tabs = document.getElementById('bag-tabs');
-  Object.keys(BAG_ITEMS).forEach(tab => {
-    const btn = document.createElement('button');
-    btn.id = `bagtab-${tab}`;
-    btn.textContent = tab;
-    btn.style.cssText = `
-      flex:1;padding:7px 4px;font-family:'Press Start 2P',monospace;font-size:5.5px;
-      border:none;cursor:pointer;letter-spacing:.5px;
-      background:${tab===bagTab?'#1a2fa8':'transparent'};
-      color:${tab===bagTab?'#f5c842':'#8899ff'};
-      border-bottom:${tab===bagTab?'3px solid #f5c842':'3px solid transparent'};
-      transition:background .15s;
-    `;
-    btn.onclick = () => { bagTab=tab; buildBagTabs(); renderBag(); };
-    tabs.appendChild(btn);
-  });
+function toggleBag(){
+  bagOpen = !bagOpen;
+  document.getElementById('bag-window').style.display = bagOpen ? 'block' : 'none';
+}
+
+function changeBagCat(dir){
+  bagCat = (bagCat + dir + BAG_CATS.length) % BAG_CATS.length;
+  document.getElementById('bag-cat-name').textContent = BAG_CATS[bagCat];
+  renderBag();
 }
 
 function renderBag(){
   const grid = document.getElementById('bag-grid');
   grid.innerHTML = '';
-  BAG_ITEMS[bagTab].forEach(item => {
+  const cat = BAG_CATS[bagCat];
+  BAG_ITEMS[cat].forEach(item => {
     const slot = document.createElement('div');
     slot.style.cssText = `
       background:#0d1744;border:2px solid #1e44aa;border-radius:5px;
       display:flex;flex-direction:column;align-items:center;
-      padding:6px 4px;cursor:pointer;position:relative;
+      padding:8px 4px 6px;cursor:pointer;
       transition:border-color .15s,transform .15s;
     `;
     slot.onmouseover = () => {
       slot.style.borderColor='#f5c842';
-      slot.style.transform='translateY(-2px)';
-      document.getElementById('bag-info').innerHTML =
-        `<span style="color:#f5c842;font-size:6.5px;">${item.name}</span>
-         <span style="color:#aabfff;font-size:6px;margin-left:8px;">x${item.qty}</span>`;
+      slot.style.transform='translateY(-3px)';
+      document.getElementById('bag-info').innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;">
+          <img src="${item.img}" style="width:24px;height:24px;image-rendering:pixelated;">
+          <span style="color:#f5c842;font-size:7px;">${item.name}</span>
+          <span style="color:#aabfff;font-size:7px;">x${item.qty}</span>
+        </div>`;
     };
     slot.onmouseout = () => {
       slot.style.borderColor='#1e44aa';
@@ -819,15 +816,15 @@ function renderBag(){
 
     const img = document.createElement('img');
     img.src = item.img;
-    img.style.cssText = 'width:32px;height:32px;object-fit:contain;image-rendering:pixelated;';
+    img.style.cssText = 'width:48px;height:48px;object-fit:contain;image-rendering:pixelated;';
 
     const qty = document.createElement('span');
     qty.textContent = `x${item.qty}`;
-    qty.style.cssText = 'color:#f5c842;font-size:5px;margin-top:3px;';
+    qty.style.cssText = 'color:#f5c842;font-size:5.5px;margin-top:4px;';
 
     const nm = document.createElement('span');
     nm.textContent = item.name;
-    nm.style.cssText = 'color:#aabbff;font-size:4px;margin-top:2px;text-align:center;line-height:1.3;';
+    nm.style.cssText = 'color:#aabbff;font-size:4.5px;margin-top:2px;text-align:center;line-height:1.4;';
 
     slot.appendChild(img);
     slot.appendChild(qty);
@@ -835,11 +832,6 @@ function renderBag(){
     grid.appendChild(slot);
   });
   document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un objeto</span>`;
-}
-
-function toggleBag(){
-  bagOpen = !bagOpen;
-  document.getElementById('bag-window').style.display = bagOpen ? 'block' : 'none';
 }
 
 // ── INIT ─────────────────────────────────────────────────
