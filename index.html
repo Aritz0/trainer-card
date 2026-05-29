@@ -3,1106 +3,826 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokémon MMORPG</title>
-<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<title>PokéTrainer Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <style>
-
-/* =========================
-ESTILO ORIGINAL MEJORADO
-========================= */
-
-body{
-background:
-linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.7)),
-url('https://images.alphacoders.com/677/677583.png');
-background-size:cover;
-background-attachment:fixed;
-background-position:center;
+/* =======================================================
+   ESTILO ORIGINAL MEJORADO (DISEÑO TRANSLÚCIDO Y NEÓN)
+   ======================================================= */
+:root {
+  --navy: #0d1244;
+  --blue: #1a2fa8;
+  --gold: #f5c842;
+  --red: #cc2222;
+  --green: #7cb836;
+  --px: 'Press Start 2P', monospace;
+  --vt: 'VT323', monospace;
 }
 
-header{
-backdrop-filter:blur(10px);
-background:rgba(5,10,30,.88);
-border-bottom:4px solid #f5c842;
-box-shadow:0 5px 25px rgba(0,0,0,.5);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--vt), monospace;
 }
 
-.card{
-background:rgba(8,15,40,.88);
-backdrop-filter:blur(8px);
-border:3px solid #355dff;
-box-shadow:0 0 20px rgba(0,0,0,.5);
+body {
+  min-height: 100vh;
+  background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.7)), url('https://images.alphacoders.com/677/677583.png');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  color: white;
+  overflow-x: hidden;
+  padding: 16px;
 }
 
-.pokemon-card{
-background:rgba(13,22,55,.95);
-transition:.25s;
-position:relative;
-overflow:hidden;
-}
+@keyframes popIn { from { transform: scale(.85) translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes cardIn { from { transform: scale(.9) translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.pokemon-card:hover{
-transform:translateY(-6px) scale(1.02);
-box-shadow:0 0 25px rgba(80,120,255,.45);
+/* ── LOADING SCREEN ── */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  gap: 16px;
 }
+#loading-screen .lball { font-size: 50px; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#loading-screen p { color: var(--gold); font-family: var(--px); font-size: 10px; letter-spacing: 2px; }
 
-.pokemon-card::before{
-content:'';
-position:absolute;
-inset:0;
-background:linear-gradient(transparent,rgba(255,255,255,.05));
-pointer-events:none;
+/* ── AUTH SCREEN ── */
+#auth-screen {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(10, 18, 45, 0.95);
+  backdrop-filter: blur(10px);
+  border: 4px solid var(--gold);
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(0,0,0,.8);
+  overflow: hidden;
+  animation: popIn .5s cubic-bezier(.2,.8,.3,1.2) both;
+  margin: 80px auto;
+  display: none;
 }
+.auth-header { background: rgba(5,10,30,.8); border-bottom: 4px solid var(--gold); padding: 20px; text-align: center; }
+.auth-header h1 { color: var(--gold); font-family: var(--px); font-size: 16px; letter-spacing: 2px; margin-bottom: 6px; }
+.auth-header p { color: #8899ff; font-size: 16px; letter-spacing: 1px; }
+.auth-tabs { display: flex; border-bottom: 3px solid var(--gold); }
+.auth-tab { flex: 1; padding: 14px; text-align: center; cursor: pointer; color: #8899ff; font-family: var(--px); font-size: 10px; background: rgba(5,10,30,.5); border: none; transition: 0.2s; }
+.auth-tab.active { background: transparent; color: var(--gold); font-weight: bold; }
+.auth-body { padding: 22px; }
+.auth-field { margin-bottom: 16px; }
+.auth-field label { display: block; color: #8899ff; font-family: var(--px); font-size: 8px; letter-spacing: 1px; margin-bottom: 6px; }
+.auth-field input, .auth-field select { width: 100%; background: #091226; border: 2px solid #355dff; border-radius: 8px; color: #fff; font-size: 22px; padding: 10px; outline: none; transition: 0.2s; }
+.auth-field input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(245,200,66,0.3); }
+.auth-btn { width: 100%; background: linear-gradient(180deg, #355dff, #1d2f88); border: 2px solid #6ea0ff; border-radius: 10px; color: white; font-family: var(--px); font-size: 11px; padding: 14px; cursor: pointer; transition: .2s; margin-top: 10px; }
+.auth-btn:hover { transform: scale(1.02); background: linear-gradient(180deg, #4b73ff, #2c43bb); box-shadow: 0 0 15px rgba(80,120,255,.45); }
+.auth-msg { margin-top: 10px; font-size: 20px; text-align: center; min-height: 24px; }
+.auth-msg.err { color: #ff5544; }
+.auth-msg.ok { color: #44ff88; }
 
-.top-btn{
-background:linear-gradient(180deg,#355dff,#1d2f88);
-font-size:24px;
-border:2px solid #6ea0ff;
-transition:.2s;
-}
+/* ─ SELECCIÓN DE INICIALES EXPANDIDA ─ */
+.starters-container { max-height: 190px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px; border: 1px solid #1e44aa; margin-top: 5px; }
+.starters-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.starter-choice { border: 2px solid #2244aa; padding: 8px; border-radius: 10px; text-align: center; cursor: pointer; background: rgba(13,22,55,.6); transition: 0.2s; }
+.starter-choice:hover, .starter-choice.selected { border-color: var(--gold); background: rgba(26,47,168,.4); transform: scale(1.05); }
+.starter-choice img { width: 55px; height: 55px; image-rendering: pixelated; object-fit: contain; }
+.starter-choice div { font-size: 15px; color: #cce0ff; margin-top: 4px; }
 
-.top-btn:hover{
-transform:scale(1.06);
-background:linear-gradient(180deg,#4b73ff,#2c43bb);
-}
+/* ── APP INTERFACE ── */
+#app-screen { display: none; width: 100%; max-width: 1200px; margin: 0 auto; }
+header { backdrop-filter: blur(10px); background: rgba(5,10,30,.88); border-bottom: 4px solid #f5c842; box-shadow: 0 5px 25px rgba(0,0,0,.5); border-radius: 12px 12px 0 0; padding: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+header h1 { font-family: var(--px); font-size: clamp(14px, 2.2vw, 24px); color: #f5c842; text-shadow: 0 0 10px rgba(245,200,66,0.3); }
 
-.modal{
-background:rgba(10,18,45,.97);
-backdrop-filter:blur(10px);
-box-shadow:0 0 35px rgba(0,0,0,.8);
-}
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.top-btn { background: linear-gradient(180deg,#355dff,#1d2f88); border: 2px solid #6ea0ff; color: white; border-radius: 8px; font-family: var(--px); font-size: 10px; padding: 8px 14px; cursor: pointer; transition: .2s; }
+.top-btn:hover { transform: scale(1.05); background: linear-gradient(180deg,#4b73ff,#2c43bb); box-shadow: 0 0 10px rgba(80,120,255,0.4); }
+.top-btn.logout { background: linear-gradient(180deg, #cc2222, #881111); border-color: #ff6666; }
 
-#combat-window{
-background:
-linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.7)),
-url('https://wallpapercave.com/wp/wp3741670.png');
-background-size:cover;
-background-position:center;
-}
+/* MAIN CONTAINERS */
+.card { background: rgba(8,15,40,.88); backdrop-filter: blur(8px); border: 3px solid #355dff; box-shadow: 0 0 20px rgba(0,0,0,.5); border-top: none; border-radius: 0 0 15px 15px; overflow: hidden; animation: cardIn .5s both; }
+.card-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
 
-.friend-card{
-background:#132252;
-padding:10px;
-border-radius:10px;
-border:2px solid #355dff;
-margin-bottom:10px;
-}
+.section-box { background: rgba(13,22,55,.5); border: 2px solid #1e44aa; border-radius: 12px; padding: 16px; }
+.section-box h2 { font-family: var(--px); font-size: 12px; color: var(--gold); margin-bottom: 12px; border-bottom: 2px solid rgba(245,200,66,0.2); padding-bottom: 6px; }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'VT323',monospace;
-}
+/* TRAINER PROFILE */
+.profile-view p { font-size: 22px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+.profile-view p span { color: var(--gold); font-weight: bold; }
 
-body{
-background:#081226;
-color:white;
-overflow-x:hidden;
-}
+/* AMIGOS & BUSCADOR */
+.friend-list-box { max-height: 180px; overflow-y: auto; margin-bottom: 12px; }
+.friend-card { background: rgba(19, 34, 82, 0.7); padding: 10px; border-radius: 10px; border: 2px solid #355dff; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.friend-card span { font-size: 20px; }
+.friend-actions { display: flex; gap: 6px; }
+.small-btn { padding: 4px 8px; font-size: 16px; border-radius: 6px; background: #2244aa; color: white; border: 1px solid #6ea0ff; cursor: pointer; }
+.small-btn.challenge { background: #997700; border-color: var(--gold); }
+.small-btn.remove { background: #771111; border-color: #ff6666; }
 
-header{
-background:#0f1d44;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:4px solid #f5c842;
-}
+/* GRID DE POKÉMON */
+.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 10px; }
+.pokemon-card { background: rgba(13,22,55,.95); border: 3px solid #355dff; border-radius: 15px; padding: 15px; text-align: center; transition: .25s; position: relative; overflow: hidden; }
+.pokemon-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 25px rgba(80,120,255,.45); border-color: var(--gold); }
+.pokemon-card img { width: 100px; height: 100px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
+.pokemon-card h3 { font-family: var(--px); font-size: 10px; color: white; margin: 6px 0 2px 0; }
+.pokemon-card .level-lbl { font-size: 16px; color: #88aadd; }
 
-h1{
-font-size:42px;
-color:#f5c842;
-}
+.bar { width: 100%; height: 14px; background: #222; border-radius: 10px; overflow: hidden; margin: 6px 0; border: 1px solid rgba(255,255,255,0.1); }
+.fill { height: 100%; background: #44ff88; transition: width 0.3s; }
+.hp-text { font-size: 16px; color: #aac8ff; }
+.pk-stats { font-size: 16px; color: #99aadd; text-align: left; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; margin-top: 6px; }
 
-button{
-cursor:pointer;
-border:none;
-}
+/* ── MODALS COMPARTIDOS ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: rgba(10,18,45,.97); backdrop-filter: blur(10px); border: 4px solid var(--gold); border-radius: 15px; padding: 20px; width: 650px; max-width: 95vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 35px rgba(0,0,0,.8); animation: popIn 0.3s ease-out; }
+.modal h2 { font-family: var(--px); font-size: 16px; color: var(--gold); margin-bottom: 15px; border-bottom: 3px solid var(--gold); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.modal-close-x { background: #cc2222; border: none; color: white; font-family: var(--px); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
 
-.top-btn{
-background:#2244aa;
-color:white;
-padding:10px 18px;
-border-radius:10px;
-font-size:20px;
-margin-left:10px;
-}
+/* SHOP & BAG BODY */
+.shop-grid, .bag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.item-shop-card, .item-bag-card { background: rgba(19, 34, 82, 0.6); border: 2px solid #355dff; border-radius: 10px; padding: 12px; text-align: center; font-size: 20px; }
 
-.container{
-padding:20px;
-}
+/* ── COMBAT WINDOW (REDISEÑADO) ── */
+#combat-window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1000px; max-width: 95vw; height: 85vh; background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.7)), url('https://wallpapercave.com/wp/wp3741670.png'); background-size: cover; background-position: center; border: 5px solid #44ff88; border-radius: 15px; z-index: 9999; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,.9); display: none; padding: 20px; }
+#combat-window.gym-mode { border-color: var(--gold); }
+.combat-area { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 20px; }
+.combat-side { width: 45%; min-width: 260px; text-align: center; background: rgba(5,10,30,0.75); backdrop-filter: blur(4px); padding: 15px; border-radius: 12px; border: 2px solid #355dff; margin: 0 auto; }
+.combat-side h2 { font-family: var(--px); font-size: 12px; color: var(--gold); }
+.combat-side img { width: 130px; height: 130px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 4px 8px #000); }
 
-.card{
-background:#101b3f;
-border:3px solid #2244aa;
-border-radius:15px;
-padding:20px;
-margin-bottom:20px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:20px;
-}
-
-.pokemon-card{
-background:#16244f;
-border:3px solid #3355cc;
-border-radius:15px;
-padding:15px;
-text-align:center;
-}
-
-.pokemon-card img{
-width:120px;
-image-rendering:pixelated;
-}
-
-.bar{
-width:100%;
-height:20px;
-background:#222;
-border-radius:20px;
-overflow:hidden;
-margin-top:5px;
-}
-
-.fill{
-height:100%;
-background:#44ff88;
-}
-
-.modal-overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.8);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:999;
-}
-
-.modal-overlay.open{
-display:flex;
-}
-
-.modal{
-background:#0f1d44;
-border:4px solid #44ff88;
-border-radius:15px;
-padding:20px;
-width:700px;
-max-width:95vw;
-max-height:90vh;
-overflow:auto;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin-top:10px;
-background:#091226;
-color:white;
-border:2px solid #2244aa;
-border-radius:8px;
-font-size:20px;
-}
-
-.auth-btn{
-margin-top:15px;
-width:100%;
-padding:12px;
-background:#44aa44;
-color:white;
-font-size:24px;
-border-radius:10px;
-}
-
-#combat-window{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:1200px;
-max-width:95vw;
-height:90vh;
-background:#0a0e2a;
-border:5px solid #44ff88;
-border-radius:15px;
-z-index:9999;
-overflow-y:auto;
-box-shadow:0 0 50px rgba(0,0,0,.9);
-display:none;
-padding:20px;
-}
-
-.combat-side{
-width:45%;
-text-align:center;
-}
-
-.combat-area{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-top:40px;
-}
-
-.move-btn{
-background:#2244aa;
-padding:12px;
-margin:10px;
-border-radius:10px;
-font-size:22px;
-color:white;
-width:45%;
-}
-
-.starter-choice{
-border:2px solid #2244aa;
-padding:10px;
-border-radius:10px;
-text-align:center;
-cursor:pointer;
-}
-
-.starter-choice img{
-width:80px;
-image-rendering:pixelated;
-}
+.battle-log { background: rgba(0,0,0,0.85); border: 2px solid #355dff; padding: 12px; border-radius: 8px; height: 90px; overflow-y: auto; margin-top: 15px; font-size: 18px; line-height: 1.4; text-align: left; }
+.move-btn { background: linear-gradient(180deg,#355dff,#1d2f88); border: 2px solid #6ea0ff; padding: 10px; margin: 5px; border-radius: 8px; font-size: 20px; color: white; width: 45%; min-width: 130px; cursor: pointer; }
+.move-btn:hover { background: linear-gradient(180deg,#4b73ff,#2c43bb); }
 </style>
 </head>
 <body>
 
-<header>
-<h1>POKÉMON MMORPG</h1>
-<div>
-<button class="top-btn" onclick="openBag()">🎒 Mochila</button>
-<button class="top-btn" onclick="openShop()">🛒 Tienda</button>
-<button class="top-btn" onclick="searchWildPokemon()">🌿 Buscar Pokémon</button>
-</div>
-</header>
-
-<div class="container">
-
-<div class="grid">
-
-<div class="card">
-<h2 style="color:#f5c842;">👤 TARJETA ENTRENADOR</h2>
-<div style="margin-top:10px;font-size:28px;" id="trainer-profile"></div>
+<div id="loading-screen">
+  <div class="lball">🔴</div>
+  <p>CONECTANDO CON POKÉTRAINER ONLINE...</p>
 </div>
 
-<div class="card">
-<h2 style="color:#44ff88;">👥 AMIGOS</h2>
-<div id="friends-list"></div>
-<input type="text" id="friend-input" placeholder="Añadir amigo">
-<button class="auth-btn" onclick="addFriend()">Añadir amigo</button>
+<div id="auth-screen">
+  <div class="auth-header">
+    <h1>POKÉTRAINER ONLINE</h1>
+    <p>MMORPG - Gestión Global de Entrenadores</p>
+  </div>
+  <div class="auth-tabs">
+    <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">INICIAR SESIÓN</button>
+    <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">NUEVO ENTRENADOR</button>
+  </div>
+  <div class="auth-body">
+    <div class="auth-field">
+      <label>CÓDIGO DE ACCESO / ENTRENADOR</label>
+      <input type="text" id="auth-username" placeholder="Ej: TrainerRed">
+    </div>
+    
+    <div id="register-extra-fields" style="display: none;">
+      <div class="auth-field">
+        <label>ELIGE TU POKÉMON INICIAL (G1 - G3)</label>
+        <div class="starters-container">
+          <div class="starters-grid">
+            <div class="starter-choice selected" onclick="selectStarter(1, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/1.gif" alt="Bulbasaur">
+              <div>Bulbasaur</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(4, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/4.gif" alt="Charmander">
+              <div>Charmander</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(7, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/7.gif" alt="Squirtle">
+              <div>Squirtle</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(152, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/152.gif" alt="Chikorita">
+              <div>Chikorita</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(155, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/155.gif" alt="Cyndaquil">
+              <div>Cyndaquil</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(158, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/158.gif" alt="Totodile">
+              <div>Totodile</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(252, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/252.gif" alt="Treecko">
+              <div>Treecko</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(255, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/255.gif" alt="Torchic">
+              <div>Torchic</div>
+            </div>
+            <div class="starter-choice" onclick="selectStarter(258, this)">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/258.gif" alt="Mudkip">
+              <div>Mudkip</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="auth-btn" id="auth-main-submit" onclick="handleAuthSubmit()">ENTRAR AL MUNDO</button>
+    <div class="auth-msg" id="auth-msg-box"></div>
+  </div>
 </div>
 
+<div id="app-screen">
+  <header>
+    <h1>POKÉTRAINER ONLINE</h1>
+    <div class="top-actions">
+      <button class="top-btn" onclick="openBagModal()">🎒 Mochila</button>
+      <button class="top-btn" onclick="openShopModal()">🛒 Tienda</button>
+      <button class="top-btn" onclick="openMapModal()">🗺️ Mapa</button>
+      <button class="top-btn" onclick="searchWildPokemon()">🌿 Buscar Pokémon</button>
+      <button class="top-btn logout" onclick="logout()">🏃 Salir</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="section-box profile-view">
+        <h2>👤 TARJETA ENTRENADOR</h2>
+        <div id="trainer-info-content">
+          </div>
+      </div>
+
+      <div class="section-box">
+        <h2>👥 SISTEMA DE AMIGOS Y LIGAS</h2>
+        <div class="add-friend-row">
+          <input type="text" id="friend-search-input" placeholder="Nombre del entrenador...">
+          <button class="small-btn" onclick="addFriendReal()" style="padding: 0 12px; font-size:18px;">Añadir</button>
+        </div>
+        <div class="friend-list-box" id="friends-list-container">
+          </div>
+      </div>
+    </div>
+    
+    <div style="padding: 0 20px 20px 20px;">
+      <div class="section-box">
+        <h2>⚔️ MI EQUIPO POKÉMON</h2>
+        <div class="team-grid" id="team-cards-container">
+          </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="card">
-<h2 id="trainer-name">Entrenador</h2>
-<p>💰 <span id="money-view">10000 ₽</span></p>
-<p>🏅 Medallas: <span id="badge-view">0</span>/8</p>
-</div>
-
-<div class="grid" id="team-grid"></div>
-
-</div>
-
-<div class="modal-overlay open" id="register-modal">
-<div class="modal">
-<h2>Registro Pokémon</h2>
-<input type="text" id="username" placeholder="Nombre entrenador">
-
-<div style="margin-top:20px;">
-<h3>Elige inicial</h3>
-<div class="grid">
-<div class="starter-choice" onclick="chooseStarter(1)">
-<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/1.gif">
-<div>Bulbasaur</div>
-</div>
-
-<div class="starter-choice" onclick="chooseStarter(4)">
-<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/4.gif">
-<div>Charmander</div>
-</div>
-
-<div class="starter-choice" onclick="chooseStarter(7)">
-<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/7.gif">
-<div>Squirtle</div>
-</div>
-</div>
-</div>
-
-<button class="auth-btn" onclick="register()">COMENZAR</button>
-</div>
-</div>
+<div id="combat-window">
+  </div>
 
 <div class="modal-overlay" id="bag-modal">
-<div class="modal">
-<h2>🎒 Mochila</h2>
-<div id="bag-body"></div>
-<button class="auth-btn" onclick="closeBag()">Cerrar</button>
-</div>
+  <div class="modal">
+    <h2><span>🎒 Mi Mochila</span><button class="modal-close-x" onclick="closeModal('bag-modal')">X</button></h2>
+    <div class="bag-grid" id="bag-modal-body"></div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="shop-modal">
-<div class="modal">
-<h2>🛒 PokéMart</h2>
-<div id="shop-body"></div>
-<button class="auth-btn" onclick="closeShop()">Cerrar</button>
-</div>
+  <div class="modal">
+    <h2><span>🛒 Tienda de Ciudad Verde</span><button class="modal-close-x" onclick="closeModal('shop-modal')">X</button></h2>
+    <div class="shop-grid" id="shop-modal-body"></div>
+  </div>
 </div>
 
-<div id="combat-window"></div>
+<div class="modal-overlay" id="map-modal">
+  <div class="modal">
+    <h2><span>🗺️ Mapa de la Región</span><button class="modal-close-x" onclick="closeModal('map-modal')">X</button></h2>
+    <div id="map-modal-body"></div>
+  </div>
+</div>
 
 <script>
+// Configuración por defecto de Firebase (Base de Datos Local Inteligente en memoria/localStorage por si no se inyectan credenciales)
+let db = null;
+try {
+  const firebaseConfig = {
+    apiKey: "AIzaSyFakeKey-PlaceholderForSafety12345",
+    authDomain: "poketrainer-online-db.firebaseapp.com",
+    projectId: "poketrainer-online-db",
+    storageBucket: "poketrainer-online-db.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abcdef"
+  };
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+} catch(e) {
+  console.log("Firebase simulado activo vía base local localDB.");
+}
 
-let selectedStarter=1;
-let currentUser=null;
-let enemyPokemon=null;
+// Estructura de Datos e Índices Globales
+let currentAuthMode = 'login';
+let selectedStarterId = 1;
+let DB = { users: {} }; // Respaldo LocalDB
+let currentUser = null;
+let currentEnemy = null;
+let activeZoneIndex = 0;
 
-const SHOP_ITEMS={
-pokeball:200,
-superball:600,
-ultraball:1200,
-potion:300,
-superPotion:700,
-hyperPotion:1200,
-revive:1500
-};
-
-const MOVEDEX={
-Placaje:{power:40,type:'normal',category:'physical'},
-Lanzallamas:{power:90,type:'fire',category:'special'},
-PistolaAgua:{power:40,type:'water',category:'special'},
-HojaAfilada:{power:55,type:'grass',category:'physical'},
-Gigadrenado:{power:75,type:'grass',category:'special',heal:true},
-Toxico:{power:0,type:'poison',category:'status',status:'poison'}
-};
-
-const EVOLUTIONS={
-1:{level:16,to:2},
-2:{level:32,to:3},
-4:{level:16,to:5},
-5:{level:36,to:6},
-7:{level:16,to:8},
-8:{level:36,to:9}
-};
-
-const POKEDEX=[
-{id:16,name:'Pidgey',rarity:'common'},
-{id:19,name:'Rattata',rarity:'common'},
-{id:25,name:'Pikachu',rarity:'rare'},
-{id:133,name:'Eevee',rarity:'rare'},
-{id:150,name:'Mewtwo',rarity:'legendary'}
+const MAP_ZONES = [
+  { name: 'Bosque Verde', wild: [16, 19, 25] }, // Pidgey, Rattata, Pikachu
+  { name: 'Monte Luna', wild: [41, 74, 35] },   // Zubat, Geodude, Clefairy
+  { name: 'Ruta Marina', wild: [72, 129, 131] },// Tentacool, Magikarp, Lapras
+  { name: 'Volcán Rojo', wild: [218, 58, 4] }    // Slugma, Growlithe, Charmander
 ];
 
-function chooseStarter(id){
-selectedStarter=id;
-}
-
-function getSpr(id){
-return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`;
-}
-
-function getStarterPokemon(id){
-const map={
-1:{name:'Bulbasaur',types:['grass']},
-4:{name:'Charmander',types:['fire']},
-7:{name:'Squirtle',types:['water']}
+const SHOP_ITEMS = {
+  pokeball: { name: 'Poké Ball', price: 200 },
+  superball: { name: 'Super Ball', price: 600 },
+  ultraball: { name: 'Ultra Ball', price: 1200 },
+  potion: { name: 'Poción', price: 300 },
+  superPotion: { name: 'Super Poción', price: 700 },
+  revive: { name: 'Revivir', price: 1500 }
 };
 
-return {
-id,
-name:map[id].name,
-level:5,
-exp:0,
-maxExp:100,
-hp:22,
-maxHp:22,
-attack:10,
-defense:10,
-spAttack:10,
-spDefense:10,
-speed:10,
-status:null,
-src:getSpr(id),
-moves:[
-{name:'Placaje',power:40,category:'physical'},
-{name:'Gigadrenado',power:75,category:'special',heal:true}
-]
-};
-}
-
-function register(){
-const username=document.getElementById('username').value;
-
-currentUser={
-friends:[],
-name:username,
-money:10000,
-badges:0,
-inventory:{
-pokeball:10,
-potion:5,
-superball:0,
-ultraball:0
-},
-team:[getStarterPokemon(selectedStarter)],
-dailyCaptures:0,
-dailyTrainerBattles:0
+const MOVEDEX = {
+  'Placaje': { power: 40, type: 'normal', category: 'physical' },
+  'Lanzallamas': { power: 90, type: 'fire', category: 'special' },
+  'Pistola Agua': { power: 40, type: 'water', category: 'special' },
+  'Hoja Afilada': { power: 55, type: 'grass', category: 'physical' },
+  'Gigadrenado': { power: 60, type: 'grass', category: 'special', heal: true },
+  'Ascuas': { power: 40, type: 'fire', category: 'special' },
+  'Burbuja': { power: 40, type: 'water', category: 'special' }
 };
 
-localStorage.setItem('pokemonUser',JSON.stringify(currentUser));
+const POKEDEX_MAP = {
+  1: { name: 'Bulbasaur', types: ['grass', 'poison'], moves: ['Placaje', 'Hoja Afilada'] },
+  4: { name: 'Charmander', types: ['fire'], moves: ['Placaje', 'Ascuas'] },
+  7: { name: 'Squirtle', types: ['water'], moves: ['Placaje', 'Pistola Agua'] },
+  16: { name: 'Pidgey', types: ['normal', 'flying'], moves: ['Placaje'] },
+  19: { name: 'Rattata', types: ['normal'], moves: ['Placaje'] },
+  25: { name: 'Pikachu', types: ['electric'], moves: ['Placaje'] },
+  35: { name: 'Clefairy', types: ['fairy'], moves: ['Placaje'] },
+  41: { name: 'Zubat', types: ['poison', 'flying'], moves: ['Placaje'] },
+  58: { name: 'Growlithe', types: ['fire'], moves: ['Placaje', 'Ascuas'] },
+  72: { name: 'Tentacool', types: ['water', 'poison'], moves: ['Pistola Agua'] },
+  74: { name: 'Geodude', types: ['rock', 'ground'], moves: ['Placaje'] },
+  129: { name: 'Magikarp', types: ['water'], moves: ['Placaje'] },
+  131: { name: 'Lapras', types: ['water', 'ice'], moves: ['Pistola Agua'] },
+  152: { name: 'Chikorita', types: ['grass'], moves: ['Placaje', 'Gigadrenado'] },
+  155: { name: 'Cyndaquil', types: ['fire'], moves: ['Placaje', 'Ascuas'] },
+  158: { name: 'Totodile', types: ['water'], moves: ['Placaje', 'Pistola Agua'] },
+  218: { name: 'Slugma', types: ['fire', 'rock'], moves: ['Ascuas'] },
+  252: { name: 'Treecko', types: ['grass'], moves: ['Placaje', 'Gigadrenado'] },
+  255: { name: 'Torchic', types: ['fire'], moves: ['Placaje', 'Ascuas'] },
+  258: { name: 'Mudkip', types: ['water'], moves: ['Placaje', 'Pistola Agua'] }
+};
 
-document.getElementById('register-modal').classList.remove('open');
-
-renderUI();
-}
-
-function renderUI(){
-
-renderFriends();
-const u=currentUser;
-
-if(!u) return;
-
-document.getElementById('trainer-name').textContent=u.name;
-
-const profile=document.getElementById('trainer-profile');
-
-profile.innerHTML=`
-<div>🏆 ${u.name}</div>
-<div>💰 ${u.money} ₽</div>
-<div>🎒 Poké Balls: ${u.inventory.pokeball}</div>
-<div>🏅 Medallas: ${u.badges}</div>
-<div>📍 Zona: ${CURRENT_ZONE.name}</div>
-<div>📖 Pokédex: ${getCapturedCount()} capturados</div>
-`;
-document.getElementById('money-view').textContent=u.money+' ₽';
-document.getElementById('badge-view').textContent=u.badges;
-
-let html='';
-
-u.team.forEach((p,index)=>{
-html+=`
-<div class="pokemon-card">
-<img src="${p.src}">
-<h2>${p.name}</h2>
-<p>Nv ${p.level}</p>
-<div class="bar"><div class="fill" style="width:${(p.hp/p.maxHp)*100}%"></div></div>
-<p>${p.hp}/${p.maxHp} HP</p>
-<p>⚔️ ${p.attack} | 🛡️ ${p.defense}</p>
-<p>✨ ${p.spAttack} | 🔰 ${p.spDefense}</p>
-<p>⚡ ${p.speed}</p>
-<p>${p.moves.map(m=>m.name).join(', ')}</p>
-</div>`;
+// Carga Inicial del Sistema
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.display = 'none';
+    loadDatabaseBackup();
+    
+    const savedSession = localStorage.getItem('poke_session');
+    if (savedSession) {
+      attemptLogin(savedSession);
+    } else {
+      document.getElementById('auth-screen').style.display = 'block';
+    }
+  }, 1200);
 });
 
-document.getElementById('team-grid').innerHTML=html;
+function loadDatabaseBackup() {
+  const local = localStorage.getItem('poke_local_db');
+  if (local) {
+    try { DB = JSON.parse(local); } catch(e){}
+  }
 }
 
-function openBag(){
-const u=currentUser;
-let html='';
-
-Object.keys(u.inventory).forEach(item=>{
-html+=`<div class="card">${item} x${u.inventory[item]}</div>`;
-});
-
-document.getElementById('bag-body').innerHTML=html;
-document.getElementById('bag-modal').classList.add('open');
+function saveDatabaseBackup() {
+  localStorage.setItem('poke_local_db', JSON.stringify(DB));
 }
 
-function closeBag(){
-document.getElementById('bag-modal').classList.remove('open');
+// Gestión del Inicio de Sesión / Registro Total
+function switchAuthTab(mode) {
+  currentAuthMode = mode;
+  document.getElementById('tab-login').classList.remove('active');
+  document.getElementById('tab-register').classList.remove('active');
+  document.getElementById('register-extra-fields').style.display = 'none';
+  
+  if (mode === 'login') {
+    document.getElementById('tab-login').classList.add('active');
+  } else {
+    document.getElementById('tab-register').classList.add('active');
+    document.getElementById('register-extra-fields').style.display = 'block';
+  }
 }
 
-function openShop(){
-let html='';
-
-Object.keys(SHOP_ITEMS).forEach(item=>{
-html+=`
-<div class="card">
-<h3>${item}</h3>
-<p>${SHOP_ITEMS[item]} ₽</p>
-<button class="auth-btn" onclick="buyItem('${item}')">Comprar</button>
-</div>`;
-});
-
-document.getElementById('shop-body').innerHTML=html;
-document.getElementById('shop-modal').classList.add('open');
+function selectStarter(id, element) {
+  selectedStarterId = id;
+  document.querySelectorAll('.starter-choice').forEach(el => el.classList.remove('selected'));
+  element.classList.add('selected');
 }
 
-function closeShop(){
-document.getElementById('shop-modal').classList.remove('open');
+function handleAuthSubmit() {
+  const username = document.getElementById('auth-username').value.trim();
+  const msgBox = document.getElementById('auth-msg-box');
+  msgBox.className = 'auth-msg';
+  msgBox.textContent = '';
+
+  if (!username) {
+    msgBox.classList.add('err');
+    msgBox.textContent = 'Introduce un nombre válido.';
+    return;
+  }
+
+  if (currentAuthMode === 'login') {
+    attemptLogin(username);
+  } else {
+    // Proceso de Registro Universal
+    if (DB.users[username]) {
+      msgBox.classList.add('err');
+      msgBox.textContent = 'El entrenador ya existe.';
+      return;
+    }
+
+    const initialPk = generatePokemonObject(selectedStarterId, 5);
+    const newTrainer = {
+      name: username,
+      money: 5000,
+      badges: 0,
+      zone: MAP_ZONES[0].name,
+      inventory: { pokeball: 10, superball: 2, potion: 5, revive: 1 },
+      team: [initialPk],
+      friends: []
+    };
+
+    DB.users[username] = newTrainer;
+    saveDatabaseBackup();
+    
+    msgBox.classList.add('ok');
+    msgBox.textContent = '¡Registro completado con éxito!';
+    setTimeout(() => { attemptLogin(username); }, 1000);
+  }
 }
 
-function buyItem(item){
-const price=SHOP_ITEMS[item];
-
-if(currentUser.money<price){
-alert('No tienes dinero suficiente');
-return;
+function attemptLogin(username) {
+  const msgBox = document.getElementById('auth-msg-box');
+  if (DB.users[username]) {
+    currentUser = DB.users[username];
+    localStorage.setItem('poke_session', username);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    renderAppUI();
+  } else {
+    localStorage.removeItem('poke_session');
+    document.getElementById('auth-screen').style.display = 'block';
+    if(msgBox) {
+      msgBox.className = 'auth-msg err';
+      msgBox.textContent = 'Entrenador no encontrado.';
+    }
+  }
 }
 
-currentUser.money-=price;
-currentUser.inventory[item]++;
-
-save();
-renderUI();
-openShop();
+function logout() {
+  localStorage.removeItem('poke_session');
+  currentUser = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'block';
 }
 
-function save(){
-localStorage.setItem('pokemonUser',JSON.stringify(currentUser));
+// Generación Dinámica de Pokémon del Diccionario Extensible
+function generatePokemonObject(id, level) {
+  const base = POKEDEX_MAP[id] || { name: 'Desconocido', types: ['normal'], moves: ['Placaje'] };
+  const maxHp = 20 + level * 3;
+  return {
+    id: id,
+    name: base.name,
+    level: level,
+    hp: maxHp,
+    maxHp: maxHp,
+    attack: 10 + level * 2,
+    defense: 10 + level * 2,
+    types: base.types,
+    moves: base.moves,
+    sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`
+  };
 }
 
-function searchWildPokemon(){
+// Renderizado de la Interfaz Estilizada
+function renderAppUI() {
+  if (!currentUser) return;
 
-if(currentUser.dailyCaptures>=1){
-alert('Solo puedes capturar 1 Pokémon al día');
-return;
+  // Renderizar Tarjeta de Perfil
+  const profileContainer = document.getElementById('trainer-info-content');
+  profileContainer.innerHTML = `
+    <p>👑 Entrenador: <span>${currentUser.name}</span></p>
+    <p>💰 Fortunas: <span>${currentUser.money} ₽</span></p>
+    <p>🏅 Medallas de Liga: <span>${currentUser.badges} / 8</span></p>
+    <p>📍 Región Actual: <span>${currentUser.zone || MAP_ZONES[0].name}</span></p>
+  `;
+
+  // Renderizar Amigos
+  renderFriendsList();
+
+  // Renderizar Equipo Pokémon
+  const teamContainer = document.getElementById('team-cards-container');
+  teamContainer.innerHTML = '';
+  currentUser.team.forEach((pk, idx) => {
+    const hpPct = Math.max(0, (pk.hp / pk.maxHp) * 100);
+    const card = document.createElement('div');
+    card.className = 'pokemon-card';
+    card.innerHTML = `
+      <img src="${pk.sprite}" alt="${pk.name}">
+      <h3>${pk.name}</h3>
+      <div class="level-lbl">Nivel ${pk.level}</div>
+      <div class="bar"><div class="fill" style="width: ${hpPct}%; background: ${hpPct < 25 ? '#ff4444' : hpPct < 50 ? '#ffaa00' : '#44ff88'}"></div></div>
+      <div class="hp-text">${pk.hp} / ${pk.maxHp} HP</div>
+      <div class="pk-stats">
+        ⚔️ ATK: ${pk.attack} | 🛡️ DEF: ${pk.defense}<br>
+        ✨ Tipo: ${pk.types.join('/')}
+      </div>
+    `;
+    teamContainer.appendChild(card);
+  });
 }
 
-const random=POKEDEX[Math.floor(Math.random()*POKEDEX.length)];
+function renderFriendsList() {
+  const container = document.getElementById('friends-list-container');
+  if (!container) return;
+  
+  if (!currentUser.friends || currentUser.friends.length === 0) {
+    container.innerHTML = `<p style="opacity:0.6; padding: 10px; font-size:18px;">No tienes amigos añadidos todavía.</p>`;
+    return;
+  }
 
-enemyPokemon={
-id:random.id,
-name:random.name,
-rarity:random.rarity,
-level:Math.floor(Math.random()*10)+3,
-hp:40,
-maxHp:40,
-attack:12,
-defense:10,
-spAttack:10,
-spDefense:10,
-speed:10,
-src:getSpr(random.id),
-status:null,
-moves:[
-{name:'Placaje',power:40,category:'physical'}
-]
-};
-
-openCombat();
+  container.innerHTML = '';
+  currentUser.friends.forEach(fName => {
+    const row = document.createElement('div');
+    row.className = 'friend-card';
+    row.innerHTML = `
+      <span>🧑‍✈️ ${fName}</span>
+      <div class="friend-actions">
+        <button class="small-btn challenge" onclick="challengeFriend('${fName}')">Retar</button>
+        <button class="small-btn remove" onclick="removeFriendReal('${fName}')">Eliminar</button>
+      </div>
+    `;
+    container.appendChild(row);
+  });
 }
 
-function openCombat(){
+function addFriendReal() {
+  const input = document.getElementById('friend-search-input');
+  const target = input.value.trim();
+  if (!target || target === currentUser.name) return;
 
-const player=currentUser.team[0];
-
-const html=`
-<h1 style="text-align:center;color:#f5c842;">COMBATE POKÉMON</h1>
-
-<div class="combat-area">
-
-<div class="combat-side">
-<h2>${player.name}</h2>
-<img src="${player.src}" width="200">
-<p>HP ${player.hp}/${player.maxHp}</p>
-<div class="bar"><div class="fill" style="width:${(player.hp/player.maxHp)*100}%"></div></div>
-</div>
-
-<div class="combat-side">
-<h2>${enemyPokemon.name}</h2>
-<img src="${enemyPokemon.src}" width="200">
-<p>HP ${enemyPokemon.hp}/${enemyPokemon.maxHp}</p>
-<div class="bar"><div class="fill" style="width:${(enemyPokemon.hp/enemyPokemon.maxHp)*100}%"></div></div>
-</div>
-
-</div>
-
-<div style="margin-top:40px;display:flex;flex-wrap:wrap;justify-content:center;">
-${player.moves.map((m,i)=>`<button class="move-btn" onclick="useMove(${i})">${m.name}</button>`).join('')}
-</div>
-
-<div style="text-align:center;margin-top:20px;">
-<button class="auth-btn" onclick="throwPokeball()">⚪ Lanzar Poké Ball</button>
-<button class="auth-btn" onclick="closeCombat()">🏃 Huir</button>
-</div>
-`;
-
-const combat=document.getElementById('combat-window');
-combat.innerHTML=html;
-combat.style.display='block';
+  if (!currentUser.friends) currentUser.friends = [];
+  
+  if (DB.users[target]) {
+    if (!currentUser.friends.includes(target)) {
+      currentUser.friends.push(target);
+      DB.users[currentUser.name] = currentUser;
+      saveDatabaseBackup();
+      renderFriendsList();
+      alert(`¡${target} añadido a tu lista de amigos!`);
+    } else {
+      alert('Ya es tu amigo.');
+    }
+  } else {
+    alert('Entrenador no encontrado en la base de datos de PokéTrainer.');
+  }
+  input.value = '';
 }
 
-function closeCombat(){
-document.getElementById('combat-window').style.display='none';
+function removeFriendReal(name) {
+  currentUser.friends = currentUser.friends.filter(f => f !== name);
+  DB.users[currentUser.name] = currentUser;
+  saveDatabaseBackup();
+  renderFriendsList();
 }
 
-function calculateDamage(attacker,defender,move){
-
-let atk=move.category==='physical' ? attacker.attack : attacker.spAttack;
-let def=move.category==='physical' ? defender.defense : defender.spDefense;
-
-let damage=Math.floor((((2*attacker.level/5)+2)*move.power*atk/def)/50)+2;
-
-if(Math.random()<0.1) damage*=2;
-
-return damage;
+// Ventanas Modales e Interacciones
+function openBagModal() {
+  const body = document.getElementById('bag-modal-body');
+  body.innerHTML = '';
+  Object.keys(currentUser.inventory).forEach(key => {
+    const qty = currentUser.inventory[key];
+    const itemCard = document.createElement('div');
+    itemCard.className = 'item-bag-card';
+    itemCard.innerHTML = `💼 <strong>${key.toUpperCase()}</strong><br>Cantidad: ${qty}`;
+    body.appendChild(itemCard);
+  });
+  document.getElementById('bag-modal').classList.add('open');
 }
 
-function useMove(index){
-
-const player=currentUser.team[0];
-const move=player.moves[index];
-
-const dmg=calculateDamage(player,enemyPokemon,move);
-
-enemyPokemon.hp-=dmg;
-
-if(move.heal){
-player.hp+=10;
-if(player.hp>player.maxHp) player.hp=player.maxHp;
+function openShopModal() {
+  const body = document.getElementById('shop-modal-body');
+  body.innerHTML = '';
+  Object.keys(SHOP_ITEMS).forEach(key => {
+    const item = SHOP_ITEMS[key];
+    const shopCard = document.createElement('div');
+    shopCard.className = 'item-shop-card';
+    shopCard.innerHTML = `
+      <strong>${item.name}</strong><br>${item.price} ₽<br>
+      <button class="small-btn" onclick="buyItemReal('${key}')" style="margin-top:5px; width:100%;">Comprar</button>
+    `;
+    body.appendChild(shopCard);
+  });
+  document.getElementById('shop-modal').classList.add('open');
 }
 
-if(enemyPokemon.hp<=0){
-enemyPokemon.hp=0;
-alert('¡Ganaste el combate!');
-gainExp(player,50);
-closeCombat();
-renderUI();
-return;
+function buyItemReal(key) {
+  const item = SHOP_ITEMS[key];
+  if (currentUser.money >= item.price) {
+    currentUser.money -= item.price;
+    currentUser.inventory[key] = (currentUser.inventory[key] || 0) + 1;
+    DB.users[currentUser.name] = currentUser;
+    saveDatabaseBackup();
+    renderAppUI();
+    openShopModal();
+  } else {
+    alert('No tienes suficiente dinero.');
+  }
 }
 
-setTimeout(enemyAttack,800);
-openCombat();
+function openMapModal() {
+  const body = document.getElementById('map-modal-body');
+  body.innerHTML = '';
+  MAP_ZONES.forEach((zone, idx) => {
+    const box = document.createElement('div');
+    box.className = 'item-shop-card';
+    box.style.marginBottom = '10px';
+    box.innerHTML = `
+      <strong>📍 ${zone.name}</strong><br>
+      <span style="font-size:16px; opacity:0.8;">Humedad / Criaturas salvajes divisadas.</span><br>
+      <button class="small-btn" onclick="travelToZone(${idx})" style="margin-top:6px;">Viajar Aquí</button>
+    `;
+    body.appendChild(box);
+  });
+  document.getElementById('map-modal').classList.add('open');
 }
 
-function enemyAttack(){
-
-const player=currentUser.team[0];
-
-const move=enemyPokemon.moves[0];
-
-const dmg=calculateDamage(enemyPokemon,player,move);
-
-player.hp-=dmg;
-
-if(player.hp<=0){
-player.hp=0;
-alert('Tu Pokémon se debilitó');
-closeCombat();
-renderUI();
-return;
+function travelToZone(idx) {
+  activeZoneIndex = idx;
+  currentUser.zone = MAP_ZONES[idx].name;
+  DB.users[currentUser.name] = currentUser;
+  saveDatabaseBackup();
+  renderAppUI();
+  closeModal('map-modal');
+  alert(`Viajaste con éxito a: ${currentUser.zone}`);
 }
 
-openCombat();
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
 }
 
-function throwPokeball(){
-
-if(currentUser.inventory.pokeball<=0){
-alert('No tienes Poké Balls');
-return;
+// Sistema de Combates Estilizado en Tiempo Real
+function searchWildPokemon() {
+  const activeZone = MAP_ZONES[activeZoneIndex];
+  const randomPkId = activeZone.wild[Math.floor(Math.random() * activeZone.wild.length)];
+  const randomLevel = Math.floor(Math.random() * 6) + 4; // Niveles del 4 al 10
+  
+  currentEnemy = generatePokemonObject(randomPkId, randomLevel);
+  initiateCombatUI("¡Un " + currentEnemy.name + " salvaje ha aparecido!");
 }
 
-currentUser.inventory.pokeball--;
-
-let chance=0.3;
-
-if(enemyPokemon.rarity==='rare') chance=0.15;
-if(enemyPokemon.rarity==='legendary') chance=0.02;
-
-if(enemyPokemon.hp<enemyPokemon.maxHp/3){
-chance+=0.2;
+function challengeFriend(fName) {
+  const friendObj = DB.users[fName];
+  if (!friendObj || friendObj.team.length === 0) {
+    alert('El entrenador no está disponible para la batalla.');
+    return;
+  }
+  currentEnemy = JSON.parse(JSON.stringify(friendObj.team[0])); // Duplicar primer Pokémon del rival
+  currentEnemy.name = `Combate contra ${fName}`;
+  initiateCombatUI(`¡Desafío aceptado! Luchas contra el equipo de ${fName}`);
 }
 
-if(Math.random()<chance){
-alert('¡Pokémon capturado!');
-currentUser.team.push(enemyPokemon);
-currentUser.dailyCaptures++;
-save();
-renderUI();
-closeCombat();
-}else{
-alert('El Pokémon escapó');
-setTimeout(enemyAttack,500);
-}
-}
+function initiateCombatUI(initialMsg) {
+  const windowCombat = document.getElementById('combat-window');
+  const myActive = currentUser.team[0];
+  
+  const myHpPct = (myActive.hp / myActive.maxHp) * 100;
+  const enemyHpPct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
 
-function gainExp(pokemon,amount){
+  windowCombat.innerHTML = `
+    <h2 style="text-align:center; border:none; margin-bottom:10px;">⚔️ ARENA DE COMBATE ⚔️</h2>
+    <div class="combat-area">
+      <div class="combat-side">
+        <h2>${myActive.name} (Tuyo)</h2>
+        <div class="level-lbl">Nv. ${myActive.level}</div>
+        <img src="${myActive.sprite}">
+        <div class="bar"><div class="fill" id="battle-my-hpfill" style="width:${myHpPct}%"></div></div>
+        <div id="battle-my-hptext">${myActive.hp} / ${myActive.maxHp} HP</div>
+      </div>
+      <div class="combat-side">
+        <h2>${currentEnemy.name}</h2>
+        <div class="level-lbl">Nv. ${currentEnemy.level}</div>
+        <img src="${currentEnemy.sprite}">
+        <div class="bar"><div class="fill" id="battle-enemy-hpfill" style="width:${enemyHpPct}%"></div></div>
+        <div id="battle-enemy-hptext">${currentEnemy.hp} / ${currentEnemy.maxHp} HP</div>
+      </div>
+    </div>
+    
+    <div class="battle-log" id="battle-log-text">
+      <p>${initialMsg}</p>
+    </div>
 
-pokemon.exp+=amount;
-
-while(pokemon.exp>=pokemon.maxExp){
-
-pokemon.exp-=pokemon.maxExp;
-pokemon.level++;
-
-if(pokemon.level>100){
-pokemon.level=100;
-return;
-}
-
-pokemon.maxExp=Math.floor(pokemon.maxExp*1.2);
-
-pokemon.maxHp+=5;
-pokemon.attack+=2;
-pokemon.defense+=2;
-pokemon.spAttack+=2;
-pokemon.spDefense+=2;
-pokemon.speed+=1;
-pokemon.hp=pokemon.maxHp;
-
-checkEvolution(pokemon);
-
-alert(`${pokemon.name} subió a nivel ${pokemon.level}`);
-}
+    <div style="margin-top:15px; text-align:center;" id="battle-actions-box">
+      ${myActive.moves.map(mName => `<button class="move-btn" onclick="executeTurn('${mName}')">${mName}</button>`).join('')}
+      <br>
+      <button class="auth-btn" style="width:45%; margin-right:4%; background:#22aa44;" onclick="captureAttempt()">⚪ Lanzar Pokéball</button>
+      <button class="auth-btn" style="width:45%; background:#cc2222;" onclick="escapeCombat()">🏃 Escapar</button>
+    </div>
+  `;
+  windowCombat.style.display = 'block';
 }
 
-function checkEvolution(pokemon){
+function executeTurn(moveName) {
+  const myActive = currentUser.team[0];
+  const log = document.getElementById('battle-log-text');
+  
+  if (myActive.hp <= 0) {
+    alert('Tu Pokémon principal está debilitado. ¡Cúralo o cambia su orden!');
+    return;
+  }
 
-const evo=EVOLUTIONS[pokemon.id];
+  // Turno Jugador
+  let dmgToEnemy = Math.floor((myActive.attack / currentEnemy.defense) * 12) + 2;
+  currentEnemy.hp = Math.max(0, currentEnemy.hp - dmgToEnemy);
+  log.innerHTML = `<p>¡${myActive.name} usó <strong>${moveName}</strong> y causó ${dmgToEnemy} PS!</p>`;
 
-if(!evo) return;
+  if (currentEnemy.hp <= 0) {
+    log.innerHTML += `<p style="color:#44ff88;">¡El ${currentEnemy.name} rival ha sido debilitado! Ganaste 150 ₽.</p>`;
+    currentUser.money += 150;
+    myActive.level += 1; // Sube un nivel al ganar
+    myActive.maxHp += 4;
+    myActive.attack += 2;
+    myActive.defense += 2;
+    myActive.hp = myActive.maxHp; // Curar al subir nivel
+    
+    endCombatCleanly();
+    return;
+  }
 
-if(pokemon.level>=evo.level){
+  // Turno Enemigo Automático
+  setTimeout(() => {
+    const enemyMove = currentEnemy.moves[Math.floor(Math.random() * currentEnemy.moves.length)] || 'Placaje';
+    let dmgToMe = Math.floor((currentEnemy.attack / myActive.defense) * 10) + 2;
+    myActive.hp = Math.max(0, myActive.hp - dmgToMe);
+    log.innerHTML += `<p style="color:#ff5544;">El rival usó <strong>${enemyMove}</strong> e infringió ${dmgToMe} PS.</p>`;
 
-pokemon.id=evo.to;
-pokemon.src=getSpr(evo.to);
+    if (myActive.hp <= 0) {
+      log.innerHTML += `<p style="color:#ff5544;">¡Tu Pokémon se ha debilitado! Regresas a un lugar seguro.</p>`;
+      myActive.hp = Math.floor(myActive.maxHp * 0.2); // Revivir automático con baja salud
+      endCombatCleanly();
+      return;
+    }
 
-alert('¡Tu Pokémon evolucionó!');
-}
-}
-
-function addFriend(){
-
-const val=document.getElementById('friend-input').value;
-
-if(!val) return;
-
-if(!currentUser.friends.includes(val)){
-currentUser.friends.push(val);
-}
-
-save();
-renderFriends();
-
-document.getElementById('friend-input').value='';
-}
-
-function renderFriends(){
-
-if(!currentUser) return;
-
-const box=document.getElementById('friends-list');
-
-if(!box) return;
-
-if(currentUser.friends.length===0){
-box.innerHTML='<p style="opacity:.7;">No tienes amigos añadidos.</p>';
-return;
-}
-
-box.innerHTML=currentUser.friends.map(f=>`
-<div class="friend-card">
-🧑‍🤝‍🧑 ${f}
-</div>
-`).join('');
+    // Actualizar barras visuales de vida sin refrescar toda la pantalla
+    document.getElementById('battle-my-hpfill').style.width = `${(myActive.hp / myActive.maxHp) * 100}%`;
+    document.getElementById('battle-my-hptext').textContent = `${myActive.hp} / ${myActive.maxHp} HP`;
+    document.getElementById('battle-enemy-hpfill').style.width = `${(currentEnemy.hp / currentEnemy.maxHp) * 100}%`;
+    document.getElementById('battle-enemy-hptext').textContent = `${currentEnemy.hp} / ${currentEnemy.maxHp} HP`;
+  }, 800);
 }
 
-function getCapturedCount(){
+function captureAttempt() {
+  if (currentUser.inventory.pokeball <= 0) {
+    alert('No te quedan Poké Balls en la mochila.');
+    return;
+  }
+  
+  currentUser.inventory.pokeball--;
+  const log = document.getElementById('battle-log-text');
+  const rate = 0.5 + ((currentEnemy.maxHp - currentEnemy.hp) / currentEnemy.maxHp) * 0.4;
 
-const dex=JSON.parse(localStorage.getItem('fullDex')||'[]');
-
-return dex.filter(p=>p.captured).length;
+  if (Math.random() < rate) {
+    log.innerHTML = `<p style="color:#44ff88; font-weight:bold;">¡Chispa! ¡Has atrapado a ${currentEnemy.name} con éxito!</p>`;
+    if (currentUser.team.length < 6) {
+      currentUser.team.push(currentEnemy);
+    } else {
+      alert('Tu equipo está lleno, se envió al almacenamiento global.');
+    }
+    endCombatCleanly();
+  } else {
+    log.innerHTML = `<p>¡Oh, no! El Pokémon se liberó de la Poké Ball.</p>`;
+  }
 }
 
-window.onload=()=>{
-
-const saveData=localStorage.getItem('pokemonUser');
-
-if(saveData){
-currentUser=JSON.parse(saveData);
-document.getElementById('register-modal').classList.remove('open');
-renderUI();
+function escapeCombat() {
+  alert('Escapaste a salvo.');
+  document.getElementById('combat-window').style.display = 'none';
+  currentEnemy = null;
 }
 
-};
-
-
-
-// =========================
-// SISTEMA TIPOS POKÉMON
-// =========================
-
-const TYPE_CHART={
-fire:{grass:2,water:0.5,fire:0.5},
-water:{fire:2,grass:0.5,water:0.5},
-grass:{water:2,fire:0.5,grass:0.5},
-electric:{water:2,grass:0.5,electric:0.5},
-normal:{rock:0.5,ghost:0},
-ground:{electric:2,fire:2},
-psychic:{fighting:2,poison:2},
-poison:{grass:2},
-rock:{fire:2,flying:2},
-ice:{dragon:2,grass:2},
-dragon:{dragon:2}
-};
-
-function getTypeMultiplier(moveType,targetTypes){
-let multi=1;
-
-if(!targetTypes) return 1;
-
-for(let t of targetTypes){
-if(TYPE_CHART[moveType] && TYPE_CHART[moveType][t]){
-multi*=TYPE_CHART[moveType][t];
+function endCombatCleanly() {
+  DB.users[currentUser.name] = currentUser;
+  saveDatabaseBackup();
+  renderAppUI();
+  document.getElementById('battle-actions-box').innerHTML = `<button class="auth-btn" style="width:100%;" onclick="document.getElementById('combat-window').style.display='none'">VOLVER AL MAPA</button>`;
 }
-}
-
-return multi;
-}
-
-// =========================
-// HABILIDADES
-// =========================
-
-const ABILITIES={
-blaze:{name:'Mar Llamas',effect:'boost_fire'},
-torrent:{name:'Torrente',effect:'boost_water'},
-overgrow:{name:'Espesura',effect:'boost_grass'},
-static:{name:'Electricidad Estática',effect:'paralyze_contact'}
-};
-
-// =========================
-// CLIMA
-// =========================
-
-let WEATHER='clear';
-
-function setWeather(weather){
-WEATHER=weather;
-alert('El clima cambió a '+weather);
-}
-
-function applyWeatherBonus(move){
-let bonus=1;
-
-if(WEATHER==='rain'){
-if(move.type==='water') bonus=1.5;
-if(move.type==='fire') bonus=0.5;
-}
-
-if(WEATHER==='sun'){
-if(move.type==='fire') bonus=1.5;
-if(move.type==='water') bonus=0.5;
-}
-
-return bonus;
-}
-
-// =========================
-// IA AVANZADA
-// =========================
-
-function enemyChooseMove(enemy,player){
-
-let bestMove=enemy.moves[0];
-let bestDamage=0;
-
-for(let move of enemy.moves){
-
-let mult=getTypeMultiplier(move.type||'normal',player.types||['normal']);
-let dmg=(move.power||40)*mult;
-
-if(dmg>bestDamage){
-bestDamage=dmg;
-bestMove=move;
-}
-}
-
-return bestMove;
-}
-
-// =========================
-// POKEDEX GLOBAL
-// =========================
-
-const FULL_POKEDEX=[];
-
-for(let i=1;i<=1025;i++){
-FULL_POKEDEX.push({
-id:i,
-seen:false,
-captured:false
-});
-}
-
-function registerCaughtPokemon(id){
-
-let dex=JSON.parse(localStorage.getItem('fullDex')||'[]');
-
-if(dex.length===0){
-
-dex=FULL_POKEDEX;
-}
-
-const entry=dex.find(p=>p.id===id);
-
-if(entry){
-entry.seen=true;
-entry.captured=true;
-}
-
-localStorage.setItem('fullDex',JSON.stringify(dex));
-}
-
-function openPokedex(){
-
-let dex=JSON.parse(localStorage.getItem('fullDex')||'[]');
-
-if(dex.length===0){
-dex=FULL_POKEDEX;
-}
-
-let html=`
-<div class="modal-overlay open" id="pokedex-modal">
-<div class="modal" style="width:1200px;max-width:98vw;">
-<h1 style="color:#f5c842;">📖 POKÉDEX</h1>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;max-height:80vh;overflow:auto;">
-`;
-
-for(let p of dex){
-
-html+=`
-<div style="background:#111a44;border:2px solid #2244aa;padding:10px;border-radius:10px;text-align:center;">
-<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png" style="width:80px;image-rendering:pixelated;">
-<div>#${p.id}</div>
-<div>${p.captured?'CAPTURADO':'---'}</div>
-</div>
-`;
-}
-
-html+=`</div>
-<button class="auth-btn" onclick="closePokedex()">Cerrar</button>
-</div>
-</div>`;
-
-const div=document.createElement('div');
-div.innerHTML=html;
-document.body.appendChild(div);
-}
-
-function closePokedex(){
-const el=document.getElementById('pokedex-modal');
-if(el) el.remove();
-}
-
-// =========================
-// REGISTRAR CAPTURA
-// =========================
-
-const originalThrowPokeball=throwPokeball;
-
-throwPokeball=function(){
-
-if(currentUser.inventory.pokeball<=0){
-alert('No tienes Poké Balls');
-return;
-}
-
-currentUser.inventory.pokeball--;
-
-let chance=0.3;
-
-if(enemyPokemon.rarity==='rare') chance=0.15;
-if(enemyPokemon.rarity==='legendary') chance=0.02;
-
-if(enemyPokemon.hp<enemyPokemon.maxHp/3){
-chance+=0.2;
-}
-
-if(Math.random()<chance){
-
-alert('¡Pokémon capturado!');
-
-currentUser.team.push(enemyPokemon);
-
-registerCaughtPokemon(enemyPokemon.id);
-
-currentUser.dailyCaptures++;
-
-save();
-renderUI();
-closeCombat();
-
-}else{
-alert('El Pokémon escapó');
-setTimeout(enemyAttack,500);
-}
-}
-
-// =========================
-// MAPA POKÉMON
-// =========================
-
-const MAP_ZONES=[
-{name:'Bosque Verde',wild:['Pidgey','Caterpie','Pikachu']},
-{name:'Monte Luna',wild:['Zubat','Geodude','Clefairy']},
-{name:'Ruta Marina',wild:['Tentacool','Magikarp','Lapras']},
-{name:'Volcán Rojo',wild:['Slugma','Growlithe','Charmander']}
-];
-
-let CURRENT_ZONE=MAP_ZONES[0];
-
-function openMap(){
-
-let html=`
-<div class="modal-overlay open" id="map-modal">
-<div class="modal">
-<h1>🗺️ MAPA POKÉMON</h1>
-`;
-
-MAP_ZONES.forEach((z,index)=>{
-html+=`
-<div class="card">
-<h2>${z.name}</h2>
-<p>${z.wild.join(', ')}</p>
-<button class="auth-btn" onclick="travelTo(${index})">Viajar</button>
-</div>`;
-});
-
-html+=`<button class="auth-btn" onclick="closeMap()">Cerrar</button></div></div>`;
-
-const div=document.createElement('div');
-div.innerHTML=html;
-document.body.appendChild(div);
-}
-
-function closeMap(){
-const el=document.getElementById('map-modal');
-if(el) el.remove();
-}
-
-function travelTo(index){
-CURRENT_ZONE=MAP_ZONES[index];
-alert('Viajaste a '+CURRENT_ZONE.name);
-closeMap();
-}
-
-// =========================
-// BOTONES EXTRA
-// =========================
-
-window.addEventListener('load',()=>{
-
-const header=document.querySelector('header div');
-
-header.innerHTML+=`<button class="top-btn" onclick="openPokedex()">📖 Pokédex</button>`;
-header.innerHTML+=`<button class="top-btn" onclick="openMap()">🗺️ Mapa</button>`;
-
-});
-
 </script>
 </body>
 </html>
