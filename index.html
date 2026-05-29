@@ -222,13 +222,39 @@ body{
 <script>
 // ── EQUIPO ──────────────────────────────────────────────
 const TEAM = [
-  { name:"SWAMPERT",        id:260, types:["water","ground"],  level:50 },
-  { name:"ROSERADE",        id:407, types:["grass","poison"],  level:50 },
-  { name:"GALVANTULA",      id:596, types:["bug","electric"],  level:50 },
-  { name:"TINKATON",        id:959, types:["fairy","steel"],   level:50 },
-  // Chandelure – Mega no tiene sprite en PokeAPI, se usa el normal
-  { name:"MEGA CHANDELURE", id:609, types:["ghost","fire"],    level:50 },
-  { name:"MALAMAR",         id:687, types:["dark","psychic"],  level:50 },
+  {
+    name:"SWAMPERT", types:["water","ground"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/260.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/260.png"
+  },
+  {
+    name:"ROSERADE", types:["grass","poison"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/407.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/407.png"
+  },
+  {
+    name:"GALVANTULA", types:["bug","electric"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/596.gif",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/596.png"
+  },
+  {
+    // Tinkaton es gen IX – no tiene gif animado, se usa sprite estático
+    name:"TINKATON", types:["fairy","steel"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/959.png",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png"
+  },
+  {
+    // Mega Chandelure shiny – usa el gif que tienes en local junto al index.html
+    name:"MEGA CHANDELURE", types:["ghost","fire"], level:50,
+    src:"ChatGPT_Image_7_dic_2025__14_00_59.png",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/609.gif"
+  },
+  {
+    // Malamar es gen VI – no tiene gif animado gen V
+    name:"MALAMAR", types:["dark","psychic"], level:50,
+    src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/687.png",
+    fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png"
+  },
 ];
 
 // ── SLOTS ───────────────────────────────────────────────
@@ -243,9 +269,8 @@ function buildSlot(p){
 
   const img = document.createElement('img');
   img.alt = p.name;
-  // Sprite pixel art estilo gen V (Black/White) – mismo estilo para todos
-  img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${p.id}.png`;
-  img.onerror = () => { img.onerror=null; img.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`; };
+  img.src = p.src;
+  img.onerror = () => { img.onerror=null; img.src=p.fallback; };
   div.appendChild(img);
 
   const nm = document.createElement('span'); nm.className='pname'; nm.textContent=p.name; div.appendChild(nm);
