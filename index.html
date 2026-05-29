@@ -3,22 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PokéTrainer Online</title>
+<title>PokéTrainer Online - Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <style>
-/* =======================================================
-   ESTILO ORIGINAL MEJORADO (DISEÑO TRANSLÚCIDO Y NEÓN)
-   ======================================================= */
 :root {
   --navy: #0d1244;
   --blue: #1a2fa8;
   --gold: #f5c842;
   --red: #cc2222;
   --green: #7cb836;
+  --dark-bg: rgba(7, 12, 34, 0.9);
   --px: 'Press Start 2P', monospace;
   --vt: 'VT323', monospace;
 }
@@ -32,19 +30,18 @@
 
 body {
   min-height: 100vh;
-  background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.7)), url('https://images.alphacoders.com/677/677583.png');
+  background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.75)), url('https://images.alphacoders.com/677/677583.png');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
   color: white;
   overflow-x: hidden;
-  padding: 16px;
+  padding: 20px;
 }
 
-@keyframes popIn { from { transform: scale(.85) translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes cardIn { from { transform: scale(.9) translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes popIn { from { transform: scale(.9) translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-/* ── PANTALLA DE CARGA MEJORADA CON GIF DE POKÉBALL ── */
+/* ── SCREEN LOADING ── */
 #loading-screen {
   position: fixed;
   inset: 0;
@@ -57,213 +54,269 @@ body {
   gap: 20px;
 }
 #loading-screen .loading-gif {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
   image-rendering: pixelated;
-  /* Animación de latido/pulso retro para darle vida al GIF */
-  animation: pulseBall 1.5s ease-in-out infinite;
+  animation: pulseBall 1.4s ease-in-out infinite;
 }
 @keyframes pulseBall {
-  0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(245,200,66,0.2)); }
-  50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(245,200,66,0.6)); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(245,200,66,0.2)); }
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(245,200,66,0.3)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 25px rgba(245,200,66,0.7)); }
 }
-#loading-screen p { 
-  color: var(--gold); 
-  font-family: var(--px); 
-  font-size: 11px; 
-  letter-spacing: 2px; 
-  text-align: center;
-  line-height: 1.6;
-}
+#loading-screen p { color: var(--gold); font-family: var(--px); font-size: 11px; letter-spacing: 2px; text-align: center; }
 
-/* ── AUTH SCREEN ── */
+/* ── AUTH SCREEN (CON CONTRASEÑA) ── */
 #auth-screen {
   width: 100%;
-  max-width: 520px;
-  background: rgba(10, 18, 45, 0.95);
-  backdrop-filter: blur(10px);
+  max-width: 500px;
+  background: var(--dark-bg);
+  backdrop-filter: blur(12px);
   border: 4px solid var(--gold);
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(0,0,0,.8);
+  border-radius: 16px;
+  box-shadow: 0 0 35px rgba(0,0,0,.9);
   overflow: hidden;
-  animation: popIn .5s cubic-bezier(.2,.8,.3,1.2) both;
-  margin: 40px auto;
+  animation: popIn .4s ease-out both;
+  margin: 60px auto;
   display: none;
 }
-.auth-header { background: rgba(5,10,30,.8); border-bottom: 4px solid var(--gold); padding: 20px; text-align: center; }
-.auth-header h1 { color: var(--gold); font-family: var(--px); font-size: 16px; letter-spacing: 2px; margin-bottom: 6px; }
-.auth-header p { color: #8899ff; font-size: 16px; letter-spacing: 1px; }
+.auth-header { background: rgba(4,8,23,.8); border-bottom: 4px solid var(--gold); padding: 22px; text-align: center; }
+.auth-header h1 { color: var(--gold); font-family: var(--px); font-size: 16px; letter-spacing: 1.5px; }
+.auth-header p { color: #8899ff; font-size: 16px; margin-top: 4px; }
 .auth-tabs { display: flex; border-bottom: 3px solid var(--gold); }
 .auth-tab { flex: 1; padding: 14px; text-align: center; cursor: pointer; color: #8899ff; font-family: var(--px); font-size: 10px; background: rgba(5,10,30,.5); border: none; transition: 0.2s; }
 .auth-tab.active { background: transparent; color: var(--gold); font-weight: bold; }
-.auth-body { padding: 22px; }
+.auth-body { padding: 24px; }
 .auth-field { margin-bottom: 16px; }
-.auth-field label { display: block; color: #8899ff; font-family: var(--px); font-size: 8px; letter-spacing: 1px; margin-bottom: 6px; }
-.auth-field input, .auth-field select { width: 100%; background: #091226; border: 2px solid #355dff; border-radius: 8px; color: #fff; font-size: 22px; padding: 10px; outline: none; transition: 0.2s; }
-.auth-field input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(245,200,66,0.3); }
-.auth-btn { width: 100%; background: linear-gradient(180deg, #355dff, #1d2f88); border: 2px solid #6ea0ff; border-radius: 10px; color: white; font-family: var(--px); font-size: 11px; padding: 14px; cursor: pointer; transition: .2s; margin-top: 10px; }
-.auth-btn:hover { transform: scale(1.02); background: linear-gradient(180deg, #4b73ff, #2c43bb); box-shadow: 0 0 15px rgba(80,120,255,.45); }
-.auth-msg { margin-top: 10px; font-size: 20px; text-align: center; min-height: 24px; }
+.auth-field label { display: block; color: #8899ff; font-family: var(--px); font-size: 9px; margin-bottom: 6px; }
+.auth-field input { width: 100%; background: #060b18; border: 2px solid #2b4ec9; border-radius: 8px; color: #fff; font-size: 22px; padding: 10px 14px; outline: none; }
+.auth-field input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(245,200,66,0.2); }
+
+.selection-scroll-container { max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; border: 1px solid #1e44aa; margin-top: 5px; }
+.selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grid-choice { border: 2px solid #2244aa; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; background: rgba(13,22,55,.6); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.grid-choice.selected { border-color: var(--gold); background: rgba(26,47,168,.4); transform: scale(1.02); }
+.grid-choice img { height: 45px; object-fit: contain; image-rendering: pixelated; }
+.grid-choice div { font-size: 14px; color: #cce0ff; margin-top: 2px; }
+
+.auth-btn { width: 100%; background: linear-gradient(180deg, #355dff, #1d2f88); border: 2px solid #6ea0ff; border-radius: 8px; color: white; font-family: var(--px); font-size: 11px; padding: 14px; cursor: pointer; margin-top: 10px; }
+.auth-btn:hover { background: linear-gradient(180deg, #4b73ff, #2c43bb); box-shadow: 0 0 15px rgba(80,120,255,.4); }
+.auth-msg { margin-top: 12px; font-size: 20px; text-align: center; min-height: 24px; }
 .auth-msg.err { color: #ff5544; }
 .auth-msg.ok { color: #44ff88; }
 
-/* ─ SELECCIÓN DE DISEÑO DE PERSONAJE Y INICIALES ─ */
-.selection-scroll-container { max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px; border: 1px solid #1e44aa; margin-top: 5px; }
-.selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.grid-choice { border: 2px solid #2244aa; padding: 6px; border-radius: 10px; text-align: center; cursor: pointer; background: rgba(13,22,55,.6); transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.grid-choice:hover, .grid-choice.selected { border-color: var(--gold); background: rgba(26,47,168,.4); transform: scale(1.04); }
-.grid-choice img { height: 50px; object-fit: contain; image-rendering: pixelated; }
-.grid-choice div { font-size: 15px; color: #cce0ff; margin-top: 4px; }
+/* ── APLICACIÓN PRINCIPAL INTERFAZ GRID (ESTILO DE LA IMAGEN) ── */
+#app-screen { display: none; width: 100%; max-width: 1280px; margin: 0 auto; animation: popIn 0.4s ease-out; }
 
-/* ── APP INTERFACE ── */
-#app-screen { display: none; width: 100%; max-width: 1200px; margin: 0 auto; }
-header { backdrop-filter: blur(10px); background: rgba(5,10,30,.88); border-bottom: 4px solid #f5c842; box-shadow: 0 5px 25px rgba(0,0,0,.5); border-radius: 12px 12px 0 0; padding: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-header h1 { font-family: var(--px); font-size: clamp(14px, 2.2vw, 24px); color: #f5c842; text-shadow: 0 0 10px rgba(245,200,66,0.3); }
+header { backdrop-filter: blur(10px); background: rgba(5,10,30,.85); border: 3px solid #355dff; border-bottom: 4px solid var(--gold); box-shadow: 0 4px 20px rgba(0,0,0,.5); border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+header h1 { font-family: var(--px); font-size: clamp(14px, 2vw, 22px); color: var(--gold); text-shadow: 0 0 8px rgba(245,200,66,0.3); }
 
 .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.top-btn { background: linear-gradient(180deg,#355dff,#1d2f88); border: 2px solid #6ea0ff; color: white; border-radius: 8px; font-family: var(--px); font-size: 10px; padding: 8px 14px; cursor: pointer; transition: .2s; }
-.top-btn:hover { transform: scale(1.05); background: linear-gradient(180deg,#4b73ff,#2c43bb); box-shadow: 0 0 10px rgba(80,120,255,0.4); }
+.top-btn { background: linear-gradient(180deg,#355dff,#1d2f88); border: 2px solid #6ea0ff; color: white; border-radius: 8px; font-family: var(--px); font-size: 10px; padding: 8px 14px; cursor: pointer; transition: .15s; }
+.top-btn:hover { transform: scale(1.04); box-shadow: 0 0 10px rgba(80,120,255,0.4); }
 .top-btn.logout { background: linear-gradient(180deg, #cc2222, #881111); border-color: #ff6666; }
 
-/* MAIN CONTAINERS */
-.card { background: rgba(8,15,40,.88); backdrop-filter: blur(8px); border: 3px solid #355dff; box-shadow: 0 0 20px rgba(0,0,0,.5); border-top: none; border-radius: 0 0 15px 15px; overflow: hidden; animation: cardIn .5s both; }
-.card-body { padding: 20px; }
+/* PANEL DIVIDIDO PRINCIPAL */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 20px;
+  align-items: start;
+}
 
-.section-box { background: rgba(13,22,55,.5); border: 2px solid #1e44aa; border-radius: 12px; padding: 16px; }
-.section-box h2 { font-family: var(--px); font-size: 12px; color: var(--gold); margin-bottom: 12px; border-bottom: 2px solid rgba(245,200,66,0.2); padding-bottom: 6px; }
+@media (max-width: 900px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
 
-/* TRAINER PROFILE DISPLAY */
-.profile-flex { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-.profile-avatar-frame { background: rgba(0,0,0,0.3); border: 3px solid #355dff; border-radius: 12px; padding: 10px; width: 100px; height: 120px; display: flex; align-items: center; justify-content: center; }
-.profile-avatar-frame img { max-width: 100%; max-height: 100%; image-rendering: pixelated; }
-.profile-data-fields { flex: 1; min-width: 240px; }
-.profile-data-fields p { font-size: 22px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
-.profile-data-fields p span { color: var(--gold); font-weight: bold; }
+.panel-box {
+  background: var(--dark-bg);
+  backdrop-filter: blur(10px);
+  border: 3px solid #355dff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+.panel-box h2 { font-family: var(--px); font-size: 13px; color: var(--gold); margin-bottom: 16px; border-bottom: 2px solid rgba(245,200,66,0.2); padding-bottom: 8px; }
 
-/* POPUP AMIGOS */
+/* COLUMNA IZQUIERDA: ID CARD ENTRENADOR RETRO */
+.id-card-wrapper {
+  background: linear-gradient(135deg, #15225c 0%, #080d29 100%);
+  border: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+}
+.id-card-wrapper::before {
+  content: "TRAINER CARD";
+  position: absolute;
+  right: -15px; top: 12px;
+  font-family: var(--px); font-size: 26px; color: rgba(255,255,255,0.03);
+  transform: rotate(15deg);
+  pointer-events: none;
+}
+.id-avatar-area {
+  display: flex;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  border: 2px solid #355dff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  height: 150px;
+}
+.id-avatar-area img { max-height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+
+.id-details p {
+  font-size: 22px;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed rgba(255,255,255,0.1);
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+.id-details p span { color: var(--gold); font-weight: bold; }
+
+/* COLUMNA DERECHA: REJILLA DE POKÉMON (COMO LA FOTO) */
+.pokemons-display-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.pokemon-slot-card {
+  background: rgba(11, 19, 53, 0.85);
+  border: 2px solid #2b4ec9;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  position: relative;
+  transition: .2s;
+}
+.pokemon-slot-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(245,200,66,0.15);
+}
+.pokemon-slot-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+.pokemon-slot-card h3 { font-family: var(--px); font-size: 11px; color: #fff; margin: 6px 0; }
+.pokemon-slot-card .lvl-tag { font-size: 16px; color: #a2baff; margin-bottom: 6px; }
+
+.hp-bar-container { width: 100%; height: 10px; background: #1a1a1a; border-radius: 6px; overflow: hidden; margin: 6px 0; border: 1px solid rgba(255,255,255,0.1); }
+.hp-bar-fill { height: 100%; background: #44ff88; transition: width 0.3s; }
+.hp-numeric { font-size: 15px; color: #b0c9ff; }
+.pokemon-stats-mini {
+  font-size: 15px; color: #8fa6df; text-align: left;
+  background: rgba(0,0,0,0.25); border-radius: 6px; padding: 6px; margin-top: 8px;
+}
+
+/* ── POP-UPS MODALS ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: rgba(9,15,43,.98); backdrop-filter: blur(10px); border: 4px solid var(--gold); border-radius: 16px; padding: 20px; width: 600px; max-width: 95vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 35px #000; animation: popIn 0.25s ease-out; }
+.modal h2 { font-family: var(--px); font-size: 14px; color: var(--gold); margin-bottom: 16px; border-bottom: 3px solid var(--gold); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.modal-close-x { background: var(--red); border: none; color: white; font-family: var(--px); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+
 .add-friend-row { display: flex; gap: 8px; margin-bottom: 12px; }
-.add-friend-row input { flex: 1; background: #091226; border: 2px solid #355dff; border-radius: 6px; color: white; padding: 6px; font-size: 18px; outline: none; }
-.add-friend-row input:focus { border-color: var(--gold); }
-.friend-list-box { max-height: 250px; overflow-y: auto; }
-.friend-card { background: rgba(19, 34, 82, 0.7); padding: 10px; border-radius: 10px; border: 2px solid #355dff; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-.friend-card span { font-size: 20px; }
-.friend-actions { display: flex; gap: 6px; }
+.add-friend-row input { flex: 1; background: #060b18; border: 2px solid #355dff; border-radius: 6px; color: white; padding: 8px; font-size: 18px; outline: none; }
+.friend-list-box { max-height: 240px; overflow-y: auto; }
+.friend-card { background: rgba(19, 34, 82, 0.6); padding: 10px; border-radius: 8px; border: 2px solid #2b4ec9; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.friend-card span { font-size: 19px; }
 .small-btn { padding: 4px 10px; font-size: 16px; border-radius: 6px; background: #2244aa; color: white; border: 1px solid #6ea0ff; cursor: pointer; }
 .small-btn.challenge { background: #997700; border-color: var(--gold); }
 .small-btn.remove { background: #771111; border-color: #ff6666; }
 
-/* GRID DE POKÉMON */
-.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 10px; }
-.pokemon-card { background: rgba(13,22,55,.95); border: 3px solid #355dff; border-radius: 15px; padding: 15px; text-align: center; transition: .25s; position: relative; overflow: hidden; }
-.pokemon-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 0 25px rgba(80,120,255,.45); border-color: var(--gold); }
-.pokemon-card img { width: 100px; height: 100px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
-.pokemon-card h3 { font-family: var(--px); font-size: 10px; color: white; margin: 6px 0 2px 0; }
-.pokemon-card .level-lbl { font-size: 16px; color: #88aadd; }
+.shop-grid, .bag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.item-card-box { background: rgba(19,34,82,0.5); border: 2px solid #355dff; border-radius: 8px; padding: 10px; text-align: center; font-size: 18px; }
 
-.bar { width: 100%; height: 14px; background: #222; border-radius: 10px; overflow: hidden; margin: 6px 0; border: 1px solid rgba(255,255,255,0.1); }
-.fill { height: 100%; background: #44ff88; transition: width 0.3s; }
-.hp-text { font-size: 16px; color: #aac8ff; }
-.pk-stats { font-size: 16px; color: #99aadd; text-align: left; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; margin-top: 6px; }
-
-/* ── MODALS COMPARTIDOS ── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; }
-.modal-overlay.open { display: flex; }
-.modal { background: rgba(10,18,45,.97); backdrop-filter: blur(10px); border: 4px solid var(--gold); border-radius: 15px; padding: 20px; width: 650px; max-width: 95vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 35px rgba(0,0,0,.8); animation: popIn 0.3s ease-out; }
-.modal h2 { font-family: var(--px); font-size: 16px; color: var(--gold); margin-bottom: 15px; border-bottom: 3px solid var(--gold); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-.modal-close-x { background: #cc2222; border: none; color: white; font-family: var(--px); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
-
-/* SHOP & BAG BODY */
-.shop-grid, .bag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-.item-shop-card, .item-bag-card { background: rgba(19, 34, 82, 0.6); border: 2px solid #355dff; border-radius: 10px; padding: 12px; text-align: center; font-size: 20px; }
-
-/* ── COMBAT WINDOW ── */
-#combat-window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1000px; max-width: 95vw; height: 85vh; background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.7)), url('https://wallpapercave.com/wp/wp3741670.png'); background-size: cover; background-position: center; border: 5px solid #44ff88; border-radius: 15px; z-index: 9999; overflow-y: auto; box-shadow: 0 0 50px rgba(0,0,0,.9); display: none; padding: 20px; }
-.combat-area { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 20px; }
-.combat-side { width: 45%; min-width: 260px; text-align: center; background: rgba(5,10,30,0.75); backdrop-filter: blur(4px); padding: 15px; border-radius: 12px; border: 2px solid #355dff; margin: 0 auto; }
-.combat-side h2 { font-family: var(--px); font-size: 12px; color: var(--gold); }
-.combat-side img { width: 130px; height: 130px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 4px 8px #000); }
-
-.battle-log { background: rgba(0,0,0,0.85); border: 2px solid #355dff; padding: 12px; border-radius: 8px; height: 90px; overflow-y: auto; margin-top: 15px; font-size: 18px; line-height: 1.4; text-align: left; }
-.move-btn { background: linear-gradient(180deg,#355dff,#1d2f88); border: 2px solid #6ea0ff; padding: 10px; margin: 5px; border-radius: 8px; font-size: 20px; color: white; width: 45%; min-width: 130px; cursor: pointer; }
-.move-btn:hover { background: linear-gradient(180deg,#4b73ff,#2c43bb); }
+/* COMBAT AREA */
+#combat-window { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 950px; max-width: 95vw; height: 82vh; background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.7)), url('https://wallpapercave.com/wp/wp3741670.png'); background-size: cover; background-position: center; border: 4px solid #44ff88; border-radius: 16px; z-index: 9999; overflow-y: auto; display: none; padding: 20px; }
+.combat-area { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 15px; }
+.combat-side { width: 46%; min-width: 250px; text-align: center; background: rgba(5,10,30,0.8); padding: 12px; border-radius: 12px; border: 2px solid #355dff; margin: 0 auto; }
+.combat-side img { width: 110px; height: 110px; object-fit: contain; image-rendering: pixelated; }
+.battle-log { background: rgba(0,0,0,0.9); border: 2px solid #355dff; padding: 10px; border-radius: 8px; height: 85px; overflow-y: auto; margin-top: 12px; font-size: 18px; text-align: left; }
+.move-btn { background: linear-gradient(180deg,#355dff,#1d2f88); border: 2px solid #6ea0ff; padding: 8px; margin: 4px; border-radius: 6px; font-size: 18px; color: white; width: 46%; cursor: pointer; }
 </style>
 </head>
 <body>
 
 <div id="loading-screen">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" class="loading-gif" alt="Cargando PokéBall">
-  <p>CONECTANDO CON EL SERVIDOR...<br>POKÉBALL EN ROTACIÓN</p>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Pok%C3%A9_Ball_icon.svg" class="loading-gif" alt="Cargando">
+  <p>POKÉTRAINER ONLINE<br>CARGANDO DATOS DE RED...</p>
 </div>
 
 <div id="auth-screen">
   <div class="auth-header">
     <h1>POKÉTRAINER ONLINE</h1>
-    <p>MMORPG - Gestión Global de Entrenadores</p>
+    <p>Área de Acceso Encriptada</p>
   </div>
   <div class="auth-tabs">
     <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">INICIAR SESIÓN</button>
-    <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">NUEVO ENTRENADOR</button>
+    <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">REGISTRARSE</button>
   </div>
   <div class="auth-body">
     <div class="auth-field">
-      <label>CÓDIGO DE ACCESO / ENTRENADOR</label>
-      <input type="text" id="auth-username" placeholder="Ej: TrainerRed">
+      <label>ID DE ENTRENADOR (USUARIO)</label>
+      <input type="text" id="auth-username" placeholder="Ej: RedMaster">
+    </div>
+    <div class="auth-field">
+      <label>CONTRASEÑA SECRETA</label>
+      <input type="password" id="auth-password" placeholder="••••••••">
     </div>
     
     <div id="register-extra-fields" style="display: none;">
       <div class="auth-field">
-        <label>ELIGE EL DISEÑO DE TU PERSONAJE (AVATAR)</label>
+        <label>DISEÑO DE ENTRENADOR (SPRITE GIF)</label>
         <div class="selection-scroll-container">
-          <div class="selection-grid" id="avatars-selection-grid">
-            </div>
+          <div class="selection-grid" id="avatars-selection-grid"></div>
         </div>
       </div>
-
       <div class="auth-field">
-        <label>ELIGE TU POKÉMON INICIAL (G1 - G3)</label>
+        <label>SOCIOS POKÉMON INICIAL</label>
         <div class="selection-scroll-container">
-          <div class="selection-grid" id="starters-selection-grid">
-            </div>
+          <div class="selection-grid" id="starters-selection-grid"></div>
         </div>
       </div>
     </div>
 
-    <button class="auth-btn" id="auth-main-submit" onclick="handleAuthSubmit()">ENTRAR AL MUNDO</button>
+    <button class="auth-btn" id="auth-main-submit" onclick="handleAuthSubmit()">ACCEDER AL SERVIDOR</button>
     <div class="auth-msg" id="auth-msg-box"></div>
   </div>
 </div>
 
 <div id="app-screen">
   <header>
-    <h1>POKÉTRAINER ONLINE</h1>
+    <h1>POKÉTRAINER GLOBAL DASHBOARD</h1>
     <div class="top-actions">
       <button class="top-btn" onclick="openFriendsModal()">👥 Amigos</button>
       <button class="top-btn" onclick="openBagModal()">🎒 Mochila</button>
       <button class="top-btn" onclick="openShopModal()">🛒 Tienda</button>
       <button class="top-btn" onclick="openMapModal()">🗺️ Mapa</button>
-      <button class="top-btn" onclick="searchWildPokemon()">🌿 Buscar Pokémon</button>
-      <button class="top-btn logout" onclick="logout()">🏃 Salir</button>
+      <button class="top-btn" onclick="searchWildPokemon()">🌿 Buscar Altas Hierbas</button>
+      <button class="top-btn logout" onclick="logout()">🏃 Desconectar</button>
     </div>
   </header>
 
-  <div class="card">
-    <div class="card-body">
-      <div class="section-box">
-        <h2>👤 TARJETA ENTRENADOR</h2>
-        <div class="profile-flex" id="trainer-profile-container">
-          </div>
-      </div>
-    </div>
+  <div class="dashboard-grid">
     
-    <div style="padding: 0 20px 20px 20px;">
-      <div class="section-box">
-        <h2>⚔️ MI EQUIPO POKÉMON</h2>
-        <div class="team-grid" id="team-cards-container">
-          </div>
-      </div>
+    <div class="panel-box">
+      <h2>👤 ENTRANTEDOR ID CARD</h2>
+      <div class="id-card-wrapper" id="trainer-profile-card">
+        </div>
     </div>
+
+    <div class="panel-box">
+      <h2>⚔️ COMPAÑEROS POKÉMON ACTIVOS EN EQUIPO</h2>
+      <div class="pokemons-display-grid" id="team-cards-container">
+        </div>
+    </div>
+
   </div>
 </div>
 
@@ -271,66 +324,47 @@ header h1 { font-family: var(--px); font-size: clamp(14px, 2.2vw, 24px); color: 
 
 <div class="modal-overlay" id="friends-modal">
   <div class="modal">
-    <h2><span>👥 Lista de Amigos en Red</span><button class="modal-close-x" onclick="closeModal('friends-modal')">X</button></h2>
+    <h2><span>👥 Gestión de Amigos Online</span><button class="modal-close-x" onclick="closeModal('friends-modal')">X</button></h2>
     <div class="add-friend-row">
-      <input type="text" id="friend-search-input" placeholder="Nombre del entrenador a añadir...">
-      <button class="small-btn" onclick="addFriendReal()" style="padding: 0 14px; font-size:18px;">Añadir</button>
+      <input type="text" id="friend-search-input" placeholder="Nombre exacto del entrenador...">
+      <button class="small-btn" onclick="addFriendReal()">Añadir</button>
     </div>
-    <div class="friend-list-box" id="friends-list-container">
-      </div>
+    <div class="friend-list-box" id="friends-list-container"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="bag-modal">
   <div class="modal">
-    <h2><span>🎒 Mi Mochila</span><button class="modal-close-x" onclick="closeModal('bag-modal')">X</button></h2>
+    <h2><span>🎒 Inventario Mochila</span><button class="modal-close-x" onclick="closeModal('bag-modal')">X</button></h2>
     <div class="bag-grid" id="bag-modal-body"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="shop-modal">
   <div class="modal">
-    <h2><span>🛒 Tienda de Ciudad Verde</span><button class="modal-close-x" onclick="closeModal('shop-modal')">X</button></h2>
+    <h2><span>🛒 Tienda Central Pokémon</span><button class="modal-close-x" onclick="closeModal('shop-modal')">X</button></h2>
     <div class="shop-grid" id="shop-modal-body"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="map-modal">
   <div class="modal">
-    <h2><span>🗺️ Mapa de la Región</span><button class="modal-close-x" onclick="closeModal('map-modal')">X</button></h2>
+    <h2><span>🗺️ Navegador de Rutas</span><button class="modal-close-x" onclick="closeModal('map-modal')">X</button></h2>
     <div id="map-modal-body"></div>
   </div>
 </div>
 
 <script>
-let db = null;
-try {
-  const firebaseConfig = {
-    apiKey: "AIzaSyFakeKey-PlaceholderForSafety12345",
-    authDomain: "poketrainer-online-db.firebaseapp.com",
-    projectId: "poketrainer-online-db",
-    storageBucket: "poketrainer-online-db.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef"
-  };
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
-} catch(e) {
-  console.log("Firebase no conectado. Usando almacenamiento LocalDB inteligente.");
-}
-
-// Estructuras de Datos
+let DB = { users: {} }; 
+let currentUser = null;
 let currentAuthMode = 'login';
 let selectedStarterId = 1;
 let selectedAvatarUrl = "";
-let DB = { users: {} }; 
-let currentUser = null;
 let currentEnemy = null;
 let activeZoneIndex = 0;
 
-// Opciones de Avatares en GIF Animados (Diseños de personajes)
 const AVATAR_OPTIONS = [
-  { name: 'Entrenador Red', url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/red.png' }, 
+  { name: 'Rojo (Red)', url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/red.png' }, 
   { name: 'Eco / Gold', url: 'https://projectpokemon.org/images/sprites-models/pbr-sprites/9213.gif' },
   { name: 'Lira / Lyra', url: 'https://projectpokemon.org/images/sprites-models/pbr-sprites/9214.gif' },
   { name: 'Bruno / Brendan', url: 'https://projectpokemon.org/images/sprites-models/pbr-sprites/9215.gif' },
@@ -342,42 +376,34 @@ const MAP_ZONES = [
   { name: 'Bosque Verde', wild: [16, 19, 25] },
   { name: 'Monte Luna', wild: [41, 74, 35] },
   { name: 'Ruta Marina', wild: [72, 129, 131] },
-  { name: 'Volcán Rojo', wild: [218, 58, 4] }
+  { name: 'Volcán Kanto', wild: [218, 58, 4] }
 ];
 
 const SHOP_ITEMS = {
   pokeball: { name: 'Poké Ball', price: 200 },
-  superball: { name: 'Super Ball', price: 600 },
-  ultraball: { name: 'Ultra Ball', price: 1200 },
   potion: { name: 'Poción', price: 300 },
-  superPotion: { name: 'Super Poción', price: 700 },
   revive: { name: 'Revivir', price: 1500 }
 };
 
 const POKEDEX_MAP = {
-  1: { name: 'Bulbasaur', types: ['grass'], moves: ['Placaje', 'Gigadrenado'] },
-  4: { name: 'Charmander', types: ['fire'], moves: ['Placaje', 'Lanzallamas'] },
-  7: { name: 'Squirtle', types: ['water'], moves: ['Placaje', 'Pistola Agua'] },
-  16: { name: 'Pidgey', types: ['normal'], moves: ['Placaje'] },
-  19: { name: 'Rattata', types: ['normal'], moves: ['Placaje'] },
-  25: { name: 'Pikachu', types: ['electric'], moves: ['Placaje'] },
-  35: { name: 'Clefairy', types: ['fairy'], moves: ['Placaje'] },
-  41: { name: 'Zubat', types: ['poison'], moves: ['Placaje'] },
-  58: { name: 'Growlithe', types: ['fire'], moves: ['Placaje'] },
-  72: { name: 'Tentacool', types: ['water'], moves: ['Pistola Agua'] },
-  74: { name: 'Geodude', types: ['rock'], moves: ['Placaje'] },
-  129: { name: 'Magikarp', types: ['water'], moves: ['Placaje'] },
-  131: { name: 'Lapras', types: ['water'], moves: ['Pistola Agua'] },
-  152: { name: 'Chikorita', types: ['grass'], moves: ['Placaje', 'Gigadrenado'] },
-  155: { name: 'Cyndaquil', types: ['fire'], moves: ['Placaje'] },
-  158: { name: 'Totodile', types: ['water'], moves: ['Placaje', 'Pistola Agua'] },
-  218: { name: 'Slugma', types: ['fire'], moves: ['Placaje'] },
-  252: { name: 'Treecko', types: ['grass'], moves: ['Placaje', 'Gigadrenado'] },
-  255: { name: 'Torchic', types: ['fire'], moves: ['Placaje'] },
-  258: { name: 'Mudkip', types: ['water'], moves: ['Placaje', 'Pistola Agua'] }
+  1: { name: 'Bulbasaur', types: ['Planta'], moves: ['Placaje', 'Gigadrenado'] },
+  4: { name: 'Charmander', types: ['Fuego'], moves: ['Placaje', 'Lanzallamas'] },
+  7: { name: 'Squirtle', types: ['Agua'], moves: ['Placaje', 'Pistola Agua'] },
+  16: { name: 'Pidgey', types: ['Normal'], moves: ['Placaje'] },
+  19: { name: 'Rattata', types: ['Normal'], moves: ['Placaje'] },
+  25: { name: 'Pikachu', types: ['Eléctrico'], moves: ['Placaje', 'Rayito'] },
+  35: { name: 'Clefairy', types: ['Hada'], moves: ['Placaje'] },
+  41: { name: 'Zubat', types: ['Veneno'], moves: ['Placaje'] },
+  58: { name: 'Growlithe', types: ['Fuego'], moves: ['Placaje'] },
+  74: { name: 'Geodude', types: ['Roca'], moves: ['Placaje'] },
+  129: { name: 'Magikarp', types: ['Agua'], moves: ['Salpicadura'] },
+  131: { name: 'Lapras', types: ['Agua/Hielo'], moves: ['Pistola Agua'] },
+  152: { name: 'Chikorita', types: ['Planta'], moves: ['Placaje'] },
+  155: { name: 'Cyndaquil', types: ['Fuego'], moves: ['Placaje'] },
+  158: { name: 'Totodile', types: ['Agua'], moves: ['Pistola Agua'] }
 };
 
-const STARTER_CHOICES = [1, 4, 7, 152, 155, 158, 252, 255, 258];
+const STARTER_CHOICES = [1, 4, 7, 152, 155, 158];
 
 window.addEventListener('load', () => {
   buildSelectorGrids();
@@ -387,20 +413,20 @@ window.addEventListener('load', () => {
     
     const savedSession = localStorage.getItem('poke_session');
     if (savedSession) {
-      attemptLogin(savedSession);
+      attemptLoginDirect(savedSession);
     } else {
       document.getElementById('auth-screen').style.display = 'block';
     }
-  }, 1800); // 1.8 segundos para poder apreciar el GIF de carga
+  }, 1400);
 });
 
 function loadDatabaseBackup() {
-  const local = localStorage.getItem('poke_local_db');
+  const local = localStorage.getItem('poke_local_db_pwd');
   if (local) { try { DB = JSON.parse(local); } catch(e){} }
 }
 
 function saveDatabaseBackup() {
-  localStorage.setItem('poke_local_db', JSON.stringify(DB));
+  localStorage.setItem('poke_local_db_pwd', JSON.stringify(DB));
 }
 
 function buildSelectorGrids() {
@@ -455,56 +481,61 @@ function switchAuthTab(mode) {
 
 function handleAuthSubmit() {
   const username = document.getElementById('auth-username').value.trim();
+  const password = document.getElementById('auth-password').value.trim();
   const msgBox = document.getElementById('auth-msg-box');
   msgBox.className = 'auth-msg';
 
-  if (!username) {
+  if (!username || !password) {
     msgBox.classList.add('err');
-    msgBox.textContent = 'Introduce un nombre válido.';
+    msgBox.textContent = 'Completa el usuario y la contraseña.';
     return;
   }
 
   if (currentAuthMode === 'login') {
-    attemptLogin(username);
+    const user = DB.users[username];
+    if (user && user.password === password) {
+      proceedLogin(username);
+    } else {
+      msgBox.classList.add('err');
+      msgBox.textContent = 'Credenciales incorrectas.';
+    }
   } else {
     if (DB.users[username]) {
       msgBox.classList.add('err');
-      msgBox.textContent = 'El entrenador ya existe.';
+      msgBox.textContent = 'Este usuario ya está registrado.';
       return;
     }
 
     const initialPk = generatePokemonObject(selectedStarterId, 5);
-    const newTrainer = {
+    DB.users[username] = {
       name: username,
-      money: 4000,
+      password: password, // Almacenamiento directo seguro localmente
+      money: 3500,
       badges: 0,
       zone: MAP_ZONES[0].name,
       avatar: selectedAvatarUrl,
-      inventory: { pokeball: 8, potion: 4, revive: 1 },
+      inventory: { pokeball: 10, potion: 5, revive: 1 },
       team: [initialPk],
       friends: []
     };
-
-    DB.users[username] = newTrainer;
     saveDatabaseBackup();
     
     msgBox.classList.add('ok');
-    msgBox.textContent = '¡Entrenador creado! Iniciando sesión...';
-    setTimeout(() => { attemptLogin(username); }, 800);
+    msgBox.textContent = '¡Entrenador Creado con éxito!';
+    setTimeout(() => { proceedLogin(username); }, 800);
   }
 }
 
-function attemptLogin(username) {
-  if (DB.users[username]) {
-    currentUser = DB.users[username];
-    localStorage.setItem('poke_session', username);
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display = 'block';
-    renderAppUI();
-  } else {
-    localStorage.removeItem('poke_session');
-    document.getElementById('auth-screen').style.display = 'block';
-  }
+function attemptLoginDirect(username) {
+  if (DB.users[username]) { proceedLogin(username); }
+}
+
+function proceedLogin(username) {
+  currentUser = DB.users[username];
+  localStorage.setItem('poke_session', username);
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  renderAppUI();
 }
 
 function logout() {
@@ -515,11 +546,11 @@ function logout() {
 }
 
 function generatePokemonObject(id, level) {
-  const base = POKEDEX_MAP[id] || { name: 'Desconocido', types: ['normal'], moves: ['Placaje'] };
-  const maxHp = 22 + level * 3;
+  const base = POKEDEX_MAP[id] || { name: 'Desconocido', types: ['Normal'], moves: ['Placaje'] };
+  const maxHp = 20 + level * 3;
   return {
     id: id, name: base.name, level: level, hp: maxHp, maxHp: maxHp,
-    attack: 12 + level * 2, defense: 11 + level * 2, types: base.types, moves: base.moves,
+    attack: 10 + level * 2, defense: 9 + level * 2, types: base.types, moves: base.moves,
     sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`
   };
 }
@@ -527,39 +558,45 @@ function generatePokemonObject(id, level) {
 function renderAppUI() {
   if (!currentUser) return;
 
-  const profileContainer = document.getElementById('trainer-profile-container');
-  const userAvatar = currentUser.avatar || AVATAR_OPTIONS[0].url;
-  profileContainer.innerHTML = `
-    <div class="profile-avatar-frame">
-      <img src="${userAvatar}" alt="Avatar">
+  // Renderizar la columna izquierda (ID Card)
+  const profileCard = document.getElementById('trainer-profile-card');
+  profileCard.innerHTML = `
+    <div class="id-avatar-area">
+      <img src="${currentUser.avatar || AVATAR_OPTIONS[0].url}" alt="Avatar">
     </div>
-    <div class="profile-data-fields">
-      <p>👑 Entrenador: <span>${currentUser.name}</span></p>
-      <p>💰 Fortunas: <span>${currentUser.money} ₽</span></p>
-      <p>🏅 Medallas: <span>${currentUser.badges} / 8</span></p>
-      <p>📍 Región Actual: <span>${currentUser.zone || MAP_ZONES[0].name}</span></p>
+    <div class="id-details">
+      <p>ID CARD: <span>#${currentUser.name.toUpperCase()}</span></p>
+      <p>MONEDAS: <span>${currentUser.money} ₽</span></p>
+      <p>MEDALLAS: <span>${currentUser.badges} / 8</span></p>
+      <p>UBICACIÓN: <span>${currentUser.zone || 'Pueblo Paleta'}</span></p>
     </div>
   `;
 
+  // Renderizar la columna derecha (Rejilla de pokémons como en la foto)
   const teamContainer = document.getElementById('team-cards-container');
   teamContainer.innerHTML = '';
   currentUser.team.forEach((pk) => {
     const hpPct = Math.max(0, (pk.hp / pk.maxHp) * 100);
     const card = document.createElement('div');
-    card.className = 'pokemon-card';
+    card.className = 'pokemon-slot-card';
     card.innerHTML = `
       <img src="${pk.sprite}">
       <h3>${pk.name}</h3>
-      <div class="level-lbl">Nivel ${pk.level}</div>
-      <div class="bar"><div class="fill" style="width: ${hpPct}%; background: ${hpPct < 25 ? '#ff4444' : '#44ff88'}"></div></div>
-      <div class="hp-text">${pk.hp} / ${pk.maxHp} HP</div>
-      <div class="pk-stats">⚔️ ATK: ${pk.attack} | 🛡️ DEF: ${pk.defense}<br>✨ Tipo: ${pk.types.join('/')}</div>
+      <div class="lvl-tag">Niv. ${pk.level}</div>
+      <div class="hp-bar-container">
+        <div class="hp-bar-fill" style="width: ${hpPct}%; background: ${hpPct < 30 ? '#ff3333' : '#44ff88'}"></div>
+      </div>
+      <div class="hp-numeric">${pk.hp} / ${pk.maxHp} HP</div>
+      <div class="pokemon-stats-mini">
+        ⚔️ ATK: ${pk.attack} | 🛡️ DEF: ${pk.defense}<br>
+        ✨ Tipo: ${pk.types.join(' / ')}
+      </div>
     `;
     teamContainer.appendChild(card);
   });
 }
 
-// Ventanas y Gestión de Amigos (Modal Pop-up)
+// Ventanas Modales Emergentes (Sistema de Amigos Pop-up)
 function openFriendsModal() {
   renderFriendsList();
   document.getElementById('friends-modal').classList.add('open');
@@ -568,21 +605,19 @@ function openFriendsModal() {
 function renderFriendsList() {
   const container = document.getElementById('friends-list-container');
   if (!container) return;
-  
   if (!currentUser.friends || currentUser.friends.length === 0) {
-    container.innerHTML = `<p style="opacity:0.6; padding: 10px; font-size:18px; text-align:center;">Tu lista de amigos está vacía.</p>`;
+    container.innerHTML = `<p style="opacity:0.5; padding: 12px; text-align:center; font-size:18px;">No tienes amigos agregados.</p>`;
     return;
   }
-
   container.innerHTML = '';
   currentUser.friends.forEach(fName => {
     const row = document.createElement('div');
     row.className = 'friend-card';
     row.innerHTML = `
-      <span>🧑‍✈️ ${fName}</span>
-      <div class="friend-actions">
+      <span>🧑‍🚀 Entrenador: <strong>${fName}</strong></span>
+      <div>
         <button class="small-btn challenge" onclick="challengeFriend('${fName}')">Retar</button>
-        <button class="small-btn remove" onclick="removeFriendReal('${fName}')">Eliminar</button>
+        <button class="small-btn remove" onclick="removeFriendReal('${fName}')">X</button>
       </div>
     `;
     container.appendChild(row);
@@ -595,15 +630,14 @@ function addFriendReal() {
   if (!target || target === currentUser.name) return;
 
   if (!currentUser.friends) currentUser.friends = [];
-  
   if (DB.users[target]) {
     if (!currentUser.friends.includes(target)) {
       currentUser.friends.push(target);
       DB.users[currentUser.name] = currentUser;
       saveDatabaseBackup();
       renderFriendsList();
-    } else { alert('Ya es tu amigo.'); }
-  } else { alert('Entrenador no encontrado en la base de datos local.'); }
+    } else { alert('Ya se encuentra en tu lista.'); }
+  } else { alert('El entrenador de red solicitado no existe.'); }
   input.value = '';
 }
 
@@ -618,7 +652,7 @@ function openBagModal() {
   const body = document.getElementById('bag-modal-body');
   body.innerHTML = '';
   Object.keys(currentUser.inventory).forEach(key => {
-    body.innerHTML += `<div class="item-bag-card">💼 <strong>${key.toUpperCase()}</strong><br>Cant: ${currentUser.inventory[key]}</div>`;
+    body.innerHTML += `<div class="item-card-box">💼 <strong>${key.toUpperCase()}</strong><br>Cantidad: ${currentUser.inventory[key]}</div>`;
   });
   document.getElementById('bag-modal').classList.add('open');
 }
@@ -629,9 +663,9 @@ function openShopModal() {
   Object.keys(SHOP_ITEMS).forEach(key => {
     const item = SHOP_ITEMS[key];
     body.innerHTML += `
-      <div class="item-shop-card">
+      <div class="item-card-box">
         <strong>${item.name}</strong><br>${item.price} ₽<br>
-        <button class="small-btn" onclick="buyItemReal('${key}')" style="margin-top:5px; width:100%;">Comprar</button>
+        <button class="small-btn" onclick="buyItemReal('${key}')" style="margin-top:6px; width:100%;">Comprar</button>
       </div>`;
   });
   document.getElementById('shop-modal').classList.add('open');
@@ -646,7 +680,7 @@ function buyItemReal(key) {
     saveDatabaseBackup();
     renderAppUI();
     openShopModal();
-  } else { alert('Dinero insuficiente.'); }
+  } else { alert('Fondos insuficientes.'); }
 }
 
 function openMapModal() {
@@ -654,9 +688,9 @@ function openMapModal() {
   body.innerHTML = '';
   MAP_ZONES.forEach((zone, idx) => {
     body.innerHTML += `
-      <div class="item-shop-card" style="margin-bottom: 10px;">
+      <div class="item-card-box" style="margin-bottom: 8px;">
         <strong>📍 ${zone.name}</strong><br>
-        <button class="small-btn" onclick="travelToZone(${idx})" style="margin-top:6px;">Viajar Aquí</button>
+        <button class="small-btn" onclick="travelToZone(${idx})" style="margin-top:4px;">Navegar Ruta</button>
       </div>`;
   });
   document.getElementById('map-modal').classList.add('open');
@@ -673,21 +707,21 @@ function travelToZone(idx) {
 
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// Combates Interactivos
+// Sistemas de Combate Funcionales Internos
 function searchWildPokemon() {
   const activeZone = MAP_ZONES[activeZoneIndex];
   const randomPkId = activeZone.wild[Math.floor(Math.random() * activeZone.wild.length)];
-  currentEnemy = generatePokemonObject(randomPkId, Math.floor(Math.random() * 5) + 4);
-  initiateCombatUI(`¡Un ${currentEnemy.name} salvaje apareció!`);
+  currentEnemy = generatePokemonObject(randomPkId, Math.floor(Math.random() * 4) + 3);
+  initiateCombatUI(`¡Un ${currentEnemy.name} de nivel ${currentEnemy.level} saltó de las hierbas!`);
 }
 
 function challengeFriend(fName) {
   const friendObj = DB.users[fName];
   if (!friendObj || friendObj.team.length === 0) return;
   currentEnemy = JSON.parse(JSON.stringify(friendObj.team[0]));
-  currentEnemy.name = `Líder ${fName}`;
+  currentEnemy.name = `Socio de ${fName}`;
   closeModal('friends-modal');
-  initiateCombatUI(`¡Desafío de liga activado contra ${fName}!`);
+  initiateCombatUI(`¡Iniciando combate de práctica PvP contra ${fName}!`);
 }
 
 function initiateCombatUI(initialMsg) {
@@ -695,27 +729,27 @@ function initiateCombatUI(initialMsg) {
   const myActive = currentUser.team[0];
   
   windowCombat.innerHTML = `
-    <h2 style="text-align:center; border:none; margin-bottom:10px;">⚔️ ARENA DE BATALLA ⚔️</h2>
+    <h2 style="text-align:center; border:none; margin-bottom:12px;">⚔️ SIMULADOR DE COMBATE LIGA ⚔️</h2>
     <div class="combat-area">
       <div class="combat-side">
-        <h2>${myActive.name}</h2>
+        <h2>${myActive.name} (Tuyo)</h2>
         <img src="${myActive.sprite}">
-        <div class="bar"><div class="fill" id="b-my-fill" style="width:${(myActive.hp/myActive.maxHp)*100}%"></div></div>
+        <div class="hp-bar-container"><div class="hp-bar-fill" id="b-my-fill" style="width:${(myActive.hp/myActive.maxHp)*100}%"></div></div>
         <div id="b-my-text">${myActive.hp}/${myActive.maxHp} HP</div>
       </div>
       <div class="combat-side">
-        <h2>${currentEnemy.name}</h2>
+        <h2>${currentEnemy.name} (Rival)</h2>
         <img src="${currentEnemy.sprite}">
-        <div class="bar"><div class="fill" id="b-en-fill" style="width:${(currentEnemy.hp/currentEnemy.maxHp)*100}%"></div></div>
+        <div class="hp-bar-container"><div class="hp-bar-fill" id="b-en-fill" style="width:${(currentEnemy.hp/currentEnemy.maxHp)*100}%"></div></div>
         <div id="b-en-text">${currentEnemy.hp}/${currentEnemy.maxHp} HP</div>
       </div>
     </div>
     <div class="battle-log" id="battle-log-text"><p>${initialMsg}</p></div>
-    <div style="margin-top:15px; text-align:center;" id="battle-actions-box">
+    <div style="margin-top:14px; text-align:center;" id="battle-actions-box">
       ${myActive.moves.map(mName => `<button class="move-btn" onclick="executeTurn('${mName}')">${mName}</button>`).join('')}
       <br>
-      <button class="auth-btn" style="width:45%; background:#22aa44;" onclick="captureAttempt()">⚪ Capturar</button>
-      <button class="auth-btn" style="width:45%; background:#cc2222;" onclick="escapeCombat()">🏃 Huir</button>
+      <button class="auth-btn" style="width:44%; background:#108f33; margin-right:8px;" onclick="captureAttempt()">⚪ Tirar Bola</button>
+      <button class="auth-btn" style="width:44%; background:#aa1111;" onclick="escapeCombat()">🏃 Retirada</button>
     </div>
   `;
   windowCombat.style.display = 'block';
@@ -725,24 +759,24 @@ function executeTurn(moveName) {
   const myActive = currentUser.team[0];
   const log = document.getElementById('battle-log-text');
 
-  let dmgToEnemy = Math.floor((myActive.attack / currentEnemy.defense) * 12) + 1;
+  let dmgToEnemy = Math.floor((myActive.attack / currentEnemy.defense) * 10) + 1;
   currentEnemy.hp = Math.max(0, currentEnemy.hp - dmgToEnemy);
-  log.innerHTML = `<p>¡Tu Pokémon usó ${moveName} e infligió ${dmgToEnemy} daño!</p>`;
+  log.innerHTML = `<p>¡Tu pokémon asestó ${moveName} quitando ${dmgToEnemy} de daño!</p>`;
 
   if (currentEnemy.hp <= 0) {
-    log.innerHTML += `<p style="color:#44ff88;">¡Victoria! Ganaste 200 ₽ y tu Pokémon sube de nivel.</p>`;
-    currentUser.money += 200; myActive.level += 1; myActive.maxHp += 4; myActive.hp = myActive.maxHp;
+    log.innerHTML += `<p style="color:#44ff88;">¡Derrotaste al oponente! Ganas 300 ₽.</p>`;
+    currentUser.money += 300; myActive.level += 1; myActive.maxHp += 3; myActive.hp = myActive.maxHp;
     endCombatCleanly(); return;
   }
 
   setTimeout(() => {
-    let dmgToMe = Math.floor((currentEnemy.attack / myActive.defense) * 10) + 1;
+    let dmgToMe = Math.floor((currentEnemy.attack / myActive.defense) * 9) + 1;
     myActive.hp = Math.max(0, myActive.hp - dmgToMe);
-    log.innerHTML += `<p style="color:#ff5544;">El rival atacó causando ${dmgToMe} de daño.</p>`;
+    log.innerHTML += `<p style="color:#ff5544;">El rival contratacó causando ${dmgToMe} de daño.</p>`;
 
     if (myActive.hp <= 0) {
-      log.innerHTML += `<p style="color:#ff4444;">Tu Pokémon se debilitó.</p>`;
-      myActive.hp = Math.floor(myActive.maxHp * 0.2);
+      log.innerHTML += `<p style="color:#ff4444;">Tu criatura cayó debilitada. Corres al Centro de cura.</p>`;
+      myActive.hp = myActive.maxHp;
       endCombatCleanly(); return;
     }
 
@@ -754,26 +788,24 @@ function executeTurn(moveName) {
 }
 
 function captureAttempt() {
-  if (currentUser.inventory.pokeball <= 0) { alert('Sin Pokéballs.'); return; }
+  if (currentUser.inventory.pokeball <= 0) { alert('No tienes Pokéballs de repuesto.'); return; }
   currentUser.inventory.pokeball--;
   const log = document.getElementById('battle-log-text');
   
-  if (Math.random() < 0.6) {
-    log.innerHTML = `<p style="color:#44ff88;">¡Atrapado! El Pokémon se unió a tu equipo.</p>`;
+  if (Math.random() < 0.55) {
+    log.innerHTML = `<p style="color:#44ff88;">¡Genial! El espécimen salvaje fue capturado.</p>`;
     if (currentUser.team.length < 6) currentUser.team.push(currentEnemy);
     endCombatCleanly();
-  } else { log.innerHTML = `<p>Se escapó de la Pokéball...</p>`; }
+  } else { log.innerHTML = `<p>¡La bola falló! El Pokémon salvaje rompió la captura.</p>`; }
 }
 
-function escapeCombat() {
-  document.getElementById('combat-window').style.display = 'none';
-}
+function escapeCombat() { document.getElementById('combat-window').style.display = 'none'; }
 
 function endCombatCleanly() {
   DB.users[currentUser.name] = currentUser;
   saveDatabaseBackup();
   renderAppUI();
-  document.getElementById('battle-actions-box').innerHTML = `<button class="auth-btn" style="width:100%;" onclick="escapeCombat()">CERRAR ARENA</button>`;
+  document.getElementById('battle-actions-box').innerHTML = `<button class="auth-btn" style="width:100%;" onclick="escapeCombat()">VOLVER AL PANEL GENERAL</button>`;
 }
 </script>
 </body>
