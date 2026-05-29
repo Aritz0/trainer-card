@@ -539,7 +539,7 @@ const PC_BOXES = [
   // CAJA 4 – Gen 5 y más
   [
     { id:545,  name:"SCOLIPEDE"  },
-    { id:552,  name:"KROKOROK"   },
+    { id:553,  name:"KROOKODILE" },
     { id:563,  name:"COFAGRIGUS" },
     { id:612,  name:"HAXORUS",   shiny:true },
     { id:194,  name:"WOOPER"     },
@@ -695,6 +695,153 @@ function typeColor(t){
   return m[t]||'#555';
 }
 
+// ── BOLSA ────────────────────────────────────────────────
+const BAG_ITEMS = {
+  "POKÉ BALLS": [
+    { name:"Poké Ball",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",     qty:30 },
+    { name:"Super Ball",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",    qty:20 },
+    { name:"Ultra Ball",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png",    qty:15 },
+    { name:"Master Ball",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",   qty:1  },
+    { name:"Dusk Ball",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dusk-ball.png",     qty:10 },
+    { name:"Net Ball",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/net-ball.png",      qty:8  },
+    { name:"Dive Ball",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dive-ball.png",     qty:8  },
+    { name:"Timer Ball",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/timer-ball.png",    qty:6  },
+    { name:"Repeat Ball",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/repeat-ball.png",   qty:5  },
+    { name:"Quick Ball",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/quick-ball.png",    qty:5  },
+    { name:"Heal Ball",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/heal-ball.png",     qty:5  },
+    { name:"Luxury Ball",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/luxury-ball.png",   qty:3  },
+  ],
+  "POCIONES": [
+    { name:"Poción",       img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png",            qty:10 },
+    { name:"Super Poción", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/super-potion.png",      qty:8  },
+    { name:"Hiper Poción", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hyper-potion.png",      qty:5  },
+    { name:"Poción Máx.",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-potion.png",        qty:3  },
+    { name:"Cura Total",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-restore.png",      qty:2  },
+    { name:"Revivir",      img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/revive.png",            qty:5  },
+    { name:"Max Revivir",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-revive.png",        qty:1  },
+    { name:"Antídoto",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/antidote.png",          qty:6  },
+    { name:"Paralyze Heal",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/paralyze-heal.png",     qty:4  },
+    { name:"Burn Heal",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/burn-heal.png",         qty:4  },
+    { name:"Ice Heal",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ice-heal.png",          qty:3  },
+    { name:"Full Heal",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-heal.png",         qty:3  },
+  ],
+};
+
+let bagOpen = false;
+let bagTab  = "POKÉ BALLS";
+
+function buildBag(){
+  // Botón bolsa
+  const btn = document.createElement('button');
+  btn.id = 'bag-btn';
+  btn.innerHTML = `🎒 BOLSA`;
+  btn.style.cssText = `
+    position:fixed;bottom:24px;right:130px;z-index:200;
+    background:#0d1244;border:3px solid #f5c842;border-radius:6px;
+    color:#f5c842;font-family:'Press Start 2P',monospace;font-size:9px;
+    padding:10px 16px;cursor:pointer;
+    box-shadow:3px 3px 0 rgba(0,0,0,.5);
+    transition:background .15s,transform .15s;
+    letter-spacing:1px;
+  `;
+  btn.onmouseover = () => btn.style.background='#1a2fa8';
+  btn.onmouseout  = () => btn.style.background='#0d1244';
+  btn.onclick = toggleBag;
+  document.body.appendChild(btn);
+
+  // Ventana bolsa
+  const win = document.createElement('div');
+  win.id = 'bag-window';
+  win.style.cssText = `
+    position:fixed;bottom:76px;right:130px;z-index:199;
+    width:360px;
+    background:#0a0e2a;border:4px solid #f5c842;border-radius:8px;
+    box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.7);
+    font-family:'Press Start 2P',monospace;
+    display:none;overflow:hidden;
+  `;
+  win.innerHTML = `
+    <div style="background:#060e33;border-bottom:3px solid #f5c842;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="color:#f5c842;font-size:8px;letter-spacing:1px;">🎒 BOLSA</span>
+      <button onclick="toggleBag()" style="background:#cc2222;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:7px;padding:4px 8px;border-radius:3px;cursor:pointer;">✕</button>
+    </div>
+    <div id="bag-tabs" style="display:flex;border-bottom:2px solid #1a2a66;background:#080e28;"></div>
+    <div id="bag-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 12px;background:#0a0e2a;max-height:220px;overflow-y:auto;"></div>
+    <div id="bag-info" style="border-top:2px solid #1a2a66;padding:7px 12px;min-height:32px;background:#080e28;"></div>
+  `;
+  document.body.appendChild(win);
+  buildBagTabs();
+  renderBag();
+}
+
+function buildBagTabs(){
+  const tabs = document.getElementById('bag-tabs');
+  Object.keys(BAG_ITEMS).forEach(tab => {
+    const btn = document.createElement('button');
+    btn.id = `bagtab-${tab}`;
+    btn.textContent = tab;
+    btn.style.cssText = `
+      flex:1;padding:7px 4px;font-family:'Press Start 2P',monospace;font-size:5.5px;
+      border:none;cursor:pointer;letter-spacing:.5px;
+      background:${tab===bagTab?'#1a2fa8':'transparent'};
+      color:${tab===bagTab?'#f5c842':'#8899ff'};
+      border-bottom:${tab===bagTab?'3px solid #f5c842':'3px solid transparent'};
+      transition:background .15s;
+    `;
+    btn.onclick = () => { bagTab=tab; buildBagTabs(); renderBag(); };
+    tabs.appendChild(btn);
+  });
+}
+
+function renderBag(){
+  const grid = document.getElementById('bag-grid');
+  grid.innerHTML = '';
+  BAG_ITEMS[bagTab].forEach(item => {
+    const slot = document.createElement('div');
+    slot.style.cssText = `
+      background:#0d1744;border:2px solid #1e44aa;border-radius:5px;
+      display:flex;flex-direction:column;align-items:center;
+      padding:6px 4px;cursor:pointer;position:relative;
+      transition:border-color .15s,transform .15s;
+    `;
+    slot.onmouseover = () => {
+      slot.style.borderColor='#f5c842';
+      slot.style.transform='translateY(-2px)';
+      document.getElementById('bag-info').innerHTML =
+        `<span style="color:#f5c842;font-size:6.5px;">${item.name}</span>
+         <span style="color:#aabfff;font-size:6px;margin-left:8px;">x${item.qty}</span>`;
+    };
+    slot.onmouseout = () => {
+      slot.style.borderColor='#1e44aa';
+      slot.style.transform='';
+      document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un objeto</span>`;
+    };
+
+    const img = document.createElement('img');
+    img.src = item.img;
+    img.style.cssText = 'width:32px;height:32px;object-fit:contain;image-rendering:pixelated;';
+
+    const qty = document.createElement('span');
+    qty.textContent = `x${item.qty}`;
+    qty.style.cssText = 'color:#f5c842;font-size:5px;margin-top:3px;';
+
+    const nm = document.createElement('span');
+    nm.textContent = item.name;
+    nm.style.cssText = 'color:#aabbff;font-size:4px;margin-top:2px;text-align:center;line-height:1.3;';
+
+    slot.appendChild(img);
+    slot.appendChild(qty);
+    slot.appendChild(nm);
+    grid.appendChild(slot);
+  });
+  document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un objeto</span>`;
+}
+
+function toggleBag(){
+  bagOpen = !bagOpen;
+  document.getElementById('bag-window').style.display = bagOpen ? 'block' : 'none';
+}
+
 // ── INIT ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('team-grid');
@@ -702,6 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateClock();
   setInterval(updateClock, 1000);
   buildPC();
+  buildBag();
 });
 </script>
 
