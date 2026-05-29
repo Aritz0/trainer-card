@@ -12,113 +12,186 @@
   --pixel:'Press Start 2P',monospace;--vt:'VT323',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+
 body{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
   background:var(--green);
   background-image:
     repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 2px,transparent 2px 28px),
     repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 28px);
-  font-family:var(--pixel);padding:20px;
+  font-family:var(--pixel);
+  padding:16px;
 }
+
+/* ── CARD ocupa todo el ancho disponible hasta 960px ── */
 .card{
-  width:480px;
+  width:100%;
+  max-width:960px;
   background:var(--blue);
-  border:4px solid var(--gold);border-radius:8px;
-  box-shadow:0 0 0 2px #000,8px 8px 0 rgba(0,0,0,.5);
+  border:4px solid var(--gold);
+  border-radius:10px;
+  box-shadow:0 0 0 2px #000,10px 10px 0 rgba(0,0,0,.5);
   overflow:hidden;
   animation:cardIn .5s cubic-bezier(.2,.8,.3,1.2) both;
 }
-@keyframes cardIn{from{transform:scale(.85) translateY(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes cardIn{from{transform:scale(.9) translateY(24px);opacity:0}to{transform:none;opacity:1}}
+
+/* ── HEADER ── */
 .card-header{
   background:var(--navy);border-bottom:3px solid var(--gold);
   display:flex;justify-content:space-between;align-items:center;
-  padding:9px 14px;
+  padding:12px 20px;
 }
-.card-header .lbl{color:var(--gold);font-size:7.5px;letter-spacing:1.5px}
-.card-header .num{color:#8899ff;font-size:7px}
-.card-body{display:grid;grid-template-columns:160px 1fr}
+.card-header .lbl{color:var(--gold);font-size:clamp(7px,1.2vw,13px);letter-spacing:2px}
+.card-header .num{color:#8899ff;font-size:clamp(6px,1vw,11px)}
+
+/* ── BODY: columna izquierda + derecha ── */
+.card-body{
+  display:grid;
+  grid-template-columns:clamp(160px,25%,280px) 1fr;
+}
+
+/* ── LEFT ── */
 .left{
   background:linear-gradient(160deg,#1833bb,#0a1266);
   border-right:3px solid rgba(255,255,255,.12);
   display:flex;flex-direction:column;align-items:center;
-  padding:12px 8px 10px;gap:10px;
+  padding:18px 12px 14px;gap:14px;
 }
 .avatar-frame{
-  width:128px;height:128px;
-  border:3px solid var(--gold);border-radius:5px;
+  width:clamp(120px,18vw,220px);
+  height:clamp(120px,18vw,220px);
+  border:3px solid var(--gold);border-radius:6px;
   background:#0e1a77;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
 }
-/* Si metes una <img> dentro de .avatar-frame, se ajusta sola */
 .avatar-frame img{width:100%;height:100%;object-fit:contain;object-position:center}
 .avatar-frame svg{width:100%;height:100%}
+
 .stats{width:100%}
 .stat-row{
   display:flex;justify-content:space-between;align-items:center;
   border-bottom:1px solid rgba(255,255,255,.12);
-  padding:4px 2px;font-size:5.5px;
+  padding:6px 3px;
+  font-size:clamp(5px,0.9vw,9px);
 }
 .stat-row .k{color:#99aadd}
 .stat-row .v{color:#fff}
 .stat-row .v.gold{color:var(--gold)}
-.right{padding:11px 10px 12px;display:flex;flex-direction:column;gap:9px}
-.team-lbl{
-  color:var(--gold);font-size:6.5px;letter-spacing:1px;
-  display:flex;align-items:center;gap:5px;
+
+/* ── RIGHT ── */
+.right{
+  padding:16px 14px 18px;
+  display:flex;flex-direction:column;gap:12px;
 }
-.team-lbl::before{content:'▶';color:#fff;font-size:5px}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.team-lbl{
+  color:var(--gold);
+  font-size:clamp(6px,1vw,11px);
+  letter-spacing:1px;
+  display:flex;align-items:center;gap:6px;
+}
+.team-lbl::before{content:'▶';color:#fff;font-size:clamp(5px,.8vw,9px)}
+
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  flex:1;
+}
+
+/* ── POKEMON SLOT ── */
 .slot{
-  background:#0a1d44;border:2px solid #1e44aa;border-radius:4px;
+  background:#0a1d44;border:2px solid #1e44aa;border-radius:6px;
   display:flex;flex-direction:column;align-items:center;
-  padding:6px 4px 5px;cursor:pointer;position:relative;
+  padding:10px 6px 8px;cursor:pointer;position:relative;
   transition:border-color .15s,transform .15s,background .15s;
 }
-.slot:hover{border-color:var(--gold);background:#142a66;transform:translateY(-4px)}
+.slot:hover{border-color:var(--gold);background:#142a66;transform:translateY(-5px)}
+
 .slot img{
-  width:76px;height:76px;object-fit:contain;
+  width:clamp(60px,9vw,110px);
+  height:clamp(60px,9vw,110px);
+  object-fit:contain;
   image-rendering:pixelated;display:block;
-  filter:drop-shadow(0 2px 5px rgba(0,0,0,.7));
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.7));
 }
-.slot .pname{color:#cce0ff;font-size:4.8px;text-align:center;margin-top:3px;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
-.slot .plv{color:#88aadd;font-size:4.2px;margin-top:1px}
-.types{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap;justify-content:center}
-.tb{font-size:4px;padding:1px 3px;border-radius:2px;color:#fff;text-transform:uppercase;letter-spacing:.3px}
+.slot .pname{
+  color:#cce0ff;
+  font-size:clamp(5px,.8vw,8px);
+  text-align:center;margin-top:5px;letter-spacing:.4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;
+}
+.slot .plv{color:#88aadd;font-size:clamp(4px,.65vw,7px);margin-top:2px}
+
+.types{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;justify-content:center}
+.tb{
+  font-size:clamp(4px,.65vw,7px);
+  padding:2px 5px;border-radius:3px;color:#fff;
+  text-transform:uppercase;letter-spacing:.3px;
+}
 .t-water{background:#3a7eee}.t-grass{background:#3da820}.t-ground{background:#b07a30}
 .t-fire{background:#e85010}.t-ice{background:#3dbcbc}.t-electric{background:#c8a800}
 .t-bug{background:#7a9a10}.t-rock{background:#887832}.t-ghost{background:#5c3a88}
 .t-poison{background:#882288}.t-steel{background:#7a8fa0}.t-fairy{background:#cc5599}
 .t-dark{background:#3a3a44}.t-flying{background:#6688cc}.t-fighting{background:#8a3010}
 .t-psychic{background:#cc2255}.t-dragon{background:#4418d8}.t-normal{background:#7a7a66}
+
+/* Tooltip */
 .tip{
-  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
-  background:#05051a;color:#dde8ff;font-family:var(--vt);font-size:14px;
-  padding:7px 10px;border-radius:3px;border:1px solid var(--gold);
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:#05051a;color:#dde8ff;font-family:var(--vt);font-size:15px;
+  padding:8px 12px;border-radius:4px;border:1px solid var(--gold);
   white-space:nowrap;z-index:99;pointer-events:none;
   opacity:0;transition:opacity .15s;text-align:center;line-height:1.6;
 }
 .slot:hover .tip{opacity:1}
+
+/* ── FOOTER ── */
 .card-footer{
   background:var(--navy);border-top:3px solid var(--gold);
-  padding:7px 14px;display:flex;justify-content:space-between;align-items:center;
+  padding:9px 20px;
+  display:flex;justify-content:space-between;align-items:center;
 }
-.card-footer .ftag{color:#8899ff;font-size:5.5px;letter-spacing:.5px}
-.card-footer .fid{color:var(--gold);font-size:5.5px}
+.card-footer .ftag{color:#8899ff;font-size:clamp(5px,.8vw,8px);letter-spacing:.5px}
+.card-footer .fid{color:var(--gold);font-size:clamp(5px,.8vw,8px)}
+
+/* ── RESPONSIVE móvil ── */
+@media(max-width:540px){
+  .card-body{grid-template-columns:1fr}
+  .left{border-right:none;border-bottom:3px solid rgba(255,255,255,.12);flex-direction:row;flex-wrap:wrap;justify-content:center;gap:12px;padding:14px}
+  .avatar-frame{width:100px;height:100px}
+  .stats{min-width:160px;flex:1}
+  .team-grid{grid-template-columns:repeat(3,1fr)}
+  .slot img{width:56px;height:56px}
+}
 </style>
 </head>
 <body>
 <div class="card">
+
   <div class="card-header">
     <span class="lbl">✦ TRAINER CARD</span>
     <span class="num">Nº 001</span>
   </div>
+
   <div class="card-body">
 
     <!-- LEFT -->
     <div class="left">
-
       <div class="avatar-frame">
+        <!--
+        =====================================================
+          AVATAR DEL ENTRENADOR
+          Borra el <svg> de aquí abajo y pon tu imagen así:
             <img src="ghetsis-pokemon.gif" alt="Aritz">
+          o con URL:
+            <img src="https://ejemplo.com/foto.jpg" alt="Aritz">
+        =====================================================
+        -->
+        <img src="ghetsis-pokemon.gif" alt="Aritz">
+        <!-- FIN AVATAR -->
       </div>
 
       <div class="stats">
@@ -138,93 +211,71 @@ body{
     </div>
 
   </div>
+
   <div class="card-footer">
     <span class="ftag">POKÉMON · BASAURI</span>
     <span class="fid">★ ARITZ ★</span>
   </div>
+
 </div>
 
 <script>
 // ── EQUIPO ──────────────────────────────────────────────
 const TEAM = [
-  { name:"SWAMPERT",        id:260,  types:["water","ground"],  level:50 },
-  { name:"ROSERADE",        id:407,  types:["grass","poison"],  level:50 },
-  { name:"GALVANTULA",      id:596,  types:["bug","electric"],  level:50 },
-  { name:"TINKATON",        id:959,  types:["fairy","steel"],   level:50 },
-  // Chandelure – la Mega no tiene sprite en PokeAPI, se usa el normal
-  { name:"MEGA CHANDELURE", id:609,  types:["ghost","fire"],    level:50 },
-  { name:"MALAMAR",         id:687,  types:["dark","psychic"],  level:50 },
+  { name:"SWAMPERT",        id:260, types:["water","ground"],  level:50 },
+  { name:"ROSERADE",        id:407, types:["grass","poison"],  level:50 },
+  { name:"GALVANTULA",      id:596, types:["bug","electric"],  level:50 },
+  { name:"TINKATON",        id:959, types:["fairy","steel"],   level:50 },
+  // Chandelure – Mega no tiene sprite en PokeAPI, se usa el normal
+  { name:"MEGA CHANDELURE", id:609, types:["ghost","fire"],    level:50 },
+  { name:"MALAMAR",         id:687, types:["dark","psychic"],  level:50 },
 ];
 
-// ── RENDERIZAR SLOTS DE POKÉMON ─────────────────────────
+// ── SLOTS ───────────────────────────────────────────────
 function buildSlot(p){
   const div = document.createElement('div');
   div.className = 'slot';
 
-  // Tooltip al hover
   const tip = document.createElement('div');
   tip.className = 'tip';
   tip.innerHTML = `${p.name}<br>${p.types.map(t=>t.toUpperCase()).join(' / ')}<br>Nv.${p.level}`;
   div.appendChild(tip);
 
-  // Imagen – Home sprite (fondo transparente, mismo estilo para todos)
   const img = document.createElement('img');
-  img.alt   = p.name;
-  img.width = 76;
-  img.height= 76;
-  img.src   = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${p.id}.png`;
-  // Fallback: sprite clásico si Home no existe
-  img.onerror = () => {
-    img.onerror = null;
-    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`;
-  };
+  img.alt = p.name;
+  // Sprite pixel art estilo gen V (Black/White) – mismo estilo para todos
+  img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${p.id}.png`;
+  img.onerror = () => { img.onerror=null; img.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`; };
   div.appendChild(img);
 
-  // Nombre
-  const nm = document.createElement('span');
-  nm.className = 'pname';
-  nm.textContent = p.name;
-  div.appendChild(nm);
-
-  // Nivel
-  const lv = document.createElement('span');
-  lv.className = 'plv';
-  lv.textContent = `Nv.${p.level}`;
-  div.appendChild(lv);
-
-  // Tipos
-  const ty = document.createElement('div');
-  ty.className = 'types';
+  const nm = document.createElement('span'); nm.className='pname'; nm.textContent=p.name; div.appendChild(nm);
+  const lv = document.createElement('span'); lv.className='plv';   lv.textContent=`Nv.${p.level}`; div.appendChild(lv);
+  const ty = document.createElement('div');  ty.className='types';
   ty.innerHTML = p.types.map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
   div.appendChild(ty);
 
   return div;
 }
 
-// ── RELOJ EN TIEMPO REAL ────────────────────────────────
+// ── RELOJ ───────────────────────────────────────────────
 const DIAS = ['DOM','LUN','MAR','MIE','JUE','VIE','SÁB'];
-
 function updateClock(){
-  const now  = new Date();
-  const h    = String(now.getHours()).padStart(2,'0');
-  const m    = String(now.getMinutes()).padStart(2,'0');
-  const s    = String(now.getSeconds()).padStart(2,'0');
-  const dia  = DIAS[now.getDay()];
-  const dd   = String(now.getDate()).padStart(2,'0');
-  const mm   = String(now.getMonth()+1).padStart(2,'0');
-  const yyyy = now.getFullYear();
-
+  const now = new Date();
+  const h   = String(now.getHours()).padStart(2,'0');
+  const m   = String(now.getMinutes()).padStart(2,'0');
+  const s   = String(now.getSeconds()).padStart(2,'0');
+  const dia = DIAS[now.getDay()];
+  const dd  = String(now.getDate()).padStart(2,'0');
+  const mm  = String(now.getMonth()+1).padStart(2,'0');
+  const yyyy= now.getFullYear();
   document.getElementById('st-hours').textContent = `${h}:${m}:${s}`;
   document.getElementById('st-day').textContent   = `${dia} ${dd}/${mm}/${yyyy}`;
 }
 
 // ── INIT ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Renderizar equipo
   const grid = document.getElementById('team-grid');
   TEAM.forEach(p => grid.appendChild(buildSlot(p)));
-
-  // Reloj actualizado cada segundo
   updateClock();
   setInterval(updateClock, 1000);
 });
