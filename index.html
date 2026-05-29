@@ -330,6 +330,22 @@ body{
       <div class="minfo">
         <div class="mname" id="modal-name"></div>
         <div class="mtypes" id="modal-types"></div>
+        <!-- HP en el modal -->
+        <div style="margin-top:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span id="modal-hp-text" style="color:#aac8ff;font-family:'Press Start 2P',monospace;font-size:6px;"></span>
+          </div>
+          <div style="width:100%;height:8px;background:#0a0a2a;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,.2);">
+            <div id="modal-hp-bar" style="height:100%;border-radius:4px;transition:width .4s,background .4s;"></div>
+          </div>
+        </div>
+        <!-- Botones de daño para simular combate -->
+        <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+          <button onclick="dealDamage(10)"  style="background:#cc2222;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border-radius:3px;cursor:pointer;">-10</button>
+          <button onclick="dealDamage(25)"  style="background:#992222;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border-radius:3px;cursor:pointer;">-25</button>
+          <button onclick="dealDamage(50)"  style="background:#771111;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border-radius:3px;cursor:pointer;">-50</button>
+          <button onclick="dealDamage(999)" style="background:#440000;border:none;color:#fff;font-family:'Press Start 2P',monospace;font-size:5px;padding:4px 7px;border-radius:3px;cursor:pointer;">KO</button>
+        </div>
       </div>
       <button class="modal-close" id="modal-close">✕ CERRAR</button>
     </div>
@@ -428,46 +444,52 @@ const MOVE_API = {
 
 let TEAM = [
   {
-    name:"SWAMPERT", types:["water","ground"], level:50,
+    name:"SWAMPERT", types:["water","ground"], level:50, id:260,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/260.gif",
     fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/260.png",
     moves:["Cascada","Puño Hielo","Terremoto","Relajo"],
-    ability:"Humedad", item:"Chaleco Asalto"
+    ability:"Humedad", item:"Chaleco Asalto",
+    maxHp:160, hp:160,
   },
   {
-    name:"ROSERADE", types:["grass","poison"], level:50,
+    name:"ROSERADE", types:["grass","poison"], level:50, id:407,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/407.gif",
     fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/407.png",
     moves:["Drenadoras","Tóxico","Protección","Energibola"],
-    ability:"Punto Tóxico", item:"Lodo Negro"
+    ability:"Punto Tóxico", item:"Lodo Negro",
+    maxHp:110, hp:110,
   },
   {
-    name:"GALVANTULA", types:["bug","electric"], level:50,
+    name:"GALVANTULA", types:["bug","electric"], level:50, id:596,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/596.gif",
     fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/596.png",
     moves:["Trueno","Red Viscosa","Zumbido","Electrotela"],
-    ability:"Ojo Compuesto", item:"Gafas Elección"
+    ability:"Ojo Compuesto", item:"Gafas Elección",
+    maxHp:120, hp:120,
   },
   {
-    name:"TINKATON", types:["fairy","steel"], level:50,
+    name:"TINKATON", types:["fairy","steel"], level:50, id:959,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png",
     fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/959.png",
     moves:["Martillo Coloso","Carantoña","Danza Espada","Sorpresa"],
-    ability:"Rompemoldes", item:"Periscopio"
+    ability:"Rompemoldes", item:"Periscopio",
+    maxHp:140, hp:140,
   },
   {
-    name:"CHANDELURE✨", types:["ghost","fire"], level:50,
+    name:"CHANDELURE✨", types:["ghost","fire"], level:50, id:609,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/609.gif",
     fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/609.png",
     moves:["Fuego Fatuo","Lanzallamas","Bola Sombra","Paz Mental"],
-    ability:"Absorbe Fuego", item:"Hechizo"
+    ability:"Absorbe Fuego", item:"Hechizo",
+    maxHp:105, hp:105,
   },
   {
-    name:"MALAMAR", types:["dark","psychic"], level:50,
+    name:"MALAMAR", types:["dark","psychic"], level:50, id:687,
     src:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png",
     fallback:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/687.png",
     moves:["A Bocajarro","Psicocorte","Desarme","Avalancha"],
-    ability:"Respondón", item:"Restos"
+    ability:"Respondón", item:"Restos",
+    maxHp:130, hp:130,
   },
 ];
 
@@ -491,28 +513,69 @@ async function fetchMove(nameEs){
 
 // ── MODAL ────────────────────────────────────────────────
 const overlay = document.getElementById('modal-overlay');
+let currentModalPoke = null;
+
+function updateModalHp(){
+  const p = currentModalPoke;
+  if(!p || !p.maxHp) return;
+  const pct = Math.max(0, p.hp / p.maxHp * 100);
+  document.getElementById('modal-hp-bar').style.width = pct + '%';
+  document.getElementById('modal-hp-bar').style.background = hpColor(p);
+  document.getElementById('modal-hp-text').textContent =
+    p.hp <= 0 ? '¡DEBILITADO!' : `PS: ${p.hp} / ${p.maxHp}`;
+}
+
+function dealDamage(dmg){
+  const p = currentModalPoke;
+  if(!p || !p.maxHp) return;
+  if(p.hp <= 0) return; // ya fainted
+  p.hp = Math.max(0, p.hp - dmg);
+  updateModalHp();
+  refreshTeam();
+}
+
+// Heal a pokemon by a set amount (0 = full heal)
+function healPoke(p, amount, revive=false){
+  if(!p || !p.maxHp) return false;
+  if(p.hp <= 0 && !revive) return false; // fainted, need revive
+  if(p.hp >= p.maxHp) return false; // already full
+  if(amount === 0) p.hp = p.maxHp;
+  else p.hp = Math.min(p.maxHp, p.hp + amount);
+  return true;
+}
+
+function revivePoke(p, halfHp=true){
+  if(!p || !p.maxHp) return false;
+  if(p.hp > 0) return false; // not fainted
+  p.hp = halfHp ? Math.floor(p.maxHp / 2) : p.maxHp;
+  return true;
+}
 
 async function openModal(p){
+  currentModalPoke = p;
   document.getElementById('modal-sprite').src = p.src;
   document.getElementById('modal-name').textContent = `${p.name}  Nv.${p.level}`;
   document.getElementById('modal-types').innerHTML  = p.types.map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
-  document.getElementById('modal-ability').textContent = p.ability;
-  document.getElementById('modal-item').textContent    = p.item;
+  document.getElementById('modal-ability').textContent = p.ability || '—';
+  document.getElementById('modal-item').textContent    = p.item || '—';
+  updateModalHp();
   overlay.classList.add('open');
 
-  // Mostrar ataques con skeleton mientras carga
   const grid = document.getElementById('modal-moves');
+  if(!p.moves || !p.moves.length){
+    grid.innerHTML = '<span style="color:#555;font-size:6px;">Sin movimientos</span>';
+    return;
+  }
   grid.innerHTML = p.moves.map(m=>`
-    <div class="move-pill" id="mp-${m.replace(/\s/g,'_')}">
+    <div class="move-pill" id="mp-${m.replace(/[\s']/g,'_')}">
       <div class="move-type-badge t-normal">···</div>
       <span class="move-name">${m}</span>
       <span class="move-pp">PP: …</span>
     </div>`).join('');
 
-  // Cargar PP y tipo desde la API en paralelo
   await Promise.all(p.moves.map(async m => {
     const info = await fetchMove(m);
-    const el   = document.getElementById(`mp-${m.replace(/\s/g,'_')}`);
+    const el   = document.getElementById(`mp-${m.replace(/[\s']/g,'_')}`);
     if(!el) return;
     el.querySelector('.move-type-badge').className = `move-type-badge t-${info.type}`;
     el.querySelector('.move-type-badge').textContent = info.type.toUpperCase();
@@ -524,15 +587,32 @@ document.getElementById('modal-close').addEventListener('click', ()=> overlay.cl
 overlay.addEventListener('click', e => { if(e.target===overlay) overlay.classList.remove('open'); });
 document.addEventListener('keydown', e => { if(e.key==='Escape') overlay.classList.remove('open'); });
 
+// ── HP helpers ───────────────────────────────────────────
+function hpColor(p){
+  const pct = p.hp / p.maxHp;
+  if(pct > .5) return '#44dd44';
+  if(pct > .2) return '#f5c842';
+  return '#cc2222';
+}
+
 // ── SLOTS ────────────────────────────────────────────────
 function buildSlot(p){
+  const fainted = p.hp <= 0;
   const div = document.createElement('div');
-  div.className = 'slot';
+  div.className = 'slot' + (fainted ? ' fainted' : '');
+
+  // Fainted overlay
+  if(fainted){
+    const fl = document.createElement('div');
+    fl.className = 'fainted-label';
+    fl.textContent = 'FIN';
+    div.appendChild(fl);
+  }
 
   const img = document.createElement('img');
   img.alt = p.name || '?';
   img.style.cssText = 'width:clamp(80px,11vw,140px);height:clamp(80px,11vw,140px);object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.7));';
-  // Intentar src animado, luego fallback
+  if(fainted) img.style.filter = 'grayscale(1) brightness(.55)';
   img.src = p.src || '';
   img.onerror = () => {
     img.onerror = null;
@@ -555,8 +635,22 @@ function buildSlot(p){
   ty.innerHTML = (p.types||['normal']).map(t=>`<span class="tb t-${t}">${t}</span>`).join('');
   div.appendChild(ty);
 
+  // HP bar (solo si tiene maxHp)
+  if(p.maxHp){
+    const pct = Math.max(0, p.hp / p.maxHp * 100);
+    const wrap = document.createElement('div'); wrap.className='hp-bar-wrap';
+    const bar  = document.createElement('div'); bar.className='hp-bar';
+    bar.style.width = pct + '%';
+    bar.style.background = hpColor(p);
+    wrap.appendChild(bar);
+    div.appendChild(wrap);
+    const ht = document.createElement('span'); ht.className='hp-text';
+    ht.textContent = fainted ? '¡DEBILITADO!' : `PS: ${p.hp}/${p.maxHp}`;
+    div.appendChild(ht);
+  }
+
   div.addEventListener('click', () => {
-    if(swapMode) return; // handled by slot.onclick in swap mode
+    if(swapMode) return;
     openModal(p);
   });
   return div;
@@ -856,18 +950,19 @@ const BAG_ITEMS = {
     { name:"Luxury Ball",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/luxury-ball.png",   qty:3  },
   ],
   "POCIONES": [
-    { name:"Poción",       img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png",            qty:10 },
-    { name:"Super Poción", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/super-potion.png",      qty:8  },
-    { name:"Hiper Poción", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hyper-potion.png",      qty:5  },
-    { name:"Poción Máx.",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-potion.png",        qty:3  },
-    { name:"Cura Total",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-restore.png",      qty:2  },
-    { name:"Revivir",      img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/revive.png",            qty:5  },
-    { name:"Max Revivir",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-revive.png",        qty:1  },
-    { name:"Antídoto",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/antidote.png",          qty:6  },
-    { name:"Paralyze Heal",img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/paralyze-heal.png",     qty:4  },
-    { name:"Burn Heal",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/burn-heal.png",         qty:4  },
-    { name:"Ice Heal",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ice-heal.png",          qty:3  },
-    { name:"Full Heal",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-heal.png",         qty:3  },
+    // heal: cantidad de PS restaurados. 0 = cura total. revive:true = revivir
+    { name:"Poción",        img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png",          qty:999, heal:20   },
+    { name:"Super Poción",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/super-potion.png",    qty:999, heal:50   },
+    { name:"Hiper Poción",  img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hyper-potion.png",    qty:999, heal:120  },
+    { name:"Poción Máx.",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-potion.png",      qty:999, heal:0    },
+    { name:"Cura Total",    img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-restore.png",    qty:999, heal:0    },
+    { name:"Revivir",       img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/revive.png",          qty:999, revive:true, heal:0, halfHp:true },
+    { name:"Max Revivir",   img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-revive.png",      qty:999, revive:true, heal:0, halfHp:false },
+    { name:"Antídoto",      img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/antidote.png",        qty:999 },
+    { name:"Paralyze Heal", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/paralyze-heal.png",   qty:999 },
+    { name:"Burn Heal",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/burn-heal.png",       qty:999 },
+    { name:"Ice Heal",      img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ice-heal.png",        qty:999 },
+    { name:"Full Heal",     img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-heal.png",       qty:999 },
   ],
 };
 
@@ -942,40 +1037,106 @@ function renderBag(){
       padding:8px 4px 6px;cursor:pointer;
       transition:border-color .15s,transform .15s;
     `;
+    const canUse = item.heal !== undefined || item.revive;
+    if(canUse) slot.style.borderColor = '#2266cc';
+
     slot.onmouseover = () => {
       slot.style.borderColor='#f5c842';
       slot.style.transform='translateY(-3px)';
+      const desc = item.revive
+        ? (item.halfHp ? 'Revive con PS/2' : 'Revive con PS máximos')
+        : item.heal !== undefined
+          ? (item.heal===0 ? 'Cura todos los PS' : `Cura ${item.heal} PS`)
+          : 'Sin efecto de curación';
       document.getElementById('bag-info').innerHTML = `
         <div style="display:flex;align-items:center;gap:8px;">
           <img src="${item.img}" style="width:24px;height:24px;image-rendering:pixelated;">
           <span style="color:#f5c842;font-size:7px;">${item.name}</span>
-          <span style="color:#aabfff;font-size:7px;">x${item.qty}</span>
+          <span style="color:#aabfff;font-size:6px;">∞</span>
+          <span style="color:#aaffaa;font-size:5.5px;">${desc}</span>
         </div>`;
     };
     slot.onmouseout = () => {
-      slot.style.borderColor='#1e44aa';
+      slot.style.borderColor = canUse ? '#2266cc' : '#1e44aa';
       slot.style.transform='';
-      document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un objeto</span>`;
+      document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Haz click en una poción para usarla en un Pokémon</span>`;
     };
+
+    // Click: mostrar selector de pokemon del equipo
+    if(canUse){
+      slot.addEventListener('click', () => showTeamPicker(item));
+    }
 
     const img = document.createElement('img');
     img.src = item.img;
     img.style.cssText = 'width:48px;height:48px;object-fit:contain;image-rendering:pixelated;';
-
     const qty = document.createElement('span');
-    qty.textContent = `x${item.qty}`;
+    qty.textContent = '∞';
     qty.style.cssText = 'color:#f5c842;font-size:5.5px;margin-top:4px;';
-
     const nm = document.createElement('span');
     nm.textContent = item.name;
     nm.style.cssText = 'color:#aabbff;font-size:4.5px;margin-top:2px;text-align:center;line-height:1.4;';
-
-    slot.appendChild(img);
-    slot.appendChild(qty);
-    slot.appendChild(nm);
+    slot.appendChild(img); slot.appendChild(qty); slot.appendChild(nm);
     grid.appendChild(slot);
   });
-  document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Pasa el ratón sobre un objeto</span>`;
+  document.getElementById('bag-info').innerHTML = `<span style="color:#444;font-size:6px;">Haz click en una poción para usarla en un Pokémon</span>`;
+}
+
+// Mostrar selector del equipo dentro del panel de la bolsa
+function showTeamPicker(item){
+  const grid = document.getElementById('bag-grid');
+  grid.innerHTML = '';
+  document.getElementById('bag-info').innerHTML =
+    `<div style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="color:#f5c842;font-size:5.5px;">¿A quién usar <strong>${item.name}</strong>?</span>
+      <button onclick="renderBag()" style="background:#333;border:none;color:#aaa;font-family:'Press Start 2P',monospace;font-size:5px;padding:3px 6px;border-radius:3px;cursor:pointer;">CANCELAR</button>
+    </div>`;
+
+  TEAM.forEach((p,i) => {
+    const fainted = p.hp <= 0;
+    const canTarget = item.revive ? fainted : (!fainted && p.hp < p.maxHp);
+
+    const slot = document.createElement('div');
+    slot.style.cssText = `
+      background:${canTarget ? '#0d1744' : '#0a0a1a'};
+      border:2px solid ${canTarget ? '#2266cc' : '#222'};
+      border-radius:5px;display:flex;flex-direction:column;align-items:center;
+      padding:6px 4px;cursor:${canTarget?'pointer':'not-allowed'};
+      opacity:${canTarget?1:.4};transition:border-color .15s,transform .15s;
+    `;
+    if(canTarget){
+      slot.onmouseover = () => { slot.style.borderColor='#f5c842'; slot.style.transform='translateY(-2px)'; };
+      slot.onmouseout  = () => { slot.style.borderColor='#2266cc'; slot.style.transform=''; };
+      slot.addEventListener('click', () => {
+        let ok = false;
+        if(item.revive) ok = revivePoke(p, item.halfHp);
+        else ok = healPoke(p, item.heal);
+        if(ok){
+          // Feedback
+          document.getElementById('bag-info').innerHTML =
+            `<span style="color:#aaffaa;font-size:6px;">✔ ${item.name} usado en ${p.name}! PS: ${p.hp}/${p.maxHp}</span>`;
+          refreshTeam();
+          // Si el modal está abierto con este pokemon, actualizar HP
+          if(currentModalPoke === p) updateModalHp();
+          setTimeout(renderBag, 1200);
+        }
+      });
+    }
+
+    const img = document.createElement('img');
+    img.src = p.src;
+    img.onerror = () => { img.onerror=null; img.src=p.fallback; };
+    img.style.cssText = `width:48px;height:48px;object-fit:contain;image-rendering:pixelated;${fainted?'filter:grayscale(1) brightness(.5);':''}`;
+    const nm = document.createElement('span');
+    nm.textContent = p.name;
+    nm.style.cssText = 'color:#aabbff;font-size:4px;margin-top:3px;text-align:center;';
+    const hp = document.createElement('span');
+    hp.textContent = fainted ? '¡FIN!' : `${p.hp}/${p.maxHp}`;
+    hp.style.cssText = `color:${fainted?'#cc2222':'#f5c842'};font-size:4px;margin-top:1px;`;
+
+    slot.appendChild(img); slot.appendChild(nm); slot.appendChild(hp);
+    grid.appendChild(slot);
+  });
 }
 
 // ── INIT ─────────────────────────────────────────────────
@@ -1003,7 +1164,27 @@ if(document.readyState === 'loading'){
 </script>
 
 <style>
-#pc-btn:active { transform: translate(2px,2px); }
+/* HP bar */
+.hp-bar-wrap{
+  width:90%;height:6px;background:#1a1a3a;
+  border-radius:3px;margin-top:5px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.15);
+}
+.hp-bar{height:100%;border-radius:3px;transition:width .4s,background .4s}
+.hp-text{color:#aac8ff;font-size:4px;margin-top:2px;letter-spacing:.3px}
+/* Fainted slot */
+.slot.fainted img{ filter:grayscale(1) brightness(.6) !important; }
+.slot.fainted{ border-color:#444 !important; background:#0a0a1a !important; }
+.slot.fainted .pname{ color:#666 !important; }
+.slot.fainted .hp-text{ color:#cc2222 !important; }
+/* fainted overlay */
+.fainted-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.7);color:#cc2222;
+  font-size:6px;padding:3px 6px;border-radius:3px;
+  letter-spacing:1px;pointer-events:none;
+  border:1px solid #cc2222;
+}
 </style>
 </body>
 </html>
