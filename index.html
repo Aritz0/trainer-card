@@ -1007,7 +1007,6 @@ body {
         </div>
         <img class="fspr" id="p-sprite" src="" alt="Aliado">
       </div>
-      
       <div style="align-self: flex-start; text-align: right;">
         <div class="hp-box" id="e-hp-box" style="text-align: left; margin-left: auto;">
           <div class="hp-name"><span id="e-name">---</span><span id="e-lv">Lv.5</span></div>
@@ -1017,7 +1016,6 @@ body {
         <img class="fspr" id="e-sprite" src="" alt="Enemigo">
       </div>
     </div>
-    
     <div class="battle-log" id="battle-log"><p>Iniciando terminal de encuentros...</p></div>
     <div class="battle-actions" id="battle-actions"></div>
   </div>
@@ -1064,7 +1062,6 @@ let currentUser = null;
 let selectedRegTrainer = "red";
 let selectedRegStarter = 1;
 let cheatShinyActive = false;
-
 let battleActive = false;
 let currentEnemy = null;
 let currentAlly = null;
@@ -1074,9 +1071,7 @@ function saveDB() {
 }
 
 function getPokemonSprite(id, shiny = false) {
-  return shiny 
-    ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`
-    : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  return shiny ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
 // --- DESPLIEGUE Y LOGIN ---
@@ -1099,10 +1094,7 @@ function buildRegisterGrids() {
   TRAINERS.forEach(t => {
     const div = document.createElement('div');
     div.className = `grid-item ${t.id === selectedRegTrainer ? 'selected' : ''}`;
-    div.onclick = () => {
-      selectedRegTrainer = t.id;
-      buildRegisterGrids();
-    };
+    div.onclick = () => { selectedRegTrainer = t.id; buildRegisterGrids(); };
     div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
     tGrid.appendChild(div);
   });
@@ -1112,14 +1104,11 @@ function buildRegisterGrids() {
   STARTERS.forEach(s => {
     const div = document.createElement('div');
     div.className = `grid-item ${s.id === selectedRegStarter ? 'selected' : ''}`;
-    div.onclick = () => {
-      selectedRegStarter = s.id;
-      buildRegisterGrids();
-    };
+    div.onclick = () => { selectedRegStarter = s.id; buildRegisterGrids(); };
     div.innerHTML = `<img src="${getPokemonSprite(s.id)}"><p>${s.name}</p>`;
     sGrid.appendChild(div);
   });
-  
+
   const innerGrid = document.getElementById('inner-trainer-grid');
   innerGrid.innerHTML = "";
   TRAINERS.forEach(t => {
@@ -1149,12 +1138,11 @@ function doLogin() {
   const p = document.getElementById('login-pass').value;
   const msg = document.getElementById('auth-msg');
 
-  if(!DB.users[u] || DB.users[u].password !== p) {
+  if (!DB.users[u] || DB.users[u].pass !== p) {
     msg.className = "auth-msg err";
-    msg.textContent = "ACCESO DENEGADO: Credenciales incorrectas.";
+    msg.textContent = "ID o Clave incorrectos.";
     return;
   }
-  localStorage.setItem('poke_pro_session_v2', u);
   loginUser(u);
 }
 
@@ -1163,115 +1151,128 @@ function doRegister() {
   const p = document.getElementById('reg-pass').value;
   const msg = document.getElementById('auth-msg');
 
-  if(u.length < 3 || p.length < 4) {
+  if (u.length < 3 || u.length > 12) {
     msg.className = "auth-msg err";
-    msg.textContent = "ERROR: Longitud insuficiente en campos.";
+    msg.textContent = "ID debe tener entre 3 y 12 caracteres.";
     return;
   }
-  if(DB.users[u]) {
+  if (p.length < 4) {
     msg.className = "auth-msg err";
-    msg.textContent = "ERROR: ID de Entrenador ya ocupado.";
+    msg.textContent = "Clave insegura (Mínimo 4).";
+    return;
+  }
+  if (DB.users[u]) {
+    msg.className = "auth-msg err";
+    msg.textContent = "El ID ya está registrado.";
     return;
   }
 
-  const starterData = STARTERS.find(s => s.id === selectedRegStarter);
-  const initialPokemon = {
-    id: starterData.id,
-    name: starterData.name,
-    level: 5,
-    hp: starterData.hp,
-    maxHp: starterData.maxHp,
-    atk: starterData.atk,
+  const baseStarter = STARTERS.find(s => s.id === selectedRegStarter);
+  const companion = {
+    id: baseStarter.id,
+    name: baseStarter.name,
+    hp: baseStarter.hp,
+    maxHp: baseStarter.maxHp,
+    atk: baseStarter.atk,
+    lv: 5,
     xp: 0,
-    maxXp: 100,
     shiny: false,
-    moves: starterData.moves
+    moves: [...baseStarter.moves]
   };
 
   DB.users[u] = {
-    username: u,
-    password: p,
+    user: u,
+    pass: p,
     trainerId: selectedRegTrainer,
     money: 3000,
-    items: { pokeballs: 5, greatballs: 0, ultraballs: 0, potions: 5, superpotions: 0 },
-    team: [initialPokemon],
-    pc: []
+    team: [companion],
+    pc: [],
+    bag: { pokeballs: 5, greatballs: 0, ultraballs: 0, potions: 2, superpotions: 0 }
   };
-  
+
   saveDB();
-  localStorage.setItem('poke_pro_session_v2', u);
   loginUser(u);
 }
 
 function loginUser(username) {
   currentUser = username;
+  localStorage.setItem('poke_pro_session_v2', username);
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'block';
+  buildRegisterGrids();
   updateDashboard();
 }
 
 function doLogout() {
-  localStorage.removeItem('poke_pro_session_v2');
   currentUser = null;
+  localStorage.removeItem('poke_pro_session_v2');
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
-  switchTab('login');
-}
-
-// --- ACTUALIZACIÓN DE ESTADOS ---
-function updateDashboard() {
-  const data = DB.users[currentUser];
-  document.getElementById('top-name').textContent = data.username;
-  document.getElementById('top-money').textContent = `CREDITOS: $${data.money}`;
-  document.getElementById('card-name').textContent = data.username;
-  document.getElementById('card-money').textContent = `$${data.money}`;
-  document.getElementById('card-pc-count').textContent = data.pc.length;
-
-  const trainerObj = TRAINERS.find(t => t.id === data.trainerId) || TRAINERS[0];
-  document.getElementById('card-avatar').src = trainerObj.url;
-
-  const tGrid = document.getElementById('team-grid');
-  tGrid.innerHTML = "";
-  data.team.forEach((p) => {
-    const hpPct = (p.hp / p.maxHp) * 100;
-    const xpPct = (p.xp / p.maxXp) * 100;
-    const div = document.createElement('div');
-    div.className = "slot";
-    div.innerHTML = `
-      <img src="${getPokemonSprite(p.id, p.shiny)}">
-      <div class="pname">${p.name} ${p.shiny ? '[S]' : ''}</div>
-      <div class="plv">NIVEL ${p.level}</div>
-      <div class="hp-bar-wrap">
-        <div class="hp-bar" style="width: ${hpPct}%; background: ${hpPct > 50 ? '#44dd44' : hpPct > 20 ? '#f5c842' : '#cc2222'}"></div>
-      </div>
-      <div style="font-size:5px; color:#fff; margin-top:3px;">HP: ${p.hp}/${p.maxHp}</div>
-      <div class="xp-bar-wrap">
-        <div class="xp-bar" style="width: ${xpPct}%;"></div>
-      </div>
-    `;
-    tGrid.appendChild(div);
-  });
-}
-
-function openModal(id) {
-  if(id === 'shop-modal') renderShop();
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
+  document.getElementById('login-user').value = "";
+  document.getElementById('login-pass').value = "";
+  document.getElementById('auth-msg').textContent = "";
 }
 
 function toggleCheatShiny() {
   cheatShinyActive = !cheatShinyActive;
   const btn = document.getElementById('cheat-btn');
   btn.classList.toggle('active', cheatShinyActive);
-  btn.textContent = cheatShinyActive ? "PROB. SHINY COMPRIMIDA AL MAXIMO" : "PROB. SHINY AUMENTADA";
 }
 
-// --- LOGICA DE LA TIENDA RETRO ---
+// --- ACTUALIZACIONES DE INTERFAZ GENERAL ---
+function updateDashboard() {
+  if (!currentUser) return;
+  const user = DB.users[currentUser];
+  const tObj = TRAINERS.find(t => t.id === user.trainerId) || TRAINERS[0];
+
+  document.getElementById('top-name').textContent = user.user.toUpperCase();
+  document.getElementById('top-money').textContent = `CREDITOS: $${user.money}`;
+  document.getElementById('card-name').textContent = user.user;
+  document.getElementById('card-pc-count').textContent = user.pc.length;
+  document.getElementById('card-money').textContent = `$${user.money}`;
+  document.getElementById('card-avatar').src = tObj.url;
+
+  const grid = document.getElementById('team-grid');
+  grid.innerHTML = "";
+
+  for (let i = 0; i < 6; i++) {
+    const pk = user.team[i];
+    const slot = document.createElement('div');
+    slot.className = "slot";
+
+    if (pk) {
+      const pct = (pk.hp / pk.maxHp) * 100;
+      const hpColor = pct > 50 ? '#44ff88' : pct > 20 ? '#ffcc00' : '#ff4433';
+      const xpPct = (pk.xp / 100) * 100;
+
+      slot.innerHTML = `
+        <img src="${getPokemonSprite(pk.id, pk.shiny)}" class="${pk.shiny ? 'shiny-anim' : ''}">
+        <p class="pname" style="${pk.shiny ? 'color:var(--gold);' : ''}">${pk.name}</p>
+        <p class="plv">Nivel ${pk.lv}</p>
+        <div class="hp-bar-wrap"><div class="hp-bar" style="width:${pct}%; background:${hpColor}"></div></div>
+        <div class="xp-bar-wrap"><div class="xp-bar" style="width:${xpPct}%"></div></div>
+      `;
+      slot.onclick = () => healWithPotionIndex(i);
+    } else {
+      slot.innerHTML = `<p class="pname" style="color:#445588; margin: auto;">VACÍO</p>`;
+    }
+    grid.appendChild(slot);
+  }
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if (id === 'shop-modal') renderShop();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// --- TIENDA Y LOGICA DE INVENTARIO ---
 function renderShop() {
-  const container = document.getElementById('shop-body');
-  container.innerHTML = "";
+  const body = document.getElementById('shop-body');
+  body.innerHTML = "";
   SHOP_ITEMS.forEach(item => {
     const div = document.createElement('div');
     div.className = "shop-item";
@@ -1285,339 +1286,337 @@ function renderShop() {
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span class="shop-price">$${item.price}</span>
-        <button class="top-btn" onclick="buyItem('${item.id}', ${item.price})">ADQUIRIR</button>
+        <button class="top-btn" onclick="buyItem('${item.id}', ${item.price})">COMPRAR</button>
       </div>
     `;
-    container.appendChild(div);
+    body.appendChild(div);
   });
 }
 
 function buyItem(itemId, price) {
   const user = DB.users[currentUser];
   if (user.money < price) {
-    alert("CREDITOS INSUFICIENTES");
+    alert("Créditos insuficientes.");
     return;
   }
   user.money -= price;
-  user.items[itemId] = (user.items[itemId] || 0) + 1;
+  user.bag[itemId] = (user.bag[itemId] || 0) + 1;
   saveDB();
   updateDashboard();
   renderShop();
 }
 
-// --- GESTIÓN DE BOLSA ---
 function openBagModal() {
-  renderBag();
   openModal('bag-modal');
-}
-
-function renderBag() {
+  const body = document.getElementById('bag-body');
+  body.innerHTML = "";
   const user = DB.users[currentUser];
-  const container = document.getElementById('bag-body');
-  container.innerHTML = "";
 
-  const itemsArray = [
-    { id: "pokeballs", name: "Poke Ball Comun", qty: user.items.pokeballs || 0, iconText: "[BALL]", usable: false },
-    { id: "greatballs", name: "Super Ball", qty: user.items.greatballs || 0, iconText: "[S-BALL]", usable: false },
-    { id: "ultraballs", name: "Ultra Ball", qty: user.items.ultraballs || 0, iconText: "[U-BALL]", usable: false },
-    { id: "potions", name: "Pocion Estandar", qty: user.items.potions || 0, iconText: "[POTION]", usable: true, heal: 50 },
-    { id: "superpotions", name: "Super Pocion", qty: user.items.superpotions || 0, iconText: "[S-POT]", usable: true, heal: 150 }
-  ];
-
-  itemsArray.forEach(item => {
-    const div = document.createElement('div');
-    div.className = "bag-item";
-    div.innerHTML = `
-      <div class="item-info">
-        <div class="item-text-icon">${item.iconText}</div>
-        <div class="item-text">
-          <h4>${item.name}</h4>
-          <p>Disponibles: x${item.qty}</p>
+  let total = 0;
+  Object.keys(user.bag).forEach(k => {
+    const qty = user.bag[k];
+    if (qty > 0) {
+      total++;
+      const sObj = SHOP_ITEMS.find(s => s.id === k);
+      const div = document.createElement('div');
+      div.className = "bag-item";
+      div.innerHTML = `
+        <div class="item-info">
+          <div class="item-text-icon">${sObj ? sObj.iconText : '[INV]'}</div>
+          <div class="item-text">
+            <h4>${sObj ? sObj.name : k.toUpperCase()}</h4>
+            <p>Cantidad en bolsa: x${qty}</p>
+          </div>
         </div>
-      </div>
-      <div>
-        ${item.usable && item.qty > 0 ? `<button class="top-btn" onclick="showBagHealTargets('${item.id}', ${item.heal})">APLICAR</button>` : ''}
-      </div>
-    `;
-    container.appendChild(div);
+      `;
+      body.appendChild(div);
+    }
   });
+  if (total === 0) body.innerHTML = `<p style="color:#6677aa; text-align:center; font-size:10px;">Tu mochila está completamente vacía.</p>`;
 }
 
-function showBagHealTargets(itemId, healAmount) {
+function healWithPotionIndex(index) {
   const user = DB.users[currentUser];
-  const container = document.getElementById('bag-body');
-  container.innerHTML = `<div style="font-size:7px; color:var(--gold); margin-bottom:10px;">SELECCIONE OBJETIVO DE RESTAURACIÓN:</div>`;
-  
-  user.team.forEach((p, idx) => {
-    const div = document.createElement('div');
-    div.className = "shop-item";
-    div.style.cursor = "pointer";
-    div.onclick = () => {
-      if (p.hp >= p.maxHp) {
-        alert("SALUD COMPLETA EN ESTE OBJETIVO");
-        return;
-      }
-      user.items[itemId]--;
-      p.hp = Math.min(p.maxHp, p.hp + healAmount);
+  const pk = user.team[index];
+  if (!pk) return;
+
+  if (pk.hp >= pk.maxHp) {
+    alert(`${pk.name} ya tiene la salud al máximo.`);
+    return;
+  }
+
+  if (user.bag.potions > 0) {
+    if (confirm(`¿Utilizar Poción Estándar en ${pk.name}?`)) {
+      user.bag.potions--;
+      pk.hp = Math.min(pk.maxHp, pk.hp + 50);
       saveDB();
       updateDashboard();
-      openBagModal();
-    };
-    div.innerHTML = `
-      <div class="item-info">
-        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:36px;height:36px;">
-        <div class="item-text"><h4>${p.name}</h4><p>HP: ${p.hp}/${p.maxHp}</p></div>
-      </div>
-    `;
-    container.appendChild(div);
-  });
-  
-  const cancelBtn = document.createElement('button');
-  cancelBtn.className = "auth-btn";
-  cancelBtn.textContent = "REGRESAR";
-  cancelBtn.onclick = renderBag;
-  container.appendChild(cancelBtn);
-}
-
-// --- LOGICA PC DE BILL ---
-function openPCModal() {
-  renderPC();
-  openModal('pc-modal');
-}
-
-function renderPC() {
-  const user = DB.users[currentUser];
-  
-  const teamList = document.getElementById('pc-team-list');
-  teamList.innerHTML = "";
-  user.team.forEach((p, idx) => {
-    const div = document.createElement('div');
-    div.className = "pc-team-row";
-    div.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px;">
-        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:32px; height:32px; image-rendering:pixelated;">
-        <span style="font-size:6px; color:#fff;">${p.name} (Lv.${p.level})</span>
-      </div>
-      ${user.team.length > 1 ? `<button class="top-btn" style="border-color:var(--red); color:#fff;" onclick="moveTeamToPC(${idx})">RETIRAR</button>` : ''}
-    `;
-    teamList.appendChild(div);
-  });
-
-  const boxGrid = document.getElementById('pc-box-grid');
-  boxGrid.innerHTML = "";
-  if (user.pc.length === 0) {
-    boxGrid.innerHTML = `<div style="grid-column: span 4; color:#556688; font-size:7px; text-align:center; padding:24px;">BANCO DE DATOS VACIO</div>`;
+    }
+  } else if (user.bag.superpotions > 0) {
+    if (confirm(`¿Utilizar Súper Poción en ${pk.name}?`)) {
+      user.bag.superpotions--;
+      pk.hp = Math.min(pk.maxHp, pk.hp + 150);
+      saveDB();
+      updateDashboard();
+    }
   } else {
-    user.pc.forEach((p, idx) => {
-      const div = document.createElement('div');
-      div.className = "pc-slot";
-      div.onclick = () => movePCToTeam(idx);
-      div.innerHTML = `
-        <img src="${getPokemonSprite(p.id, p.shiny)}" title="${p.name}">
-        <div style="font-size:5px; color:#88aadd;">Lv.${p.level}</div>
-      `;
-      boxGrid.appendChild(div);
-    });
+    alert("No dispones de medicinas de restauración en la bolsa.");
+  }
+}
+
+// --- TERMINAL PC DE BILL MÓDULO INTEGRAL ---
+function openPCModal() {
+  openModal('pc-modal');
+  updatePCUI();
+}
+
+function updatePCUI() {
+  const user = DB.users[currentUser];
+  const tList = document.getElementById('pc-team-list');
+  tList.innerHTML = "";
+
+  user.team.forEach((pk, idx) => {
+    const row = document.createElement('div');
+    row.className = "pc-team-row";
+    row.innerHTML = `
+      <div style="display:flex; align-items:center; gap:6px;">
+        <img src="${getPokemonSprite(pk.id, pk.shiny)}" style="width:32px; height:32px; image-rendering:pixelated;">
+        <span style="font-size:7px; color:#fff;">${pk.name} (Lv.${pk.lv})</span>
+      </div>
+      ${user.team.length > 1 ? `<button class="top-btn" onclick="moveTeamToPC(${idx})" style="padding:2px 6px; border-color:var(--red); color:#ff8888;">DEPOSITAR</button>` : ''}
+    `;
+    tList.appendChild(row);
+  });
+
+  const bGrid = document.getElementById('pc-box-grid');
+  bGrid.innerHTML = "";
+  user.pc.forEach((pk, idx) => {
+    const slot = document.createElement('div');
+    slot.className = "pc-slot";
+    slot.innerHTML = `<img src="${getPokemonSprite(pk.id, pk.shiny)}" title="${pk.name} Lv.${pk.lv}">`;
+    slot.onclick = () => movePCToTeam(idx);
+    bGrid.appendChild(slot);
+  });
+
+  for (let i = user.pc.length; i < 16; i++) {
+    const slot = document.createElement('div');
+    slot.className = "pc-slot";
+    slot.style.opacity = "0.2";
+    slot.innerHTML = `<div style="width:40px; height:40px;"></div>`;
+    bGrid.appendChild(slot);
   }
 }
 
 function moveTeamToPC(idx) {
   const user = DB.users[currentUser];
+  if (user.team.length <= 1) return;
   const p = user.team.splice(idx, 1)[0];
   user.pc.push(p);
   saveDB();
   updateDashboard();
-  renderPC();
+  updatePCUI();
 }
 
 function movePCToTeam(idx) {
   const user = DB.users[currentUser];
   if (user.team.length >= 6) {
-    alert("EQUIPO COMPLETO EN MANO (MAXIMO 6)");
+    alert("El Squad activo está completo (Máx 6).");
     return;
   }
   const p = user.pc.splice(idx, 1)[0];
   user.team.push(p);
   saveDB();
   updateDashboard();
-  renderPC();
+  updatePCUI();
 }
 
-// --- LOGICA DE BATALLA Y SISTEMA RPG DE NIVELES ---
-async function initWildCombat() {
+// --- ENGINE DE ENCUENTROS Y LOGICA DE COMBATE COMPLETA ---
+function initWildCombat() {
+  if (battleActive) return;
   const user = DB.users[currentUser];
   
+  // Buscar primer miembro vivo
   currentAlly = user.team.find(p => p.hp > 0);
   if (!currentAlly) {
-    alert("ERROR: No posees especimenes activos. Aplica una pocion.");
+    alert("¡Todos tus Pokémon están debilitados! Cúralos antes de combatir.");
     return;
   }
 
-  document.getElementById('battle-log').innerHTML = "<p>Rastreando señales en la zona...</p>";
-  document.getElementById('battle-actions').innerHTML = "";
-  document.getElementById('combat-window').style.display = 'flex';
   battleActive = true;
+  document.getElementById('combat-window').style.display = 'flex';
 
-  const randomId = Math.floor(Math.random() * 649) + 1; // Limitado a Gen 5 estable para rendimiento de retro-sprites
-  const isShiny = cheatShinyActive ? (Math.random() < 0.40) : (Math.random() < 0.001);
+  // Pool salvaje extendida de especies
+  const ids = [1,4,7,25,133,143,147,152,155,158,252,255,258,382,383,384];
+  const randId = ids[Math.floor(Math.random() * ids.length)];
+  const poolNames = ["BULBASAUR", "CHARMANDER", "SQUIRTLE", "PIKACHU", "EEVEE", "SNORLAX", "DRATINI", "CHIKORITA", "CYNDAQUIL", "TOTODILE", "TRECKO", "TORCHIC", "MUDKIP", "KYOGRE", "GROUDON", "RAYQUAZA"];
+  const nameChosen = poolNames[ids.indexOf(randId)];
 
-  try {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
-    const pokeData = await res.json();
-    
-    const baseHp = pokeData.stats[0].base_stat;
-    const baseAtk = pokeData.stats[1].base_stat;
-    const generatedLevel = Math.floor(Math.random() * 25) + currentAlly.level;
-
-    currentEnemy = {
-      id: randomId,
-      name: pokeData.name.toUpperCase(),
-      level: generatedLevel,
-      hp: baseHp + (generatedLevel * 2),
-      maxHp: baseHp + (generatedLevel * 2),
-      atk: baseAtk + generatedLevel,
-      shiny: isShiny
-    };
-
-    document.getElementById('e-name').textContent = currentEnemy.name + (isShiny ? " [S]" : "");
-    document.getElementById('e-lv').textContent = `Lv.${currentEnemy.level}`;
-    document.getElementById('e-sprite').src = getPokemonSprite(currentEnemy.id, isShiny);
-    updateEnemyBattleUI();
-    updateAllyBattleUI();
-
-    document.getElementById('battle-log').innerHTML = `<p>¡Un especimen <b>${currentEnemy.name}</b> salvaje fue interceptado!</p>`;
-    showBattleMenu();
-
-  } catch (err) {
-    document.getElementById('battle-log').innerHTML = "<p style='color:var(--red);'>Fallo de sincronizacion de datos de red.</p>";
-    setTimeout(closeCombat, 1500);
+  let isShiny = false;
+  if (cheatShinyActive) {
+    isShiny = Math.random() < 0.65;
+  } else {
+    isShiny = Math.random() < 0.08;
   }
+
+  const lvRand = Math.floor(Math.random() * 15) + 5;
+  const baseHp = 45 + (lvRand * 3);
+
+  currentEnemy = {
+    id: randId,
+    name: nameChosen,
+    lv: lvRand,
+    hp: baseHp,
+    maxHp: baseHp,
+    atk: 30 + (lvRand * 2),
+    shiny: isShiny
+  };
+
+  updateAllyBattleUI();
+  
+  // Render Enemigo
+  document.getElementById('e-name').textContent = currentEnemy.name + (currentEnemy.shiny ? "★" : "");
+  document.getElementById('e-lv').textContent = `Lv.${currentEnemy.lv}`;
+  document.getElementById('e-sprite').src = getPokemonSprite(currentEnemy.id, currentEnemy.shiny);
+  if (currentEnemy.shiny) {
+    document.getElementById('e-name').style.color = "var(--gold)";
+  } else {
+    document.getElementById('e-name').style.color = "#fff";
+  }
+
+  updateEnemyBattleHP();
+
+  document.getElementById('battle-log').innerHTML = `<p>¡Un <span style="${currentEnemy.shiny ? 'color:var(--gold);' : 'color:#cce0ff;'}">${currentEnemy.name}</span> salvaje ha aparecido!</p>`;
+  showBattleMenu();
 }
 
 function updateAllyBattleUI() {
-  const hpPct = (currentAlly.hp / currentAlly.maxHp) * 100;
-  document.getElementById('p-name').textContent = currentAlly.name;
-  document.getElementById('p-lv').textContent = `Lv.${currentAlly.level}`;
+  document.getElementById('p-name').textContent = currentAlly.name + (currentAlly.shiny ? "★" : "");
+  document.getElementById('p-lv').textContent = `Lv.${currentAlly.lv}`;
   document.getElementById('p-sprite').src = getPokemonSprite(currentAlly.id, currentAlly.shiny);
-  document.getElementById('p-hp-bar').style.width = `${hpPct}%`;
-  document.getElementById('p-hp-bar').style.background = hpPct > 50 ? '#44dd44' : hpPct > 20 ? '#f5c842' : '#cc2222';
+  
+  const pct = (currentAlly.hp / currentAlly.maxHp) * 100;
+  const bar = document.getElementById('p-hp-bar');
+  bar.style.width = `${pct}%`;
+  bar.style.background = pct > 50 ? '#44dd44' : pct > 20 ? '#ffcc00' : '#ff4433';
   document.getElementById('p-hp-text').textContent = `${currentAlly.hp}/${currentAlly.maxHp}`;
 }
 
-function updateEnemyBattleUI() {
-  const hpPct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
-  document.getElementById('e-hp-bar').style.width = `${hpPct}%`;
-  document.getElementById('e-hp-bar').style.background = hpPct > 50 ? '#44dd44' : hpPct > 20 ? '#f5c842' : '#cc2222';
+function updateEnemyBattleHP() {
+  const pct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
+  const bar = document.getElementById('e-hp-bar');
+  bar.style.width = `${pct}%`;
+  bar.style.background = pct > 50 ? '#44dd44' : pct > 20 ? '#ffcc00' : '#ff4433';
   document.getElementById('e-hp-text').textContent = `${currentEnemy.hp}/${currentEnemy.maxHp}`;
 }
 
 function showBattleMenu() {
-  const actions = document.getElementById('battle-actions');
-  actions.innerHTML = `
-    <button class="ba-btn atk" onclick="triggerMove(0)">${currentAlly.moves[0] || 'Ataque 1'}</button>
-    <button class="ba-btn atk" onclick="triggerMove(1)">${currentAlly.moves[1] || 'Ataque 2'}</button>
-    <button class="ba-btn ball" onclick="openBallSelection()">RETENER (BALL)</button>
-    <button class="ba-btn run" onclick="closeCombat()">HUIR</button>
+  const acts = document.getElementById('battle-actions');
+  acts.innerHTML = `
+    <button class="ba-btn atk" onclick="executeAllyAttack()">ATACAR</button>
+    <button class="ba-btn ball" onclick="openCaptureModule()">CAPTURAR</button>
+    <button class="ba-btn" style="border-color:#ffcc00; color:#ffcc00;" onclick="useItemInBattle()">MEDICINA</button>
+    <button class="ba-btn run" onclick="executeRun()">HUIR</button>
   `;
 }
 
-function triggerMove(moveIdx) {
-  if(!battleActive) return;
+function executeAllyAttack() {
+  const baseDmg = Math.floor((currentAlly.atk * 0.2) + (Math.random() * 8) + 2);
+  currentEnemy.hp = Math.max(0, currentEnemy.hp - baseDmg);
+  updateEnemyBattleHP();
 
-  const moveName = currentAlly.moves[moveIdx] || "Ataque Base";
-  const userAtk = currentAlly.atk || 40;
-  const rawDmg = Math.floor(( (2 * currentAlly.level / 5 + 2) * userAtk * 40 / currentEnemy.atk ) / 50) + 5;
-  const finalDmg = Math.floor(rawDmg * (Math.random() * (1 - 0.85) + 0.85));
-
-  currentEnemy.hp = Math.max(0, currentEnemy.hp - finalDmg);
-  updateEnemyBattleUI();
-
-  let log = `<p>¡${currentAlly.name} uso ${moveName} y causo ${finalDmg} de daño!</p>`;
+  let log = `<p>¡Tu ${currentAlly.name} asesta un golpe crítico de ${baseDmg} de daño!</p>`;
+  document.getElementById('battle-log').innerHTML = log;
 
   if (currentEnemy.hp <= 0) {
-    const rewardMoney = currentEnemy.level * 45;
-    const gainedXp = currentEnemy.level * 20;
+    log += `<p style="color:#44ff88;">¡El ${currentEnemy.name} enemigo ha sido derrotado!</p>`;
     
-    DB.users[currentUser].money += rewardMoney;
+    // Otorgar Créditos y Experiencia
+    const earnedMoney = 150 + (currentEnemy.lv * 15);
+    const earnedXp = 25 + (currentEnemy.lv * 3);
     
-    log += `<p style="color:#44ff88;">¡Especimen salvaje colapsó! Ganaste $${rewardMoney}.</p>`;
-    log += `<p style="color:#3a9eee;">¡${currentAlly.name} adquirió ${gainedXp} puntos XP!</p>`;
-    
-    currentAlly.xp += gainedXp;
-    if(currentAlly.xp >= currentAlly.maxXp) {
-      currentAlly.level += 1;
-      currentAlly.xp = 0;
-      currentAlly.maxXp = Math.floor(currentAlly.maxXp * 1.5);
-      currentAlly.maxHp = Math.floor(currentAlly.maxHp * 1.15);
-      currentAlly.atk = Math.floor(currentAlly.atk * 1.12);
+    const user = DB.users[currentUser];
+    user.money += earnedMoney;
+    currentAlly.xp += earnedXp;
+
+    log += `<p style="color:var(--gold);">+ $${earnedMoney} Créditos / + ${earnedXp} EXP obtenidos.</p>`;
+
+    if (currentAlly.xp >= 100) {
+      currentAlly.lv++;
+      currentAlly.xp -= 100;
+      currentAlly.maxHp += 6;
       currentAlly.hp = currentAlly.maxHp;
-      log += `<p style="color:var(--gold);">¡RESTRUCTURACIÓN DE DATOS: Subio a Nivel ${currentAlly.level}!</p>`;
+      currentAlly.atk += 4;
+      log += `<p style="color:#00ffcc; font-weight:bold;">¡Subida de Rango! ${currentAlly.name} alcanzó el Nivel ${currentAlly.lv}!</p>`;
     }
 
+    document.getElementById('battle-log').innerHTML = log;
     saveDB();
     updateDashboard();
-    document.getElementById('battle-log').innerHTML = log;
-    endBattleState();
-    return;
+    setNextState();
+  } else {
+    // Turno del Enemigo
+    setTimeout(executeEnemyCounter, 1200);
   }
-
-  // TURNO DEL OPONENTE
-  setTimeout(() => {
-    const enemyAtk = currentEnemy.atk || 35;
-    const rawEnemyDmg = Math.floor(( (2 * currentEnemy.level / 5 + 2) * enemyAtk * 35 / (currentAlly.atk || 40) ) / 50) + 4;
-    const finalEnemyDmg = Math.floor(rawEnemyDmg * (Math.random() * (1 - 0.85) + 0.85));
-
-    currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
-    saveDB();
-    updateDashboard();
-    updateAllyBattleUI();
-
-    log += `<p style="color:#ff5544;">¡El ${currentEnemy.name} respondio ejerciendo ${finalEnemyDmg} de daño!</p>`;
-    document.getElementById('battle-log').innerHTML = log;
-
-    if (currentAlly.hp <= 0) {
-      log += `<p style="color:var(--red);">¡Tu especimen base ha quedado fuera de servicio!</p>`;
-      document.getElementById('battle-log').innerHTML = log;
-      endBattleState();
-    }
-  }, 600);
 }
 
-function openBallSelection() {
-  const actions = document.getElementById('battle-actions');
-  const user = DB.users[currentUser];
+function executeEnemyCounter() {
+  if (currentEnemy.hp <= 0) return;
+
+  const enemyAtk = currentEnemy.atk || 35;
+  const finalEnemyDmg = Math.floor((Math.random() * 10) + (enemyAtk * 0.1));
+  currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
   
-  actions.innerHTML = `
-    <button class="ba-btn ball" onclick="throwBall('pokeballs', 1.0)" ${(!user.items.pokeballs)?'disabled':''}>PokeBall (x${user.items.pokeballs})</button>
-    <button class="ba-btn ball" onclick="throwBall('greatballs', 1.5)" ${(!user.items.greatballs)?'disabled':''}>SuperBall (x${user.items.greatballs})</button>
-    <button class="ba-btn ball" onclick="throwBall('ultraballs', 2.0)" ${(!user.items.ultraballs)?'disabled':''}>UltraBall (x${user.items.ultraballs})</button>
+  saveDB();
+  updateDashboard();
+  updateAllyBattleUI();
+
+  let log = `<p style="color:#ff5544;">¡El ${currentEnemy.name} salvaje contraataca causando ${finalEnemyDmg} de daño!</p>`;
+  document.getElementById('battle-log').innerHTML = log;
+
+  if (currentAlly.hp <= 0) {
+    log += `<p style="color:var(--red);">¡Tu Pokémon activo se ha debilitado!</p>`;
+    document.getElementById('battle-log').innerHTML = log;
+    setNextState();
+  } else {
+    showBattleMenu();
+  }
+}
+
+function openCaptureModule() {
+  const acts = document.getElementById('battle-actions');
+  const user = DB.users[currentUser];
+
+  acts.innerHTML = `
+    <button class="ba-btn ball" onclick="launchBall('pokeballs')" ${(!user.bag.pokeballs) ? 'disabled' : ''}>POKÉ BALL (x${user.bag.pokeballs})</button>
+    <button class="ba-btn ball" style="border-color:#3a7eee;" onclick="launchBall('greatballs')" ${(!user.bag.greatballs) ? 'disabled' : ''}>SUPER BALL (x${user.bag.greatballs})</button>
+    <button class="ba-btn ball" style="border-color:var(--gold);" onclick="launchBall('ultraballs')" ${(!user.bag.ultraballs) ? 'disabled' : ''}>ULTRA BALL (x${user.bag.ultraballs})</button>
     <button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>
   `;
 }
 
-function throwBall(ballType, rateModifier) {
+function launchBall(type) {
   const user = DB.users[currentUser];
-  if (!user.items[ballType]) return;
+  if (!user.bag[type] || user.bag[type] <= 0) return;
 
-  user.items[ballType]--;
-  saveDB();
+  user.bag[type]--;
+  document.getElementById('battle-log').innerHTML = `<p>¡Has lanzado una ${type === 'pokeballs' ? 'Poké Ball' : type === 'greatballs' ? 'Super Ball' : 'Ultra Ball'} de campo!</p>`;
 
-  const hpFactor = (1 - (currentEnemy.hp / currentEnemy.maxHp));
-  const finalCatchProbability = hpFactor * rateModifier;
-  const roll = Math.random();
+  let bonus = type === 'pokeballs' ? 1.0 : type === 'greatballs' ? 1.5 : 2.2;
+  const hpRatio = (currentEnemy.hp / currentEnemy.maxHp);
+  const catchProb = (1 - (hpRatio * 0.65)) * 0.45 * bonus;
 
-  if (roll < finalCatchProbability + 0.15) {
+  if (Math.random() < catchProb) {
+    // CAPTURA EXITOSA
     const caught = {
       id: currentEnemy.id,
       name: currentEnemy.name,
-      level: currentEnemy.level,
-      hp: currentEnemy.maxHp,
+      hp: currentEnemy.hp || 20,
       maxHp: currentEnemy.maxHp,
       atk: currentEnemy.atk,
+      lv: currentEnemy.lv,
       xp: 0,
-      maxXp: 100 * currentEnemy.level,
       shiny: currentEnemy.shiny,
-      moves: ["Placaje", "Mordisco"]
+      moves: ["Placaje", "Ataque Furia"]
     };
 
     if (user.team.length < 6) {
@@ -1630,8 +1629,9 @@ function throwBall(ballType, rateModifier) {
     
     saveDB();
     updateDashboard();
-    endBattleState();
+    setNextState();
   } else {
+    // ESCAPÓ DE LA BALL
     let log = `<p>¡Fallo de fijacion! El objetivo logro zafarse del modulo.</p>`;
     
     const enemyAtk = currentEnemy.atk || 35;
@@ -1648,23 +1648,61 @@ function throwBall(ballType, rateModifier) {
     if (currentAlly.hp <= 0) {
       log += `<p style="color:var(--red);">¡Squad destruido!</p>`;
       document.getElementById('battle-log').innerHTML = log;
-      endBattleState();
+      setNextState();
     } else {
       showBattleMenu();
     }
   }
 }
 
-function endBattleState() {
-  battleActive = false;
-  document.getElementById('battle-actions').innerHTML = `
-    <button class="ba-btn nxt" onclick="closeCombat()">PROCESAR LOG DE OPERACIONES</button>
+function useItemInBattle() {
+  const acts = document.getElementById('battle-actions');
+  const user = DB.users[currentUser];
+
+  acts.innerHTML = `
+    <button class="ba-btn" style="border-color:#ffcc00;" onclick="applyBattleHeal('potions')" ${(!user.bag.potions) ? 'disabled' : ''}>POCION (x${user.bag.potions})</button>
+    <button class="ba-btn" style="border-color:#ffcc00;" onclick="applyBattleHeal('superpotions')" ${(!user.bag.superpotions) ? 'disabled' : ''}>SUPER POCION (x${user.bag.superpotions})</button>
+    <button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>
   `;
 }
 
+function applyBattleHeal(type) {
+  const user = DB.users[currentUser];
+  if (!user.bag[type] || user.bag[type] <= 0) return;
+
+  user.bag[type]--;
+  const healAmount = type === 'potions' ? 50 : 150;
+  currentAlly.hp = Math.min(currentAlly.maxHp, currentAlly.hp + healAmount);
+  
+  saveDB();
+  updateDashboard();
+  updateAllyBattleUI();
+
+  document.getElementById('battle-log').innerHTML = `<p>¡Utilizaste ${type === 'potions' ? 'Poción' : 'Súper Poción'}! Restaurados ${healAmount} PS.</p>`;
+  
+  setTimeout(executeEnemyCounter, 1200);
+}
+
+function executeRun() {
+  if (Math.random() < 0.6) {
+    document.getElementById('battle-log').innerHTML = `<p>¡Huida exitosa del entorno de conflicto!</p>`;
+    setNextState();
+  } else {
+    document.getElementById('battle-log').innerHTML = `<p>¡No has podido escapar! El enemigo bloquea la salida.</p>`;
+    setTimeout(executeEnemyCounter, 1200);
+  }
+}
+
+function setNextState() {
+  const acts = document.getElementById('battle-actions');
+  acts.innerHTML = `<button class="ba-btn nxt" onclick="closeCombat()">FINALIZAR ENCUENTRO</button>`;
+}
+
 function closeCombat() {
-  document.getElementById('combat-window').style.display = 'none';
   battleActive = false;
+  currentEnemy = null;
+  document.getElementById('combat-window').style.display = 'none';
+  updateDashboard();
 }
 </script>
 
