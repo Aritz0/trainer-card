@@ -568,14 +568,24 @@ body {
   gap: 12px;
 }
 
-.item-text-icon {
+/* REDISEÑO CON IMÁGENES RETRO EN LUGAR DE TEXTO */
+.item-img-wrapper {
   background: var(--dark);
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-size: 8px;
-  padding: 6px;
-  border-radius: 4px;
-  font-family: var(--px);
+  border: 2px solid var(--gold);
+  padding: 4px;
+  border-radius: 6px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-img-wrapper img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .item-text h4 {
@@ -611,13 +621,32 @@ body {
   overflow-y: auto;
 }
 
+.pc-header-branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  background: #060e33;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-blue);
+}
+
+.pc-header-branding img {
+  width: 42px;
+  height: 42px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
 .pc-title {
   font-size: 8px;
   color: var(--gold);
   text-align: center;
-  margin-bottom: 8px;
   border-bottom: 1px dashed var(--gold);
   padding-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .pc-grid {
@@ -921,7 +950,7 @@ body {
 
 <div id="loading-screen">
   <div class="lball"></div>
-  <p>CARGANDO SISTEMA DE ENTRENAMIENTO PRO...</p>
+  <p>CARGANDO SISTEMA DE ENTORNO V4...</p>
 </div>
 
 <div id="auth-screen">
@@ -1046,6 +1075,11 @@ body {
       <button class="modal-x" onclick="closeModal('pc-modal')">X</button>
     </div>
     <div class="modal-body">
+      <div class="pc-header-branding">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pc.png" alt="PC Item Icon" onerror="this.src='https://play.pokemonshowdown.com/sprites/itemicons/reaper-cloth.png'">
+        <div style="color:var(--gold); font-size:9px; font-family:var(--px);">CONEXIÓN REMOTA EN LÍNEA</div>
+      </div>
+      
       <div class="pc-container">
         <div>
           <div class="pc-title">SQUAD EN MANO</div>
@@ -1116,8 +1150,8 @@ body {
 </div>
 
 <script>
-// --- MOTOR DE BASE DE DATOS MODIFICADO A V3 (LIMPIA) ---
-const DB_KEY = 'poketrainer_pro_db_v3';
+// --- NUEVA CLEAN DB V4 POR CAMBIOS GRÁFICOS ---
+const DB_KEY = 'poketrainer_pro_db_v4';
 let DB = JSON.parse(localStorage.getItem(DB_KEY)) || { users: {} };
 
 const TRAINERS = [
@@ -1127,7 +1161,7 @@ const TRAINERS = [
   { id: "lucas", name: "Lucas", url: "https://play.pokemonshowdown.com/sprites/trainers/lucas.png" },
   { id: "hilbert", name: "Hilbert", url: "https://play.pokemonshowdown.com/sprites/trainers/hilbert.png" },
   { id: "nate", name: "Nate", url: "https://play.pokemonshowdown.com/sprites/trainers/nate.png" },
-  { id: "calem", name: "Calem", url: "https://play.pokemonshowdown.com/sprites/trainers/calem.png" },
+ Calem", url: "https://play.pokemonshowdown.com/sprites/trainers/calem.png" },
   { id: "ghetsis", name: "Ghetsis", url: "https://play.pokemonshowdown.com/sprites/trainers/ghetsis.png" }
 ];
 
@@ -1144,12 +1178,13 @@ const STARTERS = [
   { id: 258, name: "MUDKIP", hp: 50, maxHp: 50, atk: 70, moves: ["Placaje", "Pistola Agua"] }
 ];
 
+// DATA SHOP MODIFICADA CON URL DE SPRITES OFICIALES DE LAS POKEBALLS
 const SHOP_ITEMS = [
-  { id: "pokeballs", name: "Poke Ball Comun", price: 200, iconText: "[BALL]", desc: "Captura estandar de especimenes." },
-  { id: "greatballs", name: "Super Ball", price: 600, iconText: "[S-BALL]", desc: "Mejor ratio de contencion de campo." },
-  { id: "ultraballs", name: "Ultra Ball", price: 1200, iconText: "[U-BALL]", desc: "Dispositivo de captura de alta gama." },
-  { id: "potions", name: "Pocion Estandar", price: 250, iconText: "[POTION]", desc: "Restaura 50 puntos de salud." },
-  { id: "superpotions", name: "Super Pocion", price: 700, iconText: "[S-POT]", desc: "Restaura 150 puntos de salud." }
+  { id: "pokeballs", name: "Poke Ball Comun", price: 200, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png", desc: "Captura estandar de especimenes." },
+  { id: "greatballs", name: "Super Ball", price: 600, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png", desc: "Mejor ratio de contencion de campo." },
+  { id: "ultraballs", name: "Ultra Ball", price: 1200, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png", desc: "Dispositivo de captura de alta gama." },
+  { id: "potions", name: "Pocion Estandar", price: 250, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png", desc: "Restaura 50 puntos de salud." },
+  { id: "superpotions", name: "Super Pocion", price: 700, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/super-potion.png", desc: "Restaura 150 puntos de salud." }
 ];
 
 let currentUser = null;
@@ -1169,11 +1204,10 @@ function getPokemonSprite(id, shiny = false) {
   return shiny ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
-// --- DESPLIEGUE Y LOGIN ---
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
-    const saved = localStorage.getItem('poke_pro_session_v3');
+    const saved = localStorage.getItem('poke_pro_session_v4');
     if (saved && DB.users[saved]) {
       loginUser(saved);
     } else {
@@ -1231,7 +1265,7 @@ function doLogin() {
   if (!u || !p) { msg.className = "auth-msg err"; msg.textContent = "Campos vacíos."; return; }
   if (!DB.users[u] || DB.users[u].pass !== p) { msg.className = "auth-msg err"; msg.textContent = "Credenciales incorrectas."; return; }
 
-  localStorage.setItem('poke_pro_session_v3', u);
+  localStorage.setItem('poke_pro_session_v4', u);
   loginUser(u);
 }
 
@@ -1255,20 +1289,19 @@ function doRegister() {
     maxHp: baseStarterTemplate.maxHp
   };
 
-  // NUEVO DINERO INICIAL REQUERIDO: 5000 POKEDOLARES
   DB.users[u] = {
     user: u,
     pass: p,
     trainerId: selectedRegTrainer,
-    money: 5000,
+    money: 5000, // EMPALME REQUERIDO DE 5000 POKEDOLARES
     team: [initialStarter],
     pc: [],
     bag: { pokeballs: 5, greatballs: 1, ultraballs: 0, potions: 3, superpotions: 0 },
-    friends: {} // Control de amigos estructurado
+    friends: {}
   };
 
   saveDB();
-  localStorage.setItem('poke_pro_session_v3', u);
+  localStorage.setItem('poke_pro_session_v4', u);
   loginUser(u);
 }
 
@@ -1277,13 +1310,13 @@ function loginUser(u) {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'block';
   document.getElementById('combat-btn').style.display = 'block';
-  document.getElementById('friends-btn').style.display = 'block'; // Mostrar botón de amigos opuesto
+  document.getElementById('friends-btn').style.display = 'block';
   buildRegisterGrids();
   updateDashboard();
 }
 
 function doLogout() {
-  localStorage.removeItem('poke_pro_session_v3');
+  localStorage.removeItem('poke_pro_session_v4');
   currentUser = null;
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('combat-btn').style.display = 'none';
@@ -1292,7 +1325,6 @@ function doLogout() {
   switchTab('login');
 }
 
-// --- ACTUALIZACIÓN DE INTERFAZ ---
 function updateDashboard() {
   if (!currentUser) return;
   const data = DB.users[currentUser];
@@ -1327,7 +1359,6 @@ function updateDashboard() {
   });
 }
 
-// --- CONTROLES DE MODALES COMPLETOS ---
 function openModal(id) {
   document.getElementById(id).classList.add('open');
   if (id === 'shop-modal') buildShop();
@@ -1351,7 +1382,9 @@ function openBagModal() {
       div.className = "bag-item";
       div.innerHTML = `
         <div class="item-info">
-          <div class="item-text-icon">${ref.iconText}</div>
+          <div class="item-img-wrapper">
+            <img src="${ref.imgUrl}" alt="${ref.name}">
+          </div>
           <div class="item-text">
             <h4>${ref.name}</h4>
             <p>Cantidad: ${bag[itemId]}</p>
@@ -1387,7 +1420,9 @@ function buildShop() {
     div.className = "shop-item";
     div.innerHTML = `
       <div class="item-info">
-        <div class="item-text-icon">${item.iconText}</div>
+        <div class="item-img-wrapper">
+          <img src="${item.imgUrl}" alt="${item.name}">
+        </div>
         <div class="item-text">
           <h4>${item.name}</h4>
           <p>${item.desc}</p>
@@ -1458,7 +1493,7 @@ function toggleCheatShiny() {
   btn.classList.toggle('active', cheatShinyActive);
 }
 
-// --- SISTEMA ONLINE: LÓGICA DE AMIGOS Y SOLICITUDES ---
+// --- AMIGOS ONLINE ---
 function openFriendsModal() {
   openModal('friends-modal');
   document.getElementById('friend-target-id').value = "";
@@ -1474,11 +1509,9 @@ function sendFriendRequest() {
   if (targetId === currentUser) { fMsg.style.color = "var(--red)"; fMsg.textContent = "No puedes agregarte a ti mismo."; return; }
   if (!DB.users[targetId]) { fMsg.style.color = "var(--red)"; fMsg.textContent = "El entrenador no existe."; return; }
 
-  // Inicializar nodos si no existen
   if (!DB.users[currentUser].friends) DB.users[currentUser].friends = {};
   if (!DB.users[targetId].friends) DB.users[targetId].friends = {};
 
-  // Guardar relaciones directas simuladas
   DB.users[currentUser].friends[targetId] = "solicitado";
   DB.users[targetId].friends[currentUser] = "pendiente";
 
@@ -1521,7 +1554,6 @@ function buildFriendsList() {
     } else if (status === "aceptado") {
       statusText = "AMIGOS";
       statusClass = "status-accepted";
-      // COMBATES ONLINE CONTRA AMIGOS SÓLO SI ACEPTAN LA SOLICITUD
       actionsHTML = `<button class="f-btn battle" onclick="initPvPCombat('${fId}')">COMBATE ONLINE</button>`;
     }
 
@@ -1540,7 +1572,7 @@ function buildFriendsList() {
   }
 }
 
-// --- MOTOR DE COMBATES (WILD VS ONLINE AMIGOS) ---
+// --- COMBATES ---
 function initWildCombat() {
   const data = DB.users[currentUser];
   currentAlly = data.team.find(p => p.hp > 0);
@@ -1581,7 +1613,6 @@ function initPvPCombat(friendId) {
     return;
   }
 
-  // Tomar el primer Pokémon activo del amigo como rival
   const targetFriendPoke = friendData.team.find(p => p.hp > 0) || friendData.team[0];
 
   isPvP = true;
@@ -1625,7 +1656,6 @@ function showBattleMenu() {
   
   if (!battleActive) return;
 
-  // Ataques
   (currentAlly.moves || ["Ataque Furia"]).forEach((move, i) => {
     const btn = document.createElement('button');
     btn.className = "ba-btn atk";
@@ -1634,7 +1664,6 @@ function showBattleMenu() {
     actions.appendChild(btn);
   });
 
-  // Capturar (solo permitido contra salvajes)
   const ballBtn = document.createElement('button');
   ballBtn.className = "ba-btn ball";
   ballBtn.textContent = isPvP ? "BLOQUEADO" : "CAPTURAR";
@@ -1642,7 +1671,6 @@ function showBattleMenu() {
   ballBtn.onclick = () => tryCapture();
   actions.appendChild(ballBtn);
 
-  // Huida
   const runBtn = document.createElement('button');
   runBtn.className = "ba-btn run";
   runBtn.textContent = "HUIR";
@@ -1653,7 +1681,6 @@ function showBattleMenu() {
 function executeTurn(moveName) {
   let log = document.getElementById('battle-log');
   
-  // Daño aliado
   const baseAtk = currentAlly.atk || 45;
   const dmgToEnemy = Math.floor((Math.random() * 12) + (baseAtk * 0.15));
   currentEnemy.hp = Math.max(0, currentEnemy.hp - dmgToEnemy);
@@ -1662,18 +1689,16 @@ function executeTurn(moveName) {
   
   if (currentEnemy.hp <= 0) {
     logText += `<p style="color:#44ff88;">¡El objetivo ${currentEnemy.name} se ha debilitado!</p>`;
-    // Recompensa
     if (!isPvP) {
       const reward = Math.floor(Math.random() * 150) + 80;
       DB.users[currentUser].money += reward;
       logText += `<p style="color:var(--gold);">Recibes $${reward} por la victoria de campo.</p>`;
     } else {
-      const rewardPvP = 500; // Premio mayor por derrotar a un amigo online
+      const rewardPvP = 500;
       DB.users[currentUser].money += rewardPvP;
       logText += `<p style="color:var(--gold);">¡Premio Online Pro! Recibes $${rewardPvP} por vencer a tu amigo.</p>`;
     }
     
-    // Subir XP
     currentAlly.xp += 40;
     if (currentAlly.xp >= 100) {
       currentAlly.level++;
@@ -1692,7 +1717,6 @@ function executeTurn(moveName) {
     return;
   }
 
-  // Contraataque rival
   const enemyAtk = currentEnemy.atk || 35;
   const finalEnemyDmg = Math.floor((Math.random() * 10) + (enemyAtk * 0.1));
   currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
@@ -1721,7 +1745,6 @@ function tryCapture() {
   if (isPvP) return;
   const data = DB.users[currentUser];
   
-  // Buscar primera ball disponible
   let chosenBall = null;
   if (data.bag.pokeballs > 0) chosenBall = 'pokeballs';
   else if (data.bag.greatballs > 0) chosenBall = 'greatballs';
@@ -1733,7 +1756,6 @@ function tryCapture() {
   const catchChance = chosenBall === 'ultraballs' ? 0.85 : chosenBall === 'greatballs' ? 0.6 : 0.4;
   
   if (Math.random() < catchChance) {
-    // CAPTURADO
     const caught = {
       id: currentEnemy.id,
       name: currentEnemy.name,
@@ -1757,7 +1779,6 @@ function tryCapture() {
     updateDashboard();
     endBattleState();
   } else {
-    // FALLA CAPTURA
     let log = `<p>¡Fallo de fijación! El objetivo logró zafarse del dispositivo.</p>`;
     const enemyAtk = currentEnemy.atk || 35;
     const finalEnemyDmg = Math.floor((Math.random() * 10) + (enemyAtk * 0.1));
