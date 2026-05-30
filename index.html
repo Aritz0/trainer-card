@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PokéTrainer Online Pro</title>
+<title>PokéTrainer Online Pro - XL FULL EDITION</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
 <style>
@@ -15,157 +15,172 @@
 body{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   background:var(--green);
-  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 2px,transparent 2px 28px),
-    repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 28px);
-  font-family:var(--px);padding:16px;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 3px,transparent 3px 40px),
+    repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 3px,transparent 3px 40px);
+  font-family:var(--px);padding:24px;
 }
-@keyframes popIn{from{transform:scale(.85) translateY(30px);opacity:0}to{transform:none;opacity:1}}
-@keyframes cardIn{from{transform:scale(.9) translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes popIn{from{transform:scale(.85) translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes cardIn{from{transform:scale(.9) translateY(30px);opacity:0}to{transform:none;opacity:1}}
 
 /* ── LOADING ── */
 #loading-screen{
   position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;z-index:9999;gap:16px;
+  align-items:center;justify-content:center;z-index:9999;gap:24px;
 }
-#loading-screen .lball{font-size:40px;animation:spin 1s linear infinite;}
+#loading-screen .lball{font-size:80px;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-#loading-screen p{color:var(--gold);font-size:8px;letter-spacing:2px;}
+#loading-screen p{color:var(--gold);font-size:18px;letter-spacing:4px;}
 
-/* ── AUTH ── */
+/* ── AUTH (TAMAÑO GIGANTE) ── */
 #auth-screen{
-  width:100%;max-width:480px;
-  background:var(--navy);border:5px solid var(--gold);border-radius:12px;
-  box-shadow:0 0 0 3px #000,10px 10px 0 rgba(0,0,0,.5);
+  width:100%;max-width:650px;
+  background:var(--navy);border:8px solid var(--gold);border-radius:16px;
+  box-shadow:0 0 0 5px #000,15px 15px 0 rgba(0,0,0,.5);
   overflow:hidden;animation:popIn .5s cubic-bezier(.2,.8,.3,1.2) both;
   display:none;
 }
-.auth-header{background:#060e33;border-bottom:4px solid var(--gold);padding:20px;text-align:center;}
-.auth-header h1{color:var(--gold);font-size:clamp(10px,2.5vw,15px);letter-spacing:2px;margin-bottom:6px;}
-.auth-header p{color:#8899ff;font-size:clamp(6px,1.5vw,9px);letter-spacing:1px;}
-.auth-tabs{display:flex;border-bottom:3px solid var(--gold);}
-.auth-tab{flex:1;padding:12px;text-align:center;cursor:pointer;color:#8899ff;font-size:clamp(6px,1.4vw,9px);letter-spacing:1px;background:#0a0e2a;transition:background .15s,color .15s;border:none;font-family:var(--px);}
+.auth-header{background:#060e33;border-bottom:6px solid var(--gold);padding:30px;text-align:center;}
+.auth-header h1{color:var(--gold);font-size:clamp(14px, 3.5vw, 24px);letter-spacing:3px;margin-bottom:12px;}
+.auth-header p{color:#8899ff;font-size:clamp(10px, 2vw, 14px);letter-spacing:2px;}
+.auth-tabs{display:flex;border-bottom:5px solid var(--gold);}
+.auth-tab{flex:1;padding:20px;text-align:center;cursor:pointer;color:#8899ff;font-size:clamp(10px, 2vw, 14px);letter-spacing:2px;background:#0a0e2a;transition:background .15s,color .15s;border:none;font-family:var(--px);}
 .auth-tab.active{background:var(--navy);color:var(--gold);}
-.auth-body{padding:22px; max-height: 75vh; overflow-y: auto;}
-.auth-field{margin-bottom:14px;}
-.auth-field label{display:block;color:#8899ff;font-size:6.5px;letter-spacing:1px;margin-bottom:5px;}
-.auth-field input, .auth-field select{width:100%;background:#060e33;border:2px solid #2244aa;border-radius:5px;color:#fff;font-family:var(--vt);font-size:20px;padding:9px 11px;outline:none;transition:border-color .15s;}
+.auth-body{padding:35px; max-height: 70vh; overflow-y: auto;}
+.auth-field{margin-bottom:24px;}
+.auth-field label{display:block;color:#8899ff;font-size:11px;letter-spacing:1px;margin-bottom:10px;}
+.auth-field input, .auth-field select{width:100%;background:#060e33;border:4px solid #2244aa;border-radius:8px;color:#fff;font-family:var(--vt);font-size:28px;padding:12px 16px;outline:none;transition:border-color .15s;}
 .auth-field input:focus, .auth-field select:focus{border-color:var(--gold);}
-.grid-select{display:grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 5px;}
-.grid-item{border: 2px solid #2244aa; background:#060e33; padding: 4px; text-align: center; cursor: pointer; border-radius: 4px;}
-.grid-item.selected{border-color: var(--gold); background: #142a66;}
-.grid-item img{width: 45px; height: 45px; object-fit: contain; image-rendering: pixelated;}
-.grid-item p{font-size: 5px; color: #fff; margin-top: 2px;}
 
-.auth-btn{width:100%;background:#1a2fa8;border:3px solid var(--gold);border-radius:6px;color:var(--gold);font-family:var(--px);font-size:8px;padding:12px;cursor:pointer;letter-spacing:1px;transition:background .15s,transform .1s;margin-top:4px;}
-.auth-btn:hover{background:#253fcc;transform:translateY(-2px);}
-.auth-msg{margin-top:10px;font-family:var(--vt);font-size:18px;text-align:center;min-height:22px;}
+.grid-select{display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px;}
+.grid-item{border: 3px solid #2244aa; background:#060e33; padding: 8px; text-align: center; cursor: pointer; border-radius: 6px; transition: 0.1s;}
+.grid-item.selected{border-color: var(--gold); background: #142a66; transform: scale(1.05);}
+.grid-item img{width: 70px; height: 70px; object-fit: contain; image-rendering: pixelated;}
+.grid-item p{font-size: 8px; color: #fff; margin-top: 4px; overflow: hidden; text-overflow: ellipsis;}
+
+.auth-btn{width:100%;background:#1a2fa8;border:4px solid var(--gold);border-radius:10px;color:var(--gold);font-family:var(--px);font-size:14px;padding:18px;cursor:pointer;letter-spacing:2px;transition:background .15s,transform .1s;margin-top:8px;}
+.auth-btn:hover{background:#253fcc;transform:translateY(-3px);}
+.auth-msg{margin-top:15px;font-family:var(--vt);font-size:24px;text-align:center;min-height:30px;}
 .auth-msg.err{color:#ff5544;}
 .auth-msg.ok{color:#44ff88;}
 
-/* ── APP ── */
-#app-screen{display:none;width:100%;max-width:1200px;}
-#top-bar{background:var(--navy);border:3px solid var(--gold);border-radius:8px 8px 0 0;padding:9px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-.top-user{color:var(--gold);font-size:clamp(6px,1.1vw,9px);display:flex;align-items:center;gap:8px;}
-.top-actions{display:flex;gap:6px;flex-wrap:wrap;}
-.top-btn{background:#0a0e2a;border:2px solid #2244aa;border-radius:4px;color:#cce0ff;font-family:var(--px);font-size:clamp(4.5px,.85vw,7px);padding:5px 9px;cursor:pointer;transition:border-color .15s,background .15s;}
+/* ── APP RESPONSIVA Y GIGANTE ── */
+#app-screen{display:none;width:100%;max-width:1400px;margin:0 auto;}
+#top-bar{background:var(--navy);border:6px solid var(--gold);border-radius:12px 12px 0 0;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.top-user{color:var(--gold);font-size:clamp(12px, 2vw, 20px);display:flex;align-items:center;gap:12px;}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.top-btn{background:#0a0e2a;border:3px solid #2244aa;border-radius:6px;color:#cce0ff;font-family:var(--px);font-size:clamp(10px, 1.3vw, 15px);padding:10px 16px;cursor:pointer;transition:border-color .15s,background .15s;}
 .top-btn:hover{border-color:var(--gold);background:#142a66;}
 .top-btn.logout{border-color:#cc2222;color:#ff7766;}
 
-.card{background:var(--blue);border:5px solid var(--gold);border-top:none;border-radius:0 0 12px 12px;box-shadow:0 0 0 3px #000,12px 12px 0 rgba(0,0,0,.5);overflow:hidden;animation:cardIn .5s .1s both;}
-.card-body{display:grid;grid-template-columns:clamp(170px,24%,290px) 1fr;}
-.left{background:linear-gradient(160deg,#1833bb,#0a1266);border-right:3px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;padding:18px 10px 14px;gap:12px;}
-.avatar-frame{width:clamp(110px,17vw,210px);height:clamp(110px,17vw,210px);border:4px solid var(--gold);border-radius:8px;background:#0e1a77;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0; cursor: pointer; position: relative;}
+.cheat-toggle{background: #221144; border: 3px solid #aa22ff; color: #cc66ff; font-family: var(--px); font-size: 11px; padding: 10px 14px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 8px rgba(170,34,255,0.4);}
+.cheat-toggle.active{background: #aa22ff; color: #fff; box-shadow: 0 0 16px #aa22ff;}
+
+.card{background:var(--blue);border:8px solid var(--gold);border-top:none;border-radius:0 0 16px 16px;box-shadow:0 0 0 5px #000,18px 18px 0 rgba(0,0,0,.5);overflow:hidden;animation:cardIn .5s .1s both;}
+.card-body{display:grid;grid-template-columns:350px 1fr;}
+.left{background:linear-gradient(160deg,#1833bb,#0a1266);border-right:6px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;padding:30px 20px;gap:20px;}
+.avatar-frame{width:220px;height:220px;border:5px solid var(--gold);border-radius:12px;background:#0e1a77;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0; cursor: pointer; position: relative;}
 .avatar-frame img{width:100%;height:100%;object-fit:contain;}
-.avatar-frame:hover::after{content: 'CAMBIAR'; position: absolute; inset: 0; background: rgba(0,0,0,0.6); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 7px;}
+.avatar-frame:hover::after{content: 'CAMBIAR'; position: absolute; inset: 0; background: rgba(0,0,0,0.7); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 12px; letter-spacing: 2px;}
+
 .stats{width:100%}
-.stat-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.12);padding:5px 3px;font-size:clamp(5px,.85vw,8.5px);}
+.stat-row{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid rgba(255,255,255,.12);padding:12px 6px;font-size:clamp(11px, 1.5vw, 16px);}
 .stat-row .k{color:#99aadd}.stat-row .v{color:#fff}.stat-row .v.gold{color:var(--gold)}
-.right{padding:16px 12px 18px;display:flex;flex-direction:column;gap:10px;}
-.team-lbl{color:var(--gold);font-size:clamp(7px,1.1vw,11px);letter-spacing:1px;display:flex;align-items:center;gap:6px;}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;flex:1;}
+.right{padding:24px;display:flex;flex-direction:column;gap:20px;}
+.team-lbl{color:var(--gold);font-size:clamp(14px, 2.2vw, 24px);letter-spacing:2px;display:flex;align-items:center;gap:10px;}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;flex:1;}
 
-/* ── SLOTS ── */
-.slot{background:#0a1d44;border:2px solid #1e44aa;border-radius:7px;display:flex;flex-direction:column;align-items:center;padding:9px 5px 7px;cursor:pointer;position:relative;transition:border-color .15s,transform .15s,background .15s;}
-.slot:hover{border-color:var(--gold);background:#142a66;transform:translateY(-4px)}
-.slot img{width:clamp(56px,8.5vw,105px);height:clamp(56px,8.5vw,105px);object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.7));}
-.slot .pname{color:#cce0ff;font-size:clamp(4.5px,.75vw,8px);text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
-.slot .plv{color:#88aadd;font-size:clamp(4px,.6vw,6.5px);margin-top:2px}
-.hp-bar-wrap{width:87%;height:5px;background:#1a1a3a;border-radius:3px;margin-top:4px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
-.hp-bar{height:100%;border-radius:3px;transition:width .4s,background .4s}
+/* ── SLOTS DE POKÉMON (XL) ── */
+.slot{background:#0a1d44;border:4px solid #1e44aa;border-radius:12px;display:flex;flex-direction:column;align-items:center;padding:20px 14px;cursor:pointer;position:relative;transition:border-color .15s,transform .15s,background .15s;}
+.slot:hover{border-color:var(--gold);background:#142a66;transform:translateY(-6px)}
+.slot img{width:160px;height:160px;object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.7));}
+.slot .pname{color:#cce0ff;font-size:16px;text-align:center;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;letter-spacing:1px;}
+.slot .plv{color:#88aadd;font-size:14px;margin-top:4px}
+.hp-bar-wrap{width:90%;height:10px;background:#1a1a3a;border-radius:5px;margin-top:10px;overflow:hidden;border:2px solid rgba(255,255,255,.1);}
+.hp-bar{height:100%;border-radius:5px;transition:width .4s,background .4s}
 
-/* ── MODALS ORIGINALES ADAPTADOS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;padding:14px;}
+/* ── MODALES (MÁS AMPLIOS Y GIGANTES) ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;padding:24px;}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--navy);border:4px solid var(--gold);border-radius:10px;box-shadow:0 0 0 2px #000,8px 8px 0 rgba(0,0,0,.6);width:100%;max-width:520px;overflow:hidden;max-height:88vh;overflow-y:auto;}
-.modal-hdr{background:#060e33;border-bottom:3px solid var(--gold);padding:11px 15px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
-.modal-title{color:var(--gold);font-size:clamp(7px,1.2vw,11px);letter-spacing:1px;}
-.modal-x{background:#cc2222;border:none;color:#fff;font-family:var(--px);font-size:7px;padding:5px 9px;border-radius:4px;cursor:pointer;}
-.modal-body{padding:14px;}
+.modal{background:var(--navy);border:6px solid var(--gold);border-radius:16px;box-shadow:0 0 0 4px #000,12px 12px 0 rgba(0,0,0,.6);width:100%;max-width:750px;overflow:hidden;max-height:85vh;overflow-y:auto;}
+.modal-hdr{background:#060e33;border-bottom:5px solid var(--gold);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
+.modal-title{color:var(--gold);font-size:16px;letter-spacing:2px;}
+.modal-x{background:#cc2222;border:none;color:#fff;font-family:var(--px);font-size:12px;padding:8px 14px;border-radius:6px;cursor:pointer;}
+.modal-body{padding:24px;}
 
-/* ── NUEVAS SECCIONES POKÉMON (TIENDA, BOLSA, PC) ── */
-.shop-item, .bag-item{display: flex; align-items: center; justify-content: space-between; background: #0a1d44; border: 2px solid #1e44aa; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px;}
-.item-info{display: flex; align-items: center; gap: 10px;}
-.item-icon{font-size: 20px;}
-.item-text h4{color: #fff; font-size: 8px;}
-.item-text p{color: #88aadd; font-size: 6px; margin-top: 2px;}
-.shop-price{color: var(--gold); font-size: 8px;}
+/* TIENDA Y BOLSA XL */
+.shop-item, .bag-item{display: flex; align-items: center; justify-content: space-between; background: #0a1d44; border: 3px solid #1e44aa; padding: 14px 20px; margin-bottom: 10px; border-radius: 10px; gap: 14px; flex-wrap: wrap;}
+.item-info{display: flex; align-items: center; gap: 16px;}
+.item-icon{font-size: 36px;}
+.item-text h4{color: #fff; font-size: 14px; letter-spacing: 1px;}
+.item-text p{color: #88aadd; font-size: 11px; margin-top: 4px;}
+.shop-price{color: var(--gold); font-size: 14px;}
 
-/* PC de Bill */
-.pc-container{display: grid; grid-template-columns: 1fr 1fr; gap: 12px;}
-.pc-box{background: #060e33; border: 2px solid var(--gold); border-radius: 6px; padding: 8px; max-height: 250px; overflow-y: auto;}
-.pc-title{font-size: 7px; color: var(--gold); text-align: center; margin-bottom: 6px; border-bottom: 1px dashed var(--gold); padding-bottom: 4px;}
-.pc-grid{display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;}
-.pc-slot{background: #0a1444; border: 1px solid #2244aa; border-radius: 4px; padding: 2px; text-align: center; cursor: pointer;}
+/* PC DE BILL XL */
+.pc-container{display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;}
+.pc-box{background: #060e33; border: 3px solid var(--gold); border-radius: 10px; padding: 14px; max-height: 350px; overflow-y: auto;}
+.pc-title{font-size: 12px; color: var(--gold); text-align: center; margin-bottom: 10px; border-bottom: 2px dashed var(--gold); padding-bottom: 6px; letter-spacing: 1px;}
+.pc-grid{display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;}
+.pc-slot{background: #0a1444; border: 2px solid #2244aa; border-radius: 6px; padding: 6px; text-align: center; cursor: pointer;}
 .pc-slot:hover{border-color: var(--gold); background: #142a66;}
-.pc-slot img{width: 36px; height: 36px; object-fit: contain; image-rendering: pixelated;}
+.pc-slot img{width: 60px; height: 60px; object-fit: contain; image-rendering: pixelated;}
 
-/* Estilos de estadísticas extendidos */
-.moves-list-info { margin-top: 8px; border-top: 1px dashed var(--gold); padding-top: 6px; font-size: 7px; color: #88aadd; }
+.moves-list-info { margin-top: 14px; border-top: 2px dashed var(--gold); padding-top: 10px; font-size: 12px; color: #88aadd; line-height: 1.6; }
 
-/* ── BOTÓN SHINY RATIO CHEAT ── */
-.cheat-toggle{background: #221144; border: 2px solid #aa22ff; color: #cc66ff; font-family: var(--px); font-size: 6px; padding: 6px 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 6px rgba(170,34,255,0.4);}
-.cheat-toggle.active{background: #aa22ff; color: #fff; box-shadow: 0 0 12px #aa22ff;}
-
-/* ── COMBATE WILD GIGANTE Y CENTRADO ── */
-#combat-btn{position:fixed;bottom:24px;left:24px;z-index:200;background:#0d1244;border:3px solid #44ff88;border-radius:6px;color:#44ff88;font-family:var(--px);font-size:8px;padding:12px 16px;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.5);letter-spacing:1px;}
-#combat-btn:hover{background:#1a2fa8}
+/* ── VENTANA DE COMBATE REDISEÑADA Y RESPONSIVA ── */
+#combat-btn{position:fixed;bottom:32px;left:32px;z-index:200;background:#0d1244;border:5px solid #44ff88;border-radius:12px;color:#44ff88;font-family:var(--px);font-size:14px;padding:18px 26px;cursor:pointer;box-shadow:4px 4px 0 rgba(0,0,0,.5);letter-spacing:2px; transition: 0.15s;}
+#combat-btn:hover{background:#1a2fa8; transform: scale(1.03);}
 
 #combat-window{
   position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-  z-index:1000; width:650px; max-width:95vw; height: 550px; max-height: 90vh;
-  background:#0a0e2a; border:5px solid #44ff88; border-radius:12px;
-  box-shadow:0 0 0 4px #000, 20px 20px 0 rgba(0,0,0,0.6);
+  z-index:1000; width:800px; max-width:95vw; height: 680px; max-height: 92vh;
+  background:#0a0e2a; border:6px solid #44ff88; border-radius:16px;
+  box-shadow:0 0 0 5px #000, 25px 25px 0 rgba(0,0,0,0.6);
   font-family:var(--px); display:none; flex-direction: column; overflow: hidden;
 }
-.cw-hdr{background:#060e33;border-bottom:4px solid #44ff88;padding:14px;display:flex;justify-content:space-between;align-items:center;}
-.cw-title{color:#44ff88;font-size:10px;letter-spacing:1px;}
-.cw-close{background:#cc2222;border:none;color:#fff;font-family:var(--px);font-size:8px;padding:5px 10px;border-radius:4px;cursor:pointer;}
-.arena{background:linear-gradient(180deg,#112a66,#050a1a);padding:16px;display:flex;flex-direction:column;gap:12px; flex: 1; justify-content: space-between;}
-.arena-field{display:flex;justify-content:space-between;align-items:flex-end;min-height:220px;background:linear-gradient(180deg,#0a1b44,#070f26);border-radius:8px;border:3px solid #1a3aa8;padding:16px;position:relative;}
-.fspr{width:130px;height:130px;image-rendering:pixelated;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.6));}
-.battle-log{background:#030714;border:3px solid #1a2a66;border-radius:6px;padding:12px;min-height:70px; max-height: 90px; overflow-y:auto;}
-.battle-log p{color:#cce0ff;font-family:var(--vt);font-size:20px;line-height:1.4;}
-.battle-actions{display:flex;flex-wrap:wrap;gap:8px;}
-.ba-btn{background:#0d1744;border:2px solid #2244aa;border-radius:4px;color:#cce0ff;font-family:var(--px);font-size:7px;padding:10px 14px;cursor:pointer;flex: 1; min-width: 120px; text-align: center;}
+.cw-hdr{background:#060e33;border-bottom:5px solid #44ff88;padding:18px;display:flex;justify-content:space-between;align-items:center;}
+.cw-title{color:#44ff88;font-size:14px;letter-spacing:1px;}
+.cw-close{background:#cc2222;border:none;color:#fff;font-family:var(--px);font-size:11px;padding:8px 14px;border-radius:6px;cursor:pointer;}
+.arena{background:linear-gradient(180deg,#112a66,#050a1a);padding:20px;display:flex;flex-direction:column;gap:16px; flex: 1; justify-content: space-between; overflow-y: auto;}
+.arena-field{display:flex;justify-content:space-between;align-items:flex-end;min-height:260px;background:linear-gradient(180deg,#0a1b44,#070f26);border-radius:12px;border:4px solid #1a3aa8;padding:20px;position:relative; flex-wrap: wrap; gap: 20px;}
+.fspr{width:180px;height:180px;image-rendering:pixelated;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(0,0,0,0.6));}
+.battle-log{background:#030714;border:3px solid #1a2a66;border-radius:8px;padding:16px;min-height:90px; max-height: 120px; overflow-y:auto;}
+.battle-log p{color:#cce0ff;font-family:var(--vt);font-size:26px;line-height:1.4;}
+.battle-actions{display:flex;flex-wrap:wrap;gap:12px;}
+.ba-btn{background:#0d1744;border:3px solid #2244aa;border-radius:6px;color:#cce0ff;font-family:var(--px);font-size:12px;padding:14px 20px;cursor:pointer;flex: 1; min-width: 150px; text-align: center;}
 .ba-btn:hover:not(:disabled){border-color:#f5c842;background:#142a66;}
 .ba-btn:disabled{opacity:.4;cursor:not-allowed;}
 .ba-btn.atk{border-color:#e85010;color:#ffaa88;}.ba-btn.ball{border-color:#3a7eee;color:#88ccff;}.ba-btn.run{border-color:#555;color:#888;}.ba-btn.nxt{border-color:#44ff88;color:#44ff88;}
 
-.hp-box{background: rgba(0,0,0,0.5); border: 1px solid #2244aa; padding: 6px; border-radius: 4px; color: #fff; font-size: 6px; width: 140px;}
-.hp-name{font-weight: bold; margin-bottom: 3px; display: flex; justify-content: space-between;}
+.hp-box{background: rgba(0,0,0,0.6); border: 2px solid #2244aa; padding: 10px; border-radius: 6px; color: #fff; font-size: 10px; width: 200px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);}
+.hp-name{font-weight: bold; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;}
+
+/* ── RESPONSIVIDAD INTEGRAL ── */
+@media (max-width: 992px) {
+  .card-body { grid-template-columns: 1fr; }
+  .left { border-right: none; border-bottom: 6px solid rgba(255,255,255,.12); }
+  .arena-field { justify-content: center; align-items: center; min-height: auto; }
+}
+
+@media (max-width: 576px) {
+  body { padding: 12px; }
+  .grid-select { grid-template-columns: repeat(2, 1fr); }
+  #top-bar { padding: 12px; justify-content: center; }
+  .top-actions { justify-content: center; width: 100%; }
+  #combat-btn { bottom: 16px; left: 16px; font-size: 11px; padding: 14px 18px; }
+}
 </style>
 </head>
 <body>
 
 <div id="loading-screen">
   <div class="lball">⚪</div>
-  <p>CARGANDO REGIÓN POKÉMON...</p>
+  <p>CARGANDO REGIÓN COMPLETA XL...</p>
 </div>
 
 <div id="auth-screen">
   <div class="auth-header">
     <h1>⚡ POKÉTRAINER ONLINE PRO</h1>
-    <p>EDICIÓN COMPLETA RETRO</p>
+    <p>EDICIÓN COMPLETA XL RESPONSIVA</p>
   </div>
   <div class="auth-tabs">
     <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">▶ ENTRAR</button>
@@ -206,7 +221,7 @@ body{
     </div>
     <div class="top-actions">
       <button class="cheat-toggle" id="cheat-btn" onclick="toggleCheatShiny()">✨ SHINY x4000</button>
-      <button class="top-btn" style="border-color:#f5c842; color:#f5c842;" onclick="openModal('shop-modal')">🏪 TIENDA</button>
+      <button class="top-btn" style="border-color:#f5c842; color:#f5c842;" onclick="openShopModal()">🏪 TIENDA</button>
       <button class="top-btn" style="border-color:#44ff88; color:#44ff88;" onclick="openBagModal()">🎒 BOLSA</button>
       <button class="top-btn" style="border-color:#00ffcc; color:#00ffcc;" onclick="openPCModal()">💻 PC BILL</button>
       <button class="top-btn logout" onclick="doLogout()">✕ SALIR</button>
@@ -226,7 +241,7 @@ body{
         </div>
       </div>
       <div class="right">
-        <div class="team-lbl">EQUIPO POKÉMON (MÁX 6) <span style="font-size: 5px; color:#aaa; margin-left:10px;">(Click para ver estadísticas)</span></div>
+        <div class="team-lbl">EQUIPO POKÉMON (MÁX 6)</div>
         <div class="team-grid" id="team-grid"></div>
       </div>
     </div>
@@ -264,13 +279,13 @@ body{
 </div>
 
 <div class="modal-overlay" id="pc-modal">
-  <div class="modal" style="max-width: 650px;">
+  <div class="modal" style="max-width: 700px;">
     <div class="modal-hdr"><span class="modal-title">💻 ALMACENAMIENTO DE BILL</span><button class="modal-x" onclick="closeModal('pc-modal')">✕</button></div>
     <div class="modal-body">
       <div class="pc-container">
         <div>
           <div class="pc-title">EQUIPO ACTUAL</div>
-          <div id="pc-team-list" style="display:flex; flex-direction:column; gap:4px;"></div>
+          <div id="pc-team-list" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
         <div>
           <div class="pc-title">POKÉMON EN EL PC</div>
@@ -291,18 +306,18 @@ body{
   </div>
   <div class="arena">
     <div class="arena-field">
-      <div style="align-self: flex-end;">
+      <div>
         <div class="hp-box" id="p-hp-box">
-          <div class="hp-name"><span id="p-name">---</span><span id="p-lv">Lv.50</span></div>
+          <div class="hp-name"><span id="p-name">---</span><span id="p-lv">Lv.5</span></div>
           <div class="hp-bar-wrap"><div class="hp-bar" id="p-hp-bar" style="background:#44dd44; width:100%;"></div></div>
-          <div style="text-align:right; margin-top:2px;" id="p-hp-text">100/100</div>
+          <div style="text-align:right; margin-top:4px;" id="p-hp-text">100/100</div>
         </div>
         <img class="fspr" id="p-sprite" src="" alt="Aliado">
       </div>
       
-      <div style="align-self: flex-start; text-align: right;">
+      <div style="text-align: right;">
         <div class="hp-box" id="e-hp-box" style="text-align: left; margin-left: auto;">
-          <div class="hp-name"><span id="e-name">---</span><span id="e-lv">Lv.50</span></div>
+          <div class="hp-name"><span id="e-name">---</span><span id="e-lv">Lv.5</span></div>
           <div class="hp-bar-wrap"><div class="hp-bar" id="e-hp-bar" style="background:#44dd44; width:100%;"></div></div>
         </div>
         <img class="fspr" id="e-sprite" src="" alt="Enemigo">
@@ -315,8 +330,7 @@ body{
 </div>
 
 <script>
-// ─── CONFIGURACIONES Y CONSTANTES DE DATOS POKÉMON ───
-const DB_KEY = 'poketrainer_pro_db';
+const DB_KEY = 'poketrainer_pro_db_v4';
 let DB = JSON.parse(localStorage.getItem(DB_KEY)) || { users: {} };
 
 const TRAINERS = [
@@ -331,16 +345,18 @@ const TRAINERS = [
 ];
 
 const STARTERS = [
-  { id: 1, name: "BULBASAUR", type: "grass", moves: ["Placaje", "Látigo Cepa", "Gruñido"] },
-  { id: 4, name: "CHARMANDER", type: "fire", moves: ["Arañazo", "Ascuas", "Gruñido"] },
-  { id: 7, name: "SQUIRTLE", type: "water", moves: ["Placaje", "Pistola Agua", "Látigo"] },
-  { id: 25, name: "PIKACHU", type: "electric", moves: ["Impactrueno", "Ataque Rápido", "Látigo"] },
-  { id: 152, name: "CHIKORITA", type: "grass", moves: ["Placaje", "Hojas Afiladas", "Gruñido"] },
-  { id: 155, name: "CYNDAQUIL", type: "fire", moves: ["Placaje", "Ascuas", "Malicioso"] },
-  { id: 158, name: "TOTODILE", type: "water", moves: ["Arañazo", "Pistola Agua", "Malicioso"] },
-  { id: 252, name: "TRECKO", type: "grass", moves: ["Destructor", "Absorber", "Malicioso"] },
-  { id: 255, name: "TORCHIC", type: "fire", moves: ["Arañazo", "Ascuas", "Gruñido"] },
-  { id: 258, name: "MUDKIP", type: "water", moves: ["Placaje", "Pistola Agua", "Gruñido"] }
+  { id: 1, name: "BULBASAUR", level: 5, hp: 45, maxHp: 45, moves: ["Placaje", "Látigo Cepa", "Gruñido"] },
+  { id: 4, name: "CHARMANDER", level: 5, hp: 45, maxHp: 45, moves: ["Arañazo", "Ascuas", "Gruñido"] },
+  { id: 7, name: "SQUIRTLE", level: 5, hp: 45, maxHp: 45, moves: ["Placaje", "Pistola Agua", "Látigo"] },
+  { id: 25, name: "PIKACHU", level: 5, hp: 40, maxHp: 40, moves: ["Impactrueno", "Ataque Rápido", "Látigo"] },
+  { id: 152, name: "CHIKORITA", level: 5, hp: 45, maxHp: 45, moves: ["Placaje", "Hojas Afiladas", "Gruñido"] },
+  { id: 155, name: "CYNDAQUIL", level: 5, hp: 45, maxHp: 45, moves: ["Placaje", "Ascuas", "Malicioso"] },
+  { id: 158, name: "TOTODILE", level: 5, hp: 50, maxHp: 50, moves: ["Arañazo", "Pistola Agua", "Malicioso"] }
+];
+
+const SHOP_ITEMS = [
+  { id: "pokeballs", name: "Poké Ball", price: 200, icon: "🔴", desc: "Permite capturar Pokémon" },
+  { id: "potions", name: "Poción Básica", price: 300, icon: "🧪", desc: "Cura 50 HP a un Pokémon" }
 ];
 
 let currentUser = null;
@@ -348,7 +364,6 @@ let selectedRegTrainer = "red";
 let selectedRegStarter = 1;
 let cheatShinyActive = false;
 
-// Variables de estado del combate activo
 let battleActive = false;
 let currentEnemy = null;
 let currentAlly = null;
@@ -363,7 +378,6 @@ function getPokemonSprite(id, shiny = false) {
     : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
-// ─── INICIALIZACIÓN DE INTERFAZ RETRO DE REGISTRO ───
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
@@ -383,10 +397,7 @@ function buildRegisterGrids() {
   TRAINERS.forEach(t => {
     const div = document.createElement('div');
     div.className = `grid-item ${t.id === selectedRegTrainer ? 'selected' : ''}`;
-    div.onclick = () => {
-      selectedRegTrainer = t.id;
-      buildRegisterGrids();
-    };
+    div.onclick = () => { selectedRegTrainer = t.id; buildRegisterGrids(); };
     div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
     tGrid.appendChild(div);
   });
@@ -396,15 +407,11 @@ function buildRegisterGrids() {
   STARTERS.forEach(s => {
     const div = document.createElement('div');
     div.className = `grid-item ${s.id === selectedRegStarter ? 'selected' : ''}`;
-    div.onclick = () => {
-      selectedRegStarter = s.id;
-      buildRegisterGrids();
-    };
+    div.onclick = () => { selectedRegStarter = s.id; buildRegisterGrids(); };
     div.innerHTML = `<img src="${getPokemonSprite(s.id)}"><p>${s.name}</p>`;
     sGrid.appendChild(div);
   });
   
-  // Grid para cambiar el avatar dentro de la app
   const innerGrid = document.getElementById('inner-trainer-grid');
   innerGrid.innerHTML = "";
   TRAINERS.forEach(t => {
@@ -429,7 +436,6 @@ function switchTab(tab) {
   document.getElementById('auth-msg').textContent = "";
 }
 
-// ─── SISTEMA DE LOGIN Y REGISTRO COMPLETO ───
 function doLogin() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
@@ -464,9 +470,9 @@ function doRegister() {
   const initialPokemon = {
     id: starterData.id,
     name: starterData.name,
-    level: 5,
-    hp: 45,
-    maxHp: 45,
+    level: starterData.level,
+    hp: starterData.hp,
+    maxHp: starterData.maxHp,
     shiny: false,
     moves: starterData.moves || ["Placaje", "Gruñido"]
   };
@@ -491,6 +497,7 @@ function loginUser(username) {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'block';
   updateDashboard();
+  buildRegisterGrids();
 }
 
 function doLogout() {
@@ -501,7 +508,6 @@ function doLogout() {
   switchTab('login');
 }
 
-// ─── RENDERIZADO DEL DASHBOARD PRINCIPAL ───
 function updateDashboard() {
   const data = DB.users[currentUser];
   document.getElementById('top-name').textContent = data.username;
@@ -519,7 +525,6 @@ function updateDashboard() {
     const hpPct = (p.hp / p.maxHp) * 100;
     const div = document.createElement('div');
     div.className = "slot";
-    // Corrección para abrir estadísticas al hacer clic
     div.onclick = () => showPokemonStats(idx);
     div.innerHTML = `
       <img src="${getPokemonSprite(p.id, p.shiny)}">
@@ -528,13 +533,12 @@ function updateDashboard() {
       <div class="hp-bar-wrap">
         <div class="hp-bar" style="width: ${hpPct}%; background: ${hpPct > 50 ? '#44dd44' : hpPct > 20 ? '#f5c842' : '#cc2222'}"></div>
       </div>
-      <div style="font-size:5px; color:#fff; margin-top:2px;">${p.hp}/${p.maxHp} HP</div>
+      <div style="font-size:11px; color:#fff; margin-top:6px;">${p.hp}/${p.maxHp} HP</div>
     `;
     tGrid.appendChild(div);
   });
 }
 
-// Implementación de la visualización de estadísticas
 function showPokemonStats(idx) {
   const user = DB.users[currentUser];
   const p = user.team[idx];
@@ -542,9 +546,9 @@ function showPokemonStats(idx) {
   
   body.innerHTML = `
     <div style="text-align:center; margin-bottom:12px;">
-      <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:100px; height:100px; image-rendering:pixelated;">
-      <h3 style="color:var(--gold); font-size:12px;">${p.name} ${p.shiny ? '✨' : ''}</h3>
-      <p style="color:#fff; font-size:8px; margin-top:4px;">Nivel ${p.level}</p>
+      <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:130px; height:130px; image-rendering:pixelated;">
+      <h3 style="color:var(--gold); font-size:16px;">${p.name} ${p.shiny ? '✨' : ''}</h3>
+      <p style="color:#fff; font-size:12px; margin-top:4px;">Nivel ${p.level}</p>
     </div>
     <div class="stats">
       <div class="stat-row"><span class="k">HP Actual</span><span class="v">${p.hp} / ${p.maxHp}</span></div>
@@ -552,22 +556,16 @@ function showPokemonStats(idx) {
       <div class="stat-row"><span class="k">Defensa</span><span class="v">${Math.floor(p.level * 1.2 + 8)}</span></div>
     </div>
     <div class="moves-list-info">
-      <p style="color:var(--gold); margin-bottom:4px;">MOVIMIENTOS:</p>
+      <p style="color:var(--gold); margin-bottom:6px;">MOVIMIENTOS:</p>
       ${p.moves.map(m => `• ${m}`).join('<br>')}
     </div>
   `;
   openModal('stats-modal');
 }
 
-// ─── CONTROLADORES DE MODALES GENÉRICOS ───
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// ─── INTERRUPTOR CHEAT RATIO SHINY ───
 function toggleCheatShiny() {
   cheatShinyActive = !cheatShinyActive;
   const btn = document.getElementById('cheat-btn');
@@ -575,12 +573,8 @@ function toggleCheatShiny() {
   btn.textContent = cheatShinyActive ? "✨ SHINY ACTIVADO" : "✨ SHINY x4000";
 }
 
-// ─── SISTEMA DE TIENDA POKÉMON ───
-const SHOP_ITEMS = [
-  { id: "pokeballs", name: "Poké Ball", price: 200, icon: "🔴", desc: "Permite capturar Pokémon" },
-  { id: "potions", name: "Poción Básica", price: 300, icon: "🧪", desc: "Cura 50 HP a un Pokémon" }
-];
-
+// ─── SISTEMA DE TIENDA ───
+function openShopModal() { renderShop(); openModal('shop-modal'); }
 function renderShop() {
   const container = document.getElementById('shop-body');
   container.innerHTML = "";
@@ -595,7 +589,7 @@ function renderShop() {
           <p>${item.desc}</p>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:14px;">
         <span class="shop-price">$${item.price}</span>
         <button class="top-btn" onclick="buyItem('${item.id}', ${item.price})">COMPRAR</button>
       </div>
@@ -612,21 +606,11 @@ function buyItem(itemId, price) {
   }
   user.money -= price;
   user.items[itemId] = (user.items[itemId] || 0) + 1;
-  saveDB();
-  updateDashboard();
-  renderShop();
+  saveDB(); updateDashboard(); renderShop();
 }
 
-document.addEventListener('click', (e) => {
-  if(e.target.matches('[onclick*="shop-modal"]')) renderShop();
-});
-
-// ─── SISTEMA DE LA BOLSA Y CURACIÓN ───
-function openBagModal() {
-  renderBag();
-  openModal('bag-modal');
-}
-
+// ─── SISTEMA DE BOLSA GLOBAL ───
+function openBagModal() { renderBag(); openModal('bag-modal'); }
 function renderBag() {
   const user = DB.users[currentUser];
   const container = document.getElementById('bag-body');
@@ -659,7 +643,7 @@ function renderBag() {
 function showBagCureTargets() {
   const user = DB.users[currentUser];
   const container = document.getElementById('bag-body');
-  container.innerHTML = `<div style="font-size:7px; color:var(--gold); margin-bottom:8px;">¿A qué Pokémon deseas curar?</div>`;
+  container.innerHTML = `<div style="font-size:12px; color:var(--gold); margin-bottom:10px;">¿A qué Pokémon deseas curar?</div>`;
   
   user.team.forEach((p, idx) => {
     const div = document.createElement('div');
@@ -672,13 +656,11 @@ function showBagCureTargets() {
       }
       user.items.potions--;
       p.hp = Math.min(p.maxHp, p.hp + 50);
-      saveDB();
-      updateDashboard();
-      openBagModal();
+      saveDB(); updateDashboard(); openBagModal();
     };
     div.innerHTML = `
       <div class="item-info">
-        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:30px;height:30px;">
+        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:40px;height:40px;">
         <div class="item-text"><h4>${p.name}</h4><p>HP: ${p.hp}/${p.maxHp}</p></div>
       </div>
     `;
@@ -691,101 +673,85 @@ function showBagCureTargets() {
   container.appendChild(cancelBtn);
 }
 
-// ─── SISTEMA DE PC DE BILL (GESTIÓN DE CAJAS) ───
-function openPCModal() {
-  renderPC();
-  openModal('pc-modal');
-}
-
+// ─── PC DE BILL ───
+function openPCModal() { renderPC(); openModal('pc-modal'); }
 function renderPC() {
   const user = DB.users[currentUser];
-  
-  // Lista del equipo en el PC
   const teamList = document.getElementById('pc-team-list');
   teamList.innerHTML = "";
   user.team.forEach((p, idx) => {
     const div = document.createElement('div');
-    div.className = "friend-row";
-    div.style.padding = "4px 8px";
+    div.className = "shop-item";
+    div.style.padding = "8px 12px";
     div.innerHTML = `
-      <div style="display:flex; align-items:center; gap:6px;">
-        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:28px; height:28px; image-rendering:pixelated;">
-        <span style="font-size:6px; color:#fff;">${p.name} (Lv.${p.level})</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:40px; height:40px; image-rendering:pixelated;">
+        <span style="font-size:11px; color:#fff;">${p.name}</span>
       </div>
-      ${user.team.length > 1 ? `<button class="fr-btn remove" onclick="moveTeamToPC(${idx})">RETIRAR</button>` : ''}
+      ${user.team.length > 1 ? `<button class="top-btn" onclick="moveTeamToPC(${idx})">RETIRAR</button>` : ''}
     `;
     teamList.appendChild(div);
   });
 
-  // Rejilla de la Caja del PC
   const boxGrid = document.getElementById('pc-box-grid');
   boxGrid.innerHTML = "";
   if (user.pc.length === 0) {
-    boxGrid.innerHTML = `<div style="grid-column: span 4; color:#556688; font-size:6px; text-align:center; padding:20px;">PC VACÍO</div>`;
+    boxGrid.innerHTML = `<div style="grid-column: span 4; color:#556688; font-size:11px; text-align:center; padding:20px;">PC VACÍO</div>`;
   } else {
     user.pc.forEach((p, idx) => {
       const div = document.createElement('div');
       div.className = "pc-slot";
       div.onclick = () => movePCToTeam(idx);
-      div.innerHTML = `
-        <img src="${getPokemonSprite(p.id, p.shiny)}" title="${p.name}">
-        <div style="font-size:4.5px; color:#88aadd;">Lv.${p.level}</div>
-      `;
+      div.innerHTML = `<img src="${getPokemonSprite(p.id, p.shiny)}"><div style="font-size:9px; color:#88aadd;">Lv.${p.level}</div>`;
       boxGrid.appendChild(div);
     });
   }
 }
-
 function moveTeamToPC(idx) {
   const user = DB.users[currentUser];
-  const p = user.team.splice(idx, 1)[0];
-  user.pc.push(p);
-  saveDB();
-  updateDashboard();
-  renderPC();
+  user.pc.push(user.team.splice(idx, 1)[0]);
+  saveDB(); updateDashboard(); renderPC();
 }
-
 function movePCToTeam(idx) {
   const user = DB.users[currentUser];
-  if (user.team.length >= 6) {
-    alert("¡Tu equipo actual ya está lleno! (Máximo 6 Pokémon)");
-    return;
-  }
-  const p = user.pc.splice(idx, 1)[0];
-  user.team.push(p);
-  saveDB();
-  updateDashboard();
-  renderPC();
+  if (user.team.length >= 6) { alert("¡Equipo lleno!"); return; }
+  user.team.push(user.pc.splice(idx, 1)[0]);
+  saveDB(); updateDashboard(); renderPC();
 }
 
-// ─── MOTOR DE COMBATE WILD (MEJORADO CON BOLSA Y ATAQUES SELECCIONABLES) ───
+// ─── COMBATE INTERACTIVO CON POKÉMON SALVAJE DEL NIVEL MÁS ALTO ───
 async function initWildCombat() {
   const user = DB.users[currentUser];
-  
   currentAlly = user.team.find(p => p.hp > 0);
-  if (!currentAlly) {
-    alert("¡Todos tus Pokémon están debilitados! Úsa una Poción desde tu Bolsa.");
-    return;
-  }
+  if (!currentAlly) { alert("¡Todos tus Pokémon están debilitados! Cúralos usando Pociones desde la Bolsa."); return; }
 
-  document.getElementById('battle-log').innerHTML = "<p>¡Buscando en la hierba alta...</p>";
+  // 1. CONDICIÓN NUEVA: Obtener el nivel más alto que tenga el jugador en su equipo actual
+  let highestTeamLevel = 1;
+  user.team.forEach(p => {
+    if(p.level > highestTeamLevel) {
+      highestTeamLevel = p.level;
+    }
+  });
+
+  document.getElementById('battle-log').innerHTML = "<p>Buscando en la hierba alta un oponente poderoso...</p>";
   document.getElementById('battle-actions').innerHTML = "";
   document.getElementById('combat-window').style.display = 'flex';
   battleActive = true;
 
-  const randomId = Math.floor(Math.random() * 1010) + 1;
-  const isShiny = cheatShinyActive ? (Math.random() < 0.33) : (Math.random() < 0.00024);
+  const randomId = Math.floor(Math.random() * 151) + 1;
+  const isShiny = cheatShinyActive ? (Math.random() < 0.4) : (Math.random() < 0.01);
 
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
-    const pokeData = await res.json();
+    const data = await res.json();
     
+    // 2. APLICACIÓN DE NIVEL MÁXIMO DEL EQUIPO AL POKÉMON SALVAJE ENCONTRADO
     currentEnemy = {
       id: randomId,
-      name: pokeData.name.toUpperCase(),
-      level: Math.floor(Math.random() * 40) + 15,
-      hp: pokeData.stats[0].base_stat + 30,
-      maxHp: pokeData.stats[0].base_stat + 30,
+      name: data.name.toUpperCase(),
+      level: highestTeamLevel, // Forzado exactamente al nivel más alto detectado en tu equipo
+      hp: data.stats[0].base_stat + (highestTeamLevel * 2),
+      maxHp: data.stats[0].base_stat + (highestTeamLevel * 2),
       shiny: isShiny
     };
 
@@ -796,13 +762,11 @@ async function initWildCombat() {
     document.getElementById('e-hp-bar').style.background = "#44dd44";
 
     updateAllyBattleUI();
-
-    document.getElementById('battle-log').innerHTML = `<p>¡Un <b>${currentEnemy.name}</b> salvaje apareció!</p>`;
+    document.getElementById('battle-log').innerHTML = `<p>¡Un ${currentEnemy.name} salvaje de nivel máximo apareció! (Nv. ${currentEnemy.level})</p>`;
     showBattleMenu();
-
-  } catch (err) {
-    document.getElementById('battle-log').innerHTML = "<p class='red'>Error de conexión con la Pokédex. Inténtalo de nuevo.</p>";
-    closeCombat();
+  } catch (e) { 
+    console.error(e);
+    closeCombat(); 
   }
 }
 
@@ -817,38 +781,30 @@ function updateAllyBattleUI() {
 }
 
 function showBattleMenu() {
-  const actions = document.getElementById('battle-actions');
-  actions.innerHTML = `
+  document.getElementById('battle-actions').innerHTML = `
     <button class="ba-btn atk" onclick="showMovesMenu()">⚔️ ATACAR</button>
     <button class="ba-btn ball" onclick="showBattleBagMenu()">🎒 BOLSA</button>
     <button class="ba-btn run" onclick="closeCombat()">🏃 HUIR</button>
   `;
 }
 
-// 1. Mostrar menú con los ataques propios del Pokémon
 function showMovesMenu() {
-  const actions = document.getElementById('battle-actions');
   let html = "";
-  
   currentAlly.moves.forEach(move => {
     html += `<button class="ba-btn atk" onclick="executeMove('${move}')">${move}</button>`;
   });
-  
   html += `<button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>`;
-  actions.innerHTML = html;
+  document.getElementById('battle-actions').innerHTML = html;
 }
 
-// 2. Mostrar submenú de Bolsa en combate
 function showBattleBagMenu() {
   const user = DB.users[currentUser];
-  const actions = document.getElementById('battle-actions');
-  
   const pBalls = user.items.pokeballs || 0;
   const potions = user.items.potions || 0;
 
-  actions.innerHTML = `
-    <button class="ba-btn ball" onclick="confirmCaptureRoll()" ${pBalls <= 0 ? 'disabled' : ''}>🔴 Lanzar Ball (x${pBalls})</button>
-    <button class="ba-btn ball" style="border-color:cyan; color:cyan;" onclick="usePotionInBattle()" ${potions <= 0 ? 'disabled' : ''}>🧪 Usar Poción (x${potions})</button>
+  document.getElementById('battle-actions').innerHTML = `
+    <button class="ba-btn ball" onclick="confirmCaptureRoll()" ${pBalls <= 0 ? 'disabled' : ''}>🔴 Poké Ball (x${pBalls})</button>
+    <button class="ba-btn ball" style="border-color:cyan; color:cyan;" onclick="usePotionInBattle()" ${potions <= 0 ? 'disabled' : ''}>🧪 Poción (x${potions})</button>
     <button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>
   `;
 }
@@ -857,72 +813,57 @@ function usePotionInBattle() {
   const user = DB.users[currentUser];
   user.items.potions--;
   currentAlly.hp = Math.min(currentAlly.maxHp, currentAlly.hp + 50);
-  
-  saveDB();
-  updateDashboard();
-  updateAllyBattleUI();
-
-  document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡Usaste una poción! ${currentAlly.name} recuperó salud.</p>`;
-  
-  // Turno del enemigo tras usar ítem
-  setTimeout(enemyCounterAttack, 1500);
+  saveDB(); updateDashboard(); updateAllyBattleUI();
+  document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡Usaste una Poción en ${currentAlly.name}!</p>`;
+  setTimeout(enemyCounterAttack, 1200);
 }
 
 function confirmCaptureRoll() {
-  if (confirm(`¿Quieres intentar capturar a ${currentEnemy.name}?`)) {
+  if (confirm(`¿Quieres lanzar una Poké Ball para capturar a ${currentEnemy.name}?`)) {
     executeThrowBall();
   }
 }
 
 function executeMove(moveName) {
-  if(!battleActive) return;
-
-  const dmgToEnemy = Math.floor(Math.random() * 20) + 12;
-  currentEnemy.hp = Math.max(0, currentEnemy.hp - dmgToEnemy);
+  const baseDmg = Math.floor(Math.random() * 12) + 8;
+  const dmg = Math.floor(baseDmg + (currentAlly.level * 0.5));
+  currentEnemy.hp = Math.max(0, currentEnemy.hp - dmg);
   const eHpPct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
   
   document.getElementById('e-hp-bar').style.width = `${eHpPct}%`;
   document.getElementById('e-hp-bar').style.background = eHpPct > 50 ? '#44dd44' : eHpPct > 20 ? '#f5c842' : '#cc2222';
-
-  let logText = `<p>¡${currentAlly.name} usó <b>${moveName}</b> y causó ${dmgToEnemy} de daño!</p>`;
-  document.getElementById('battle-log').innerHTML = logText;
+  document.getElementById('battle-log').innerHTML = `<p>¡${currentAlly.name} usó ${moveName} e infligió ${dmg} puntos de daño!</p>`;
 
   if (currentEnemy.hp <= 0) {
-    const goldGained = currentEnemy.level * 15;
-    DB.users[currentUser].money += goldGained;
-    saveDB();
-    updateDashboard();
+    const cash = currentEnemy.level * 40;
+    DB.users[currentUser].money += cash;
     
-    logText += `<p style="color:#44ff88;">¡El ${currentEnemy.name} salvaje se ha debilitado! Ganaste $${goldGained}.</p>`;
-    document.getElementById('battle-log').innerHTML = logText;
+    // Subir un nivel al Pokémon ganador como recompensa por vencer a un rival de nivel alto
+    currentAlly.level += 1;
+    currentAlly.maxHp += 5;
+    currentAlly.hp = Math.min(currentAlly.maxHp, currentAlly.hp + 10);
+    
+    saveDB(); updateDashboard();
+    document.getElementById('battle-log').innerHTML += `<p style="color:#44ff88;">¡Enemigo derrotado! Ganaste $${cash} y ${currentAlly.name} subió de nivel.</p>`;
     endBattleState();
     return;
   }
-
-  // Si sobrevive, el enemigo ataca después de una pequeña pausa
   setTimeout(enemyCounterAttack, 1200);
 }
 
 function enemyCounterAttack() {
   if(!battleActive) return;
+  const baseDmg = Math.floor(Math.random() * 8) + 4;
+  const dmg = Math.floor(baseDmg + (currentEnemy.level * 0.4));
+  currentAlly.hp = Math.max(0, currentAlly.hp - dmg);
+  saveDB(); updateDashboard(); updateAllyBattleUI();
 
-  const dmgToAlly = Math.floor(Math.random() * 15) + 5;
-  currentAlly.hp = Math.max(0, currentAlly.hp - dmgToAlly);
-  saveDB();
-  updateDashboard();
-  updateAllyBattleUI();
-
-  let logText = document.getElementById('battle-log').innerHTML;
-  logText += `<p style="color:#ff5544;">¡El ${currentEnemy.name} salvaje contraatacó con ${dmgToAlly} de daño!</p>`;
-  document.getElementById('battle-log').innerHTML = logText;
-  
+  document.getElementById('battle-log').innerHTML += `<p style="color:#ff5544;">¡El enemigo contraatacó violentamente e hizo ${dmg} de daño!</p>`;
   if (currentAlly.hp <= 0) {
-    logText += `<p style="color:#cc2222;">¡Tu Pokémon se ha debilitado!</p>`;
-    document.getElementById('battle-log').innerHTML = logText;
+    document.getElementById('battle-log').innerHTML += `<p style="color:#cc2222;">¡Tu Pokémon se ha debilitado!</p>`;
     endBattleState();
     return;
   }
-
   showBattleMenu();
 }
 
@@ -932,50 +873,32 @@ function executeThrowBall() {
   saveDB();
 
   const catchRate = 1 - (currentEnemy.hp / currentEnemy.maxHp);
-  const roll = Math.random();
-
-  if (roll < catchRate + 0.35) { // Un poco más fácil la captura
-    const caughtPokemon = {
-      id: currentEnemy.id,
-      name: currentEnemy.name,
-      level: currentEnemy.level,
-      hp: currentEnemy.maxHp,
-      maxHp: currentEnemy.maxHp,
-      shiny: currentEnemy.shiny,
-      moves: ["Placaje", "Gruñido"]
+  // Al ser niveles altos es un poco más desafiante, pero justo
+  if (Math.random() < catchRate + 0.25) {
+    const caught = { 
+      id: currentEnemy.id, 
+      name: currentEnemy.name, 
+      level: currentEnemy.level, 
+      hp: currentEnemy.maxHp, 
+      maxHp: currentEnemy.maxHp, 
+      shiny: currentEnemy.shiny, 
+      moves: ["Placaje", "Gruñido", "Derribo"] 
     };
-
-    if (user.team.length < 6) {
-      user.team.push(caughtPokemon);
-      document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡Ya está! ¡El ${currentEnemy.name} salvaje fue atrapado y enviado a tu equipo!</p>`;
-    } else {
-      user.pc.push(caughtPokemon);
-      document.getElementById('battle-log').innerHTML = `<p style="color:#00ffcc;">¡Ya está! ¡El ${currentEnemy.name} salvaje fue atrapado y transferido al PC de Bill!</p>`;
-    }
-    
-    saveDB();
-    updateDashboard();
+    if (user.team.length < 6) user.team.push(caught); else user.pc.push(caught);
+    saveDB(); updateDashboard();
+    document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡Excelente! ¡El Pokémon de nivel alto ${currentEnemy.name} fue atrapado!</p>`;
     endBattleState();
   } else {
-    let logText = `<p>¡Nooo! El Pokémon se liberó de la Poké Ball.</p>`;
-    document.getElementById('battle-log').innerHTML = logText;
-    
+    document.getElementById('battle-log').innerHTML = `<p>¡Nooo! ¡El Pokémon rompió la Poké Ball y se escapó!</p>`;
     setTimeout(enemyCounterAttack, 1200);
   }
 }
 
 function endBattleState() {
   battleActive = false;
-  document.getElementById('battle-actions').innerHTML = `
-    <button class="ba-btn nxt" onclick="closeCombat()">ENTENDIDO</button>
-  `;
+  document.getElementById('battle-actions').innerHTML = `<button class="ba-btn nxt" onclick="closeCombat()">SALIR DEL COMBATE</button>`;
 }
-
-function closeCombat() {
-  document.getElementById('combat-window').style.display = 'none';
-  battleActive = false;
-}
+function closeCombat() { document.getElementById('combat-window').style.display = 'none'; battleActive = false; }
 </script>
-
 </body>
 </html>
