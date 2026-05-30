@@ -3,208 +3,898 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PokéTrainer Online Pro</title>
-
-<link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23cc2222'/><path d='M1 8h14v7H1z' fill='%23ffffff'/><path d='M1 7h14v2H1z' fill='%230d1244'/><circle cx='8' cy='8' r='3' fill='%230d1244'/><circle cx='8' cy='8' r='1.5' fill='%23ffffff'/></svg>">
-
+<title>PokéTrainer Online Pro - Edición Coleccionista</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --navy:#0d1244;--blue:#1a2fa8;--gold:#f5c842;--red:#cc2222;--green:#7cb836;
-  --px:'Press Start 2P',monospace;--vt:'VT323',monospace;
+:root {
+  --navy: #0d1244;
+  --blue: #1a2fa8;
+  --gold: #f5c842;
+  --red: #cc2222;
+  --green: #7cb836;
+  --dark: #060e33;
+  --panel: #0a1d44;
+  --border-blue: #1e44aa;
+  --px: 'Press Start 2P', monospace;
+  --vt: 'VT323', monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:var(--green);
-  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0 2px,transparent 2px 28px),
-    repeating-linear-gradient(90deg,rgba(0,0,0,.05) 0 2px,transparent 2px 28px);
-  font-family:var(--px);padding:16px;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-@keyframes popIn{from{transform:scale(.85) translateY(30px);opacity:0}to{transform:none;opacity:1}}
-@keyframes cardIn{from{transform:scale(.9) translateY(24px);opacity:0}to{transform:none;opacity:1}}
 
-/* ── LOADING ── */
-#loading-screen{
-  position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;z-index:9999;gap:16px;
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green);
+  background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 2px, transparent 2px 28px),
+                    repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 2px, transparent 2px 28px);
+  font-family: var(--px);
+  padding: 16px;
+  overflow-x: hidden;
 }
-#loading-screen .lball{font-size:40px;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-#loading-screen p{color:var(--gold);font-size:8px;letter-spacing:2px;}
 
-/* ── AUTH ── */
-#auth-screen{
-  width:100%;max-width:520px;
-  background:var(--navy);border:5px solid var(--gold);border-radius:12px;
-  box-shadow:0 0 0 3px #000,10px 10px 0 rgba(0,0,0,.5);
-  overflow:hidden;animation:popIn .5s cubic-bezier(.2,.8,.3,1.2) both;
-  display:none;
+@keyframes popIn {
+  from { transform: scale(.85) translateY(30px); opacity: 0; }
+  to { transform: none; opacity: 1; }
 }
-.auth-header{background:#060e33;border-bottom:4px solid var(--gold);padding:20px;text-align:center;}
-.auth-header h1{color:var(--gold);font-size:clamp(10px,2.5vw,15px);letter-spacing:2px;margin-bottom:6px;}
-.auth-header p{color:#8899ff;font-size:clamp(6px,1.5vw,9px);letter-spacing:1px;}
-.auth-tabs{display:flex;border-bottom:3px solid var(--gold);}
-.auth-tab{flex:1;padding:12px;text-align:center;cursor:pointer;color:#8899ff;font-size:clamp(6px,1.4vw,9px);letter-spacing:1px;background:#0a0e2a;transition:background .15s,color .15s;border:none;font-family:var(--px);}
-.auth-tab.active{background:var(--navy);color:var(--gold);}
 
-/* Contenedor adaptado con scroll para que entren todos los elementos de registro */
-.auth-body{padding:22px; max-height:75vh; overflow-y:auto;}
-.auth-field{margin-bottom:14px;}
-.auth-field label{display:block;color:#8899ff;font-size:6.5px;letter-spacing:1px;margin-bottom:5px;}
-.auth-field input, .auth-field select{width:100%;background:#060e33;border:2px solid #2244aa;border-radius:5px;color:#fff;font-family:var(--vt);font-size:20px;padding:9px 11px;outline:none;transition:border-color .15s;}
-.auth-field input:focus, .auth-field select:focus{border-color:var(--gold);}
-
-/* Cuadrículas optimizadas con scroll para albergar los 16 iniciales */
-.grid-select{display:grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 5px; max-height: 190px; overflow-y: auto; padding-right: 4px;}
-.grid-item{border: 2px solid #2244aa; background:#060e33; padding: 4px; text-align: center; cursor: pointer; border-radius: 4px; transition: all 0.1s ease;}
-.grid-item.selected{border-color: var(--gold); background: #142a66; transform: scale(1.03); box-shadow: 0 0 6px var(--gold);}
-.grid-item img{width: 45px; height: 45px; object-fit: contain; image-rendering: pixelated;}
-.grid-item p{font-size: 5px; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-
-.auth-btn{width:100%;background:#1a2fa8;border:3px solid var(--gold);border-radius:6px;color:var(--gold);font-family:var(--px);font-size:8px;padding:12px;cursor:pointer;letter-spacing:1px;transition:background .15s,transform .1s;margin-top:4px;}
-.auth-btn:hover{background:#253fcc;transform:translateY(-2px);}
-.auth-msg{margin-top:10px;font-family:var(--vt);font-size:18px;text-align:center;min-height:22px;}
-.auth-msg.err{color:#ff5544;}
-.auth-msg.ok{color:#44ff88;}
-
-/* Scrollbars Retro Personalizados */
-.auth-body::-webkit-scrollbar, .grid-select::-webkit-scrollbar, .pc-box::-webkit-scrollbar, .battle-log::-webkit-scrollbar {width: 6px;}
-.auth-body::-webkit-scrollbar-track, .grid-select::-webkit-scrollbar-track, .pc-box::-webkit-scrollbar-track, .battle-log::-webkit-scrollbar-track {background: #060e33;}
-.auth-body::-webkit-scrollbar-thumb, .grid-select::-webkit-scrollbar-thumb, .pc-box::-webkit-scrollbar-thumb, .battle-log::-webkit-scrollbar-thumb {background: var(--gold); border-radius: 3px;}
-
-/* ── APP ── */
-#app-screen{display:none;width:100%;max-width:1200px;}
-#top-bar{background:var(--navy);border:3px solid var(--gold);border-radius:8px 8px 0 0;padding:9px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-.top-user{color:var(--gold);font-size:clamp(6px,1.1vw,9px);display:flex;align-items:center;gap:8px;}
-.top-actions{display:flex;gap:6px;flex-wrap:wrap;}
-.top-btn{background:#0a0e2a;border:2px solid #2244aa;border-radius:4px;color:#cce0ff;font-family:var(--px);font-size:clamp(4.5px,.85vw,7px);padding:5px 9px;cursor:pointer;transition:border-color .15s,background .15s;}
-.top-btn:hover{border-color:var(--gold);background:#142a66;}
-.top-btn.logout{border-color:#cc2222;color:#ff7766;}
-
-.card{background:var(--blue);border:5px solid var(--gold);border-top:none;border-radius:0 0 12px 12px;box-shadow:0 0 0 3px #000,12px 12px 0 rgba(0,0,0,.5);overflow:hidden;animation:cardIn .5s .1s both;}
-.card-body{display:grid;grid-template-columns:clamp(170px,24%,290px) 1fr;}
-.left{background:linear-gradient(160deg,#1833bb,#0a1266);border-right:3px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;padding:18px 10px 14px;gap:12px;}
-.avatar-frame{width:clamp(110px,17vw,210px);height:clamp(110px,17vw,210px);border:4px solid var(--gold);border-radius:8px;background:#0e1a77;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0; cursor: pointer; position: relative;}
-.avatar-frame img{width:100%;height:100%;object-fit:contain;}
-.avatar-frame:hover::after{content: 'CAMBIAR'; position: absolute; inset: 0; background: rgba(0,0,0,0.6); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 7px;}
-.stats{width:100%}
-.stat-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.12);padding:5px 3px;font-size:clamp(5px,.85vw,8.5px);}
-.stat-row .k{color:#99aadd}.stat-row .v{color:#fff}.stat-row .v.gold{color:var(--gold)}
-.right{padding:16px 12px 18px;display:flex;flex-direction:column;gap:10px;}
-.team-lbl{color:var(--gold);font-size:clamp(7px,1.1vw,11px);letter-spacing:1px;display:flex;align-items:center;gap:6px;}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;flex:1;}
-
-/* ── SLOTS ── */
-.slot{background:#0a1d44;border:2px solid #1e44aa;border-radius:7px;display:flex;flex-direction:column;align-items:center;padding:9px 5px 7px;cursor:pointer;position:relative;transition:border-color .15s,transform .15s,background .15s;}
-.slot:hover{border-color:var(--gold);background:#142a66;transform:translateY(-4px)}
-.slot img{width:clamp(56px,8.5vw,105px);height:clamp(56px,8.5vw,105px);object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.7));}
-.slot .pname{color:#cce0ff;font-size:clamp(4.5px,.75vw,8px);text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
-.slot .plv{color:#88aadd;font-size:clamp(4px,.6vw,6.5px);margin-top:2px}
-.hp-bar-wrap{width:87%;height:5px;background:#1a1a3a;border-radius:3px;margin-top:4px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
-.hp-bar{height:100%;border-radius:3px;transition:width .4s,background .4s}
-
-/* ── MODALS ORIGINALES ADAPTADOS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity .2s;padding:14px;}
-.modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--navy);border:4px solid var(--gold);border-radius:10px;box-shadow:0 0 0 2px #000,8px 8px 0 rgba(0,0,0,.6);width:100%;max-width:520px;overflow:hidden;max-height:88vh;overflow-y:auto;}
-.modal-hdr{background:#060e33;border-bottom:3px solid var(--gold);padding:11px 15px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1;}
-.modal-title{color:var(--gold);font-size:clamp(7px,1.2vw,11px);letter-spacing:1px;}
-.modal-x{background:#cc2222;border:none;color:#fff;font-family:var(--px);font-size:7px;padding:5px 9px;border-radius:4px;cursor:pointer;}
-.modal-body{padding:14px;}
-
-/* ── NUEVAS SECCIONES POKÉMON (TIENDA, BOLSA, PC) ── */
-.shop-item, .bag-item{display: flex; align-items: center; justify-content: space-between; background: #0a1d44; border: 2px solid #1e44aa; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px;}
-.item-info{display: flex; align-items: center; gap: 10px;}
-.item-icon{font-size: 20px;}
-.item-text h4{color: #fff; font-size: 8px;}
-.item-text p{color: #88aadd; font-size: 6px; margin-top: 2px;}
-.shop-price{color: var(--gold); font-size: 8px;}
-
-/* PC de Bill */
-.pc-container{display: grid; grid-template-columns: 1fr 1fr; gap: 12px;}
-.pc-box{background: #060e33; border: 2px solid var(--gold); border-radius: 6px; padding: 8px; max-height: 250px; overflow-y: auto;}
-.pc-title{font-size: 7px; color: var(--gold); text-align: center; margin-bottom: 6px; border-bottom: 1px dashed var(--gold); padding-bottom: 4px;}
-.pc-grid{display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;}
-.pc-slot{background: #0a1444; border: 1px solid #2244aa; border-radius: 4px; padding: 2px; text-align: center; cursor: pointer;}
-.pc-slot:hover{border-color: var(--gold); background: #142a66;}
-.pc-slot img{width: 36px; height: 36px; object-fit: contain; image-rendering: pixelated;}
-
-.friend-row { display: flex; align-items: center; justify-content: space-between; background: #060e33; border: 1px solid #2244aa; border-radius: 5px; margin-bottom: 4px; }
-.fr-btn.remove { background: #cc2222; border: 1px solid var(--gold); color: #fff; font-family: var(--px); font-size: 5px; padding: 4px 6px; border-radius: 3px; cursor: pointer; }
-
-/* ── BOTÓN SHINY RATIO CHEAT ── */
-.cheat-toggle{background: #221144; border: 2px solid #aa22ff; color: #cc66ff; font-family: var(--px); font-size: 6px; padding: 6px 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 6px rgba(170,34,255,0.4);}
-.cheat-toggle.active{background: #aa22ff; color: #fff; box-shadow: 0 0 12px #aa22ff;}
-
-/* ── COMBATE WILD GIGANTE Y CENTRADO ── */
-#combat-btn{position:fixed;bottom:24px;left:24px;z-index:200;background:#0d1244;border:3px solid #44ff88;border-radius:6px;color:#44ff88;font-family:var(--px);font-size:8px;padding:12px 16px;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.5);letter-spacing:1px;}
-#combat-btn:hover{background:#1a2fa8}
-
-#combat-window{
-  position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
-  z-index:1000; width:650px; max-width:95vw; height: 550px; max-height: 90vh;
-  background:#0a0e2a; border:5px solid #44ff88; border-radius:12px;
-  box-shadow:0 0 0 4px #000, 20px 20px 0 rgba(0,0,0,0.6);
-  font-family:var(--px); display:none; flex-direction: column; overflow: hidden;
+@keyframes cardIn {
+  from { transform: scale(.9) translateY(24px); opacity: 0; }
+  to { transform: none; opacity: 1; }
 }
-.cw-hdr{background:#060e33;border-bottom:4px solid #44ff88;padding:14px;display:flex;justify-content:space-between;align-items:center;}
-.cw-title{color:#44ff88;font-size:10px;letter-spacing:1px;}
-.cw-close{background:#cc2222;border:none;color:#fff;font-family:var(--px);font-size:8px;padding:5px 10px;border-radius:4px;cursor:pointer;}
-.arena{background:linear-gradient(180deg,#112a66,#050a1a);padding:16px;display:flex;flex-direction:column;gap:12px; flex: 1; justify-content: space-between;}
-.arena-field{display:flex;justify-content:space-between;align-items:flex-end;min-height:220px;background:linear-gradient(180deg,#0a1b44,#070f26);border-radius:8px;border:3px solid #1a3aa8;padding:16px;position:relative;}
-.fspr{width:130px;height:130px;image-rendering:pixelated;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.6));}
-.battle-log{background:#030714;border:3px solid #1a2a66;border-radius:6px;padding:12px;min-height:70px; max-height: 90px; overflow-y:auto;}
-.battle-log p{color:#cce0ff;font-family:var(--vt);font-size:20px;line-height:1.4;}
-.battle-actions{display:flex;flex-wrap:wrap;gap:8px;}
-.ba-btn{background:#0d1744;border:2px solid #2244aa;border-radius:4px;color:#cce0ff;font-family:var(--px);font-size:7px;padding:10px 14px;cursor:pointer;flex: 1; min-width: 120px; text-align: center;}
-.ba-btn:hover:not(:disabled){border-color:#f5c842;background:#142a66;}
-.ba-btn:disabled{opacity:.4;cursor:not-allowed;}
-.ba-btn.atk{border-color:#e85010;color:#ffaa88;}.ba-btn.ball{border-color:#3a7eee;color:#88ccff;}.ba-btn.run{border-color:#555;color:#888;}.ba-btn.nxt{border-color:#44ff88;color:#44ff88;}
 
-.hp-box{background: rgba(0,0,0,0.5); border: 1px solid #2244aa; padding: 6px; border-radius: 4px; color: #fff; font-size: 6px; width: 140px;}
-.hp-name{font-weight: bold; margin-bottom: 3px; display: flex; justify-content: space-between;}
+/* --- PANTALLA DE CARGA --- */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  gap: 16px;
+}
+
+#loading-screen .lball {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  background: linear-gradient(var(--red) 20px, #fff 20px);
+  animation: spin 1s linear infinite;
+  position: relative;
+}
+
+#loading-screen .lball::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 3px solid var(--navy);
+  border-radius: 50%;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#loading-screen p {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+/* --- AUTENTICACIÓN --- */
+#auth-screen {
+  width: 100%;
+  max-width: 540px;
+  background: var(--navy);
+  border: 5px solid var(--gold);
+  border-radius: 12px;
+  box-shadow: 0 0 0 3px #000, 10px 10px 0 rgba(0,0,0,.5);
+  overflow: hidden;
+  animation: popIn .5s cubic-bezier(.2,.8,.3,1.2) both;
+  display: none;
+}
+
+.auth-header {
+  background: var(--dark);
+  border-bottom: 4px solid var(--gold);
+  padding: 20px;
+  text-align: center;
+}
+
+.auth-header h1 {
+  color: var(--gold);
+  font-size: clamp(10px, 2.5vw, 16px);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.auth-header p {
+  color: #8899ff;
+  font-size: clamp(6px, 1.5vw, 10px);
+  letter-spacing: 1px;
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 3px solid var(--gold);
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  color: #8899ff;
+  font-size: clamp(6px, 1.4vw, 10px);
+  letter-spacing: 1px;
+  background: #0a0e2a;
+  transition: background .15s, color .15s;
+  border: none;
+  font-family: var(--px);
+}
+
+.auth-tab.active {
+  background: var(--navy);
+  color: var(--gold);
+}
+
+.auth-body {
+  padding: 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.auth-field {
+  margin-bottom: 16px;
+}
+
+.auth-field label {
+  display: block;
+  color: #8899ff;
+  font-size: 7px;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.auth-field input, .auth-field select {
+  width: 100%;
+  background: var(--dark);
+  border: 2px solid #2244aa;
+  border-radius: 5px;
+  color: #fff;
+  font-family: var(--vt);
+  font-size: 22px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.auth-field input:focus, .auth-field select:focus {
+  border-color: var(--gold);
+}
+
+.grid-select {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.grid-item {
+  border: 2px solid #2244aa;
+  background: var(--dark);
+  padding: 6px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  position: relative;
+}
+
+.grid-item.selected {
+  border-color: var(--gold);
+  background: #142a66;
+}
+
+.grid-item img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.grid-item p {
+  font-size: 6px;
+  color: #fff;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-btn {
+  width: 100%;
+  background: var(--blue);
+  border: 3px solid var(--gold);
+  border-radius: 6px;
+  color: var(--gold);
+  font-family: var(--px);
+  font-size: 9px;
+  padding: 14px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background .15s, transform .1s;
+  margin-top: 6px;
+}
+
+.auth-btn:hover {
+  background: #253fcc;
+  transform: translateY(-2px);
+}
+
+.auth-msg {
+  margin-top: 12px;
+  font-family: var(--vt);
+  font-size: 20px;
+  text-align: center;
+  min-height: 24px;
+}
+
+.auth-msg.err { color: #ff5544; }
+.auth-msg.ok { color: #44ff88; }
+
+/* --- APLICACIÓN GENERAL --- */
+#app-screen {
+  display: none;
+  width: 100%;
+  max-width: 1240px;
+}
+
+#top-bar {
+  background: var(--navy);
+  border: 3px solid var(--gold);
+  border-radius: 8px 8px 0 0;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.top-user {
+  color: var(--gold);
+  font-size: clamp(6px, 1.1vw, 10px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.top-btn {
+  background: #0a0e2a;
+  border: 2px solid #2244aa;
+  border-radius: 4px;
+  color: #cce0ff;
+  font-family: var(--px);
+  font-size: clamp(5px, .85vw, 8px);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.top-btn:hover {
+  border-color: var(--gold);
+  background: #142a66;
+}
+
+.top-btn.logout {
+  border-color: var(--red);
+  color: #ff7766;
+}
+
+.card {
+  background: var(--blue);
+  border: 5px solid var(--gold);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 0 0 3px #000, 12px 12px 0 rgba(0,0,0,.5);
+  overflow: hidden;
+  animation: cardIn .5s .1s both;
+}
+
+.card-body {
+  display: grid;
+  grid-template-columns: clamp(180px, 25%, 300px) 1fr;
+}
+
+.left {
+  background: linear-gradient(160deg, #1833bb, #0a1266);
+  border-right: 3px solid rgba(255,255,255,.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 12px;
+  gap: 14px;
+}
+
+.avatar-frame {
+  width: clamp(120px, 18vw, 220px);
+  height: clamp(120px, 18vw, 220px);
+  border: 4px solid var(--gold);
+  border-radius: 8px;
+  background: #0e1a77;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.avatar-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.avatar-frame:hover::after {
+  content: 'CAMBIAR AVATAR';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 7px;
+  padding: 4px;
+}
+
+.stats { width: 100%; }
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  padding: 6px 4px;
+  font-size: clamp(5px, .85vw, 9px);
+}
+
+.stat-row .k { color: #99aadd; }
+.stat-row .v { color: #fff; }
+.stat-row .v.gold { color: var(--gold); }
+
+.right {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.team-lbl {
+  color: var(--gold);
+  font-size: clamp(7px, 1.1vw, 12px);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  flex: 1;
+}
+
+/* --- RENDIJAS DE EQUIPO POKÉMON --- */
+.slot {
+  background: var(--panel);
+  border: 2px solid var(--border-blue);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 6px;
+  cursor: pointer;
+  position: relative;
+  transition: border-color .15s, transform .15s, background .15s;
+}
+
+.slot:hover {
+  border-color: var(--gold);
+  background: #142a66;
+  transform: translateY(-4px);
+}
+
+.slot img {
+  width: clamp(64px, 9vw, 110px);
+  height: clamp(64px, 9vw, 110px);
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,.6));
+}
+
+.slot .pname {
+  color: #cce0ff;
+  font-size: clamp(5px, .75vw, 9px);
+  text-align: center;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.slot .plv {
+  color: #88aadd;
+  font-size: clamp(4.5px, .6vw, 7px);
+  margin-top: 3px;
+}
+
+.hp-bar-wrap {
+  width: 90%;
+  height: 6px;
+  background: #1a1a3a;
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.hp-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .4s, background .4s;
+}
+
+.xp-bar-wrap {
+  width: 90%;
+  height: 3px;
+  background: #111;
+  border-radius: 1px;
+  margin-top: 3px;
+  overflow: hidden;
+}
+
+.xp-bar {
+  height: 100%;
+  background: #3a9eee;
+  width: 0%;
+  transition: width .3s;
+}
+
+/* --- MODALES RETRO --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+  padding: 16px;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--navy);
+  border: 4px solid var(--gold);
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px #000, 8px 8px 0 rgba(0,0,0,.6);
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-hdr {
+  background: var(--dark);
+  border-bottom: 3px solid var(--gold);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  color: var(--gold);
+  font-size: clamp(7px, 1.2vw, 11px);
+  letter-spacing: 1px;
+}
+
+.modal-x {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  font-family: var(--px);
+  font-size: 8px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* --- TIENDA Y INVENTARIO --- */
+.shop-item, .bag-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--panel);
+  border: 2px solid var(--border-blue);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-text-icon {
+  background: var(--dark);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  font-family: var(--px);
+}
+
+.item-text h4 {
+  color: #fff;
+  font-size: 9px;
+}
+
+.item-text p {
+  color: #88aadd;
+  font-size: 7px;
+  margin-top: 3px;
+}
+
+.shop-price {
+  color: var(--gold);
+  font-size: 9px;
+  font-family: var(--px);
+}
+
+/* SISTEMA PC DE BILL */
+.pc-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pc-box {
+  background: var(--dark);
+  border: 2px solid var(--gold);
+  border-radius: 6px;
+  padding: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.pc-title {
+  font-size: 8px;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed var(--gold);
+  padding-bottom: 6px;
+}
+
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.pc-slot {
+  background: #0a1444;
+  border: 1px solid #2244aa;
+  border-radius: 4px;
+  padding: 4px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.pc-slot:hover {
+  border-color: var(--gold);
+  background: #142a66;
+}
+
+.pc-slot img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.pc-team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0a1444;
+  border: 1px solid #2244aa;
+  border-radius: 4px;
+  padding: 6px;
+  margin-bottom: 4px;
+}
+
+/* CHEAT MODES */
+.cheat-toggle {
+  background: #221144;
+  border: 2px solid #aa22ff;
+  color: #cc66ff;
+  font-family: var(--px);
+  font-size: 7px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 6px rgba(170,34,255,0.4);
+}
+
+.cheat-toggle.active {
+  background: #aa22ff;
+  color: #fff;
+  box-shadow: 0 0 12px #aa22ff;
+}
+
+/* --- ARENA DE COMBATE AVANZADA --- */
+#combat-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 200;
+  background: var(--navy);
+  border: 3px solid #44ff88;
+  border-radius: 6px;
+  color: #44ff88;
+  font-family: var(--px);
+  font-size: 9px;
+  padding: 14px 20px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #000;
+  letter-spacing: 1px;
+}
+
+#combat-btn:hover {
+  background: var(--blue);
+}
+
+#combat-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 750px;
+  max-width: 96vw;
+  height: 580px;
+  max-height: 92vh;
+  background: #0a0e2a;
+  border: 5px solid #44ff88;
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px #000, 20px 20px 0 rgba(0,0,0,0.6);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cw-hdr {
+  background: var(--dark);
+  border-bottom: 4px solid #44ff88;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cw-title {
+  color: #44ff88;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.cw-close {
+  background: var(--red);
+  border: none;
+  color: #fff;
+  font-family: var(--px);
+  font-size: 8px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.arena {
+  background: linear-gradient(180deg, #112a66, #050a1a);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.arena-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-height: 240px;
+  background: linear-gradient(180deg, #0a1b44, #070f26);
+  border-radius: 8px;
+  border: 3px solid #1a3aa8;
+  padding: 20px;
+  position: relative;
+}
+
+.fspr {
+  width: 140px;
+  height: 140px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,0.7));
+}
+
+.battle-log {
+  background: #030714;
+  border: 3px solid #1a2a66;
+  border-radius: 6px;
+  padding: 14px;
+  min-height: 85px;
+  max-height: 110px;
+  overflow-y: auto;
+}
+
+.battle-log p {
+  color: #cce0ff;
+  font-family: var(--vt);
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.battle-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.ba-btn {
+  background: #0d1744;
+  border: 2px solid #2244aa;
+  border-radius: 4px;
+  color: #cce0ff;
+  font-family: var(--px);
+  font-size: 8px;
+  padding: 12px 6px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ba-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: #142a66;
+}
+
+.ba-btn:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+}
+
+.ba-btn.atk { border-color: #e85010; color: #ffaa88; }
+.ba-btn.ball { border-color: #3a7eee; color: #88ccff; }
+.ba-btn.run { border-color: #666; color: #aaa; }
+.ba-btn.nxt { border-color: #44ff88; color: #44ff88; grid-column: span 4; }
+
+.hp-box {
+  background: rgba(0,0,0,0.6);
+  border: 2px solid #2244aa;
+  padding: 8px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 7px;
+  width: 160px;
+}
+
+.hp-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
 </style>
 </head>
 <body>
 
 <div id="loading-screen">
-  <div class="lball">⚪</div>
-  <p>CARGANDO REGIÓN POKÉMON...</p>
+  <div class="lball"></div>
+  <p>CARGANDO SISTEMA DE ENTRENAMIENTO PRO...</p>
 </div>
 
 <div id="auth-screen">
   <div class="auth-header">
-    <h1>⚡ POKÉTRAINER ONLINE PRO</h1>
-    <p>EDICIÓN COMPLETA RETRO</p>
+    <h1>[ POKETRAINER ONLINE PRO ]</h1>
+    <p>SISTEMA DE GESTIÓN Y COMBATE RETRO INTEGRADO</p>
   </div>
   <div class="auth-tabs">
-    <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">▶ ENTRAR</button>
-    <button class="auth-tab" id="tab-register" onclick="switchTab('register')">✦ REGISTRARSE</button>
+    <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">ENTRAR</button>
+    <button class="auth-tab" id="tab-register" onclick="switchTab('register')">REGISTRARSE</button>
   </div>
   <div class="auth-body">
     <div id="form-login">
-      <div class="auth-field"><label>NOMBRE DE ENTRENADOR</label><input type="text" id="login-user" placeholder="Tu nombre..."></div>
-      <div class="auth-field"><label>CONTRASEÑA</label><input type="password" id="login-pass" placeholder="••••••••"></div>
-      <button class="auth-btn" onclick="doLogin()">▶ COMENZAR AVENTURA</button>
+      <div class="auth-field">
+        <label>ID DE ENTRENADOR</label>
+        <input type="text" id="login-user" placeholder="Nombre...">
+      </div>
+      <div class="auth-field">
+        <label>CLAVE DE ACCESO</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">INICIAR CONEXIÓN</button>
     </div>
     
     <div id="form-register" style="display:none;">
-      <div class="auth-field"><label>NOMBRE DE ENTRENADOR</label><input type="text" id="reg-user" placeholder="Tu nick..." maxlength="12"></div>
-      <div class="auth-field"><label>CONTRASEÑA</label><input type="password" id="reg-pass" placeholder="Mín. 4 caracteres"></div>
+      <div class="auth-field">
+        <label>NUEVO ID ENTRENADOR (MÁX. 12 CARACTERES)</label>
+        <input type="text" id="reg-user" placeholder="Tu identificador..." maxlength="12">
+      </div>
+      <div class="auth-field">
+        <label>NUEVA CLAVE DE ACCESO (MÍN. 4 CARACTERES)</label>
+        <input type="password" id="reg-pass" placeholder="Password...">
+      </div>
       
       <div class="auth-field">
-        <label>ELIGE TU ENTRENADOR</label>
+        <label>SELECCIÓN DE AVATAR BASE</label>
         <div class="grid-select" id="reg-trainer-grid"></div>
       </div>
 
       <div class="auth-field">
-        <label>ELIGE TU POKÉMON INICIAL (GEN 1-5)</label>
+        <label>SELECCIÓN DE COMPAÑERO INICIAL</label>
         <div class="grid-select" id="reg-starter-grid"></div>
       </div>
 
-      <button class="auth-btn" onclick="doRegister()">✦ CREAR ENTRENADOR & INICIAR</button>
+      <button class="auth-btn" onclick="doRegister()">CREAR CUENTA E INICIAR</button>
     </div>
     <div class="auth-msg" id="auth-msg"></div>
   </div>
@@ -213,15 +903,15 @@ body{
 <div id="app-screen">
   <div id="top-bar">
     <div class="top-user">
-      <span>⚡</span><span id="top-name">---</span>
-      <span style="color: var(--gold);" id="top-money">🪙 $3000</span>
+      <span>ENTRENADOR:</span><span id="top-name">---</span>
+      <span style="color: var(--gold);" id="top-money">CREDITOS: $3000</span>
     </div>
     <div class="top-actions">
-      <button class="cheat-toggle" id="cheat-btn" onclick="toggleCheatShiny()">✨ SHINY x4000</button>
-      <button class="top-btn" style="border-color:#f5c842; color:#f5c842;" onclick="openModal('shop-modal')">🏪 TIENDA</button>
-      <button class="top-btn" style="border-color:#44ff88; color:#44ff88;" onclick="openBagModal()">🎒 BOLSA</button>
-      <button class="top-btn" style="border-color:#00ffcc; color:#00ffcc;" onclick="openPCModal()">💻 PC BILL</button>
-      <button class="top-btn logout" onclick="doLogout()">✕ SALIR</button>
+      <button class="cheat-toggle" id="cheat-btn" onclick="toggleCheatShiny()">PROB. SHINY AUMENTADA</button>
+      <button class="top-btn" style="border-color: var(--gold); color: var(--gold);" onclick="openModal('shop-modal')">TIENDA</button>
+      <button class="top-btn" style="border-color: #44ff88; color: #44ff88;" onclick="openBagModal()">BOLSA</button>
+      <button class="top-btn" style="border-color: #00ffcc; color: #00ffcc;" onclick="openPCModal()">PC BILL</button>
+      <button class="top-btn logout" onclick="doLogout()">DESCONECTAR</button>
     </div>
   </div>
   
@@ -232,13 +922,13 @@ body{
           <img id="card-avatar" src="" alt="Trainer">
         </div>
         <div class="stats">
-          <div class="stat-row"><span class="k">ENTRENADOR</span><span class="v gold" id="card-name">---</span></div>
-          <div class="stat-row"><span class="k">POKÉMON PC</span><span class="v" id="card-pc-count">0</span></div>
-          <div class="stat-row"><span class="k">DINERO</span><span class="v gold" id="card-money">$0</span></div>
+          <div class="stat-row"><span class="k">USUARIO</span><span class="v gold" id="card-name">---</span></div>
+          <div class="stat-row"><span class="k">SISTEMA PC</span><span class="v" id="card-pc-count">0</span></div>
+          <div class="stat-row"><span class="k">EFECTIVO</span><span class="v gold" id="card-money">$0</span></div>
         </div>
       </div>
       <div class="right">
-        <div class="team-lbl">EQUIPO POKÉMON (MÁX 6)</div>
+        <div class="team-lbl">MÓDULO DE SQUAD ACTIVO (MAX 6)</div>
         <div class="team-grid" id="team-grid"></div>
       </div>
     </div>
@@ -247,7 +937,10 @@ body{
 
 <div class="modal-overlay" id="avatar-modal">
   <div class="modal">
-    <div class="modal-hdr"><span class="modal-title">🎭 SELECCIONAR ENTRENADOR</span><button class="modal-x" onclick="closeModal('avatar-modal')">✕</button></div>
+    <div class="modal-hdr">
+      <span class="modal-title">ACTUALIZAR AVATAR DE RED</span>
+      <button class="modal-x" onclick="closeModal('avatar-modal')">X</button>
+    </div>
     <div class="modal-body">
       <div class="grid-select" id="inner-trainer-grid"></div>
     </div>
@@ -256,29 +949,38 @@ body{
 
 <div class="modal-overlay" id="shop-modal">
   <div class="modal">
-    <div class="modal-hdr"><span class="modal-title">🏪 TIENDA POKÉMON</span><button class="modal-x" onclick="closeModal('shop-modal')">✕</button></div>
+    <div class="modal-hdr">
+      <span class="modal-title">SISTEMA DE SUMINISTROS</span>
+      <button class="modal-x" onclick="closeModal('shop-modal')">X</button>
+    </div>
     <div class="modal-body" id="shop-body"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="bag-modal">
   <div class="modal">
-    <div class="modal-hdr"><span class="modal-title">🎒 MUESTRARIO DE LA BOLSA</span><button class="modal-x" onclick="closeModal('bag-modal')">✕</button></div>
+    <div class="modal-hdr">
+      <span class="modal-title">INVENTARIO DE CAMPO</span>
+      <button class="modal-x" onclick="closeModal('bag-modal')">X</button>
+    </div>
     <div class="modal-body" id="bag-body"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="pc-modal">
-  <div class="modal" style="max-width: 650px;">
-    <div class="modal-hdr"><span class="modal-title">💻 ALMACENAMIENTO DE BILL</span><button class="modal-x" onclick="closeModal('pc-modal')">✕</button></div>
+  <div class="modal" style="max-width: 680px;">
+    <div class="modal-hdr">
+      <span class="modal-title">TERMINAL DE TRANSFERENCIA DE BILL</span>
+      <button class="modal-x" onclick="closeModal('pc-modal')">X</button>
+    </div>
     <div class="modal-body">
       <div class="pc-container">
         <div>
-          <div class="pc-title">EQUIPO ACTUAL</div>
-          <div id="pc-team-list" style="display:flex; flex-direction:column; gap:4px;"></div>
+          <div class="pc-title">SQUAD EN MANO</div>
+          <div id="pc-team-list" style="display:flex; flex-direction:column; gap:6px;"></div>
         </div>
         <div>
-          <div class="pc-title">POKÉMON EN EL PC</div>
+          <div class="pc-title">BANCO DE ALMACENAMIENTO</div>
           <div class="pc-box">
             <div class="pc-grid" id="pc-box-grid"></div>
           </div>
@@ -288,40 +990,42 @@ body{
   </div>
 </div>
 
-<button id="combat-btn" onclick="initWildCombat()">⚔️ BUSCAR POKÉMON SALVAJE</button>
+<button id="combat-btn" onclick="initWildCombat()">ESCANEAR ENTORNO SALVAJE</button>
+
 <div id="combat-window">
   <div class="cw-hdr">
-    <span class="cw-title">⚔️ ¡UN POKÉMON SALVAJE APARECIÓ!</span>
-    <button class="cw-close" onclick="closeCombat()">✕ HUIR</button>
+    <span class="cw-title">Rastreo de Combate Activo</span>
+    <button class="cw-close" onclick="closeCombat()">RETIRADA</button>
   </div>
   <div class="arena">
     <div class="arena-field">
       <div style="align-self: flex-end;">
         <div class="hp-box" id="p-hp-box">
-          <div class="hp-name"><span id="p-name">---</span><span id="p-lv">Lv.50</span></div>
+          <div class="hp-name"><span id="p-name">---</span><span id="p-lv">Lv.5</span></div>
           <div class="hp-bar-wrap"><div class="hp-bar" id="p-hp-bar" style="background:#44dd44; width:100%;"></div></div>
-          <div style="text-align:right; margin-top:2px;" id="p-hp-text">100/100</div>
+          <div style="text-align:right; margin-top:3px; font-size:6px;" id="p-hp-text">0/0</div>
         </div>
         <img class="fspr" id="p-sprite" src="" alt="Aliado">
       </div>
       
       <div style="align-self: flex-start; text-align: right;">
         <div class="hp-box" id="e-hp-box" style="text-align: left; margin-left: auto;">
-          <div class="hp-name"><span id="e-name">---</span><span id="e-lv">Lv.50</span></div>
+          <div class="hp-name"><span id="e-name">---</span><span id="e-lv">Lv.5</span></div>
           <div class="hp-bar-wrap"><div class="hp-bar" id="e-hp-bar" style="background:#44dd44; width:100%;"></div></div>
+          <div style="text-align:right; margin-top:3px; font-size:6px;" id="e-hp-text">0/0</div>
         </div>
         <img class="fspr" id="e-sprite" src="" alt="Enemigo">
       </div>
     </div>
     
-    <div class="battle-log" id="battle-log"><p>¡Prepárate para combatir!</p></div>
+    <div class="battle-log" id="battle-log"><p>Iniciando terminal de encuentros...</p></div>
     <div class="battle-actions" id="battle-actions"></div>
   </div>
 </div>
 
 <script>
-// ─── CONFIGURACIONES Y CONSTANTES DE DATOS POKÉMON ───
-const DB_KEY = 'poketrainer_pro_db';
+// --- MOTOR DE BASE DE DATOS Y OBJETOS GLOBALES ---
+const DB_KEY = 'poketrainer_pro_db_v2';
 let DB = JSON.parse(localStorage.getItem(DB_KEY)) || { users: {} };
 
 const TRAINERS = [
@@ -335,29 +1039,25 @@ const TRAINERS = [
   { id: "ghetsis", name: "Ghetsis", url: "https://play.pokemonshowdown.com/sprites/trainers/ghetsis.png" }
 ];
 
-// LISTA COMPLETA EXTENDIDA DE INICIALES DESDE LA GEN 1 HASTA LA 5 + PIKACHU
 const STARTERS = [
-  // Generación 1
-  { id: 1, name: "BULBASAUR", type: "grass" },
-  { id: 4, name: "CHARMANDER", type: "fire" },
-  { id: 7, name: "SQUIRTLE", type: "water" },
-  { id: 25, name: "PIKACHU", type: "electric" },
-  // Generación 2
-  { id: 152, name: "CHIKORITA", type: "grass" },
-  { id: 155, name: "CYNDAQUIL", type: "fire" },
-  { id: 158, name: "TOTODILE", type: "water" },
-  // Generación 3
-  { id: 252, name: "TRECKO", type: "grass" },
-  { id: 255, name: "TORCHIC", type: "fire" },
-  { id: 258, name: "MUDKIP", type: "water" },
-  // Generación 4
-  { id: 387, name: "TURTURWIG", type: "grass" },
-  { id: 390, name: "CHIMCHAR", type: "fire" },
-  { id: 393, name: "PIPLUP", type: "water" },
-  // Generación 5
-  { id: 495, name: "SNIVY", type: "grass" },
-  { id: 498, name: "TEPIG", type: "fire" },
-  { id: 501, name: "OSHAWOTT", type: "water" }
+  { id: 1, name: "BULBASAUR", hp: 45, maxHp: 45, atk: 49, moves: ["Placaje", "Latigo Cepa"] },
+  { id: 4, name: "CHARMANDER", hp: 39, maxHp: 39, atk: 52, moves: ["Arañazo", "Ascuas"] },
+  { id: 7, name: "SQUIRTLE", hp: 44, maxHp: 44, atk: 48, moves: ["Placaje", "Pistola Agua"] },
+  { id: 25, name: "PIKACHU", hp: 35, maxHp: 35, atk: 55, moves: ["Impactrueno", "Ataque Rapido"] },
+  { id: 152, name: "CHIKORITA", hp: 45, maxHp: 45, atk: 49, moves: ["Placaje", "Hojas Afiladas"] },
+  { id: 155, name: "CYNDAQUIL", hp: 39, maxHp: 39, atk: 52, moves: ["Placaje", "Ascuas"] },
+  { id: 158, name: "TOTODILE", hp: 50, maxHp: 50, atk: 65, moves: ["Arañazo", "Pistola Agua"] },
+  { id: 252, name: "TRECKO", hp: 40, maxHp: 40, atk: 45, moves: ["Destructor", "Absorber"] },
+  { id: 255, name: "TORCHIC", hp: 45, maxHp: 45, atk: 60, moves: ["Arañazo", "Ascuas"] },
+  { id: 258, name: "MUDKIP", hp: 50, maxHp: 50, atk: 70, moves: ["Placaje", "Pistola Agua"] }
+];
+
+const SHOP_ITEMS = [
+  { id: "pokeballs", name: "Poke Ball Comun", price: 200, iconText: "[BALL]", desc: "Captura estandar de especimenes." },
+  { id: "greatballs", name: "Super Ball", price: 600, iconText: "[S-BALL]", desc: "Mejor ratio de contencion de campo." },
+  { id: "ultraballs", name: "Ultra Ball", price: 1200, iconText: "[U-BALL]", desc: "Dispositivo de captura de alta gama." },
+  { id: "potions", name: "Pocion Estandar", price: 250, iconText: "[POTION]", desc: "Restaura 50 puntos de salud." },
+  { id: "superpotions", name: "Super Pocion", price: 700, iconText: "[S-POT]", desc: "Restaura 150 puntos de salud." }
 ];
 
 let currentUser = null;
@@ -365,7 +1065,6 @@ let selectedRegTrainer = "red";
 let selectedRegStarter = 1;
 let cheatShinyActive = false;
 
-// Variables de estado del combate activo
 let battleActive = false;
 let currentEnemy = null;
 let currentAlly = null;
@@ -380,30 +1079,18 @@ function getPokemonSprite(id, shiny = false) {
     : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
-// Función para animar el Favicon de la Poké Ball parpadeando en la pestaña
-function startFaviconAnimation() {
-  const favicon = document.getElementById('favicon');
-  const iconOpen = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23cc2222'/><path d='M1 8h14v7H1z' fill='%23ffffff'/><path d='M1 7h14v2H1z' fill='%230d1244'/><circle cx='8' cy='8' r='3' fill='%23f5c842'/><circle cx='8' cy='8' r='1.5' fill='%23ffffff'/></svg>";
-  const iconClosed = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23cc2222'/><path d='M1 8h14v7H1z' fill='%23ffffff'/><path d='M1 7h14v2H1z' fill='%230d1244'/><circle cx='8' cy='8' r='3' fill='%230d1244'/><circle cx='8' cy='8' r='1.5' fill='%23ffffff'/></svg>";
-  
-  setInterval(() => {
-    favicon.href = favicon.href === iconClosed ? iconOpen : iconClosed;
-  }, 1000);
-}
-
-// ─── INICIALIZACIÓN DE INTERFAZ RETRO DE REGISTRO ───
+// --- DESPLIEGUE Y LOGIN ---
 window.addEventListener('load', () => {
-  startFaviconAnimation();
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
-    const saved = localStorage.getItem('poke_pro_session');
+    const saved = localStorage.getItem('poke_pro_session_v2');
     if (saved && DB.users[saved]) {
       loginUser(saved);
     } else {
       document.getElementById('auth-screen').style.display = 'block';
       buildRegisterGrids();
     }
-  }, 1000);
+  }, 1200);
 });
 
 function buildRegisterGrids() {
@@ -433,7 +1120,6 @@ function buildRegisterGrids() {
     sGrid.appendChild(div);
   });
   
-  // Grid para cambiar el avatar dentro de la app
   const innerGrid = document.getElementById('inner-trainer-grid');
   innerGrid.innerHTML = "";
   TRAINERS.forEach(t => {
@@ -458,7 +1144,6 @@ function switchTab(tab) {
   document.getElementById('auth-msg').textContent = "";
 }
 
-// ─── SISTEMA DE LOGIN Y REGISTRO COMPLETO ───
 function doLogin() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
@@ -466,10 +1151,10 @@ function doLogin() {
 
   if(!DB.users[u] || DB.users[u].password !== p) {
     msg.className = "auth-msg err";
-    msg.textContent = "✕ Credenciales incorrectas";
+    msg.textContent = "ACCESO DENEGADO: Credenciales incorrectas.";
     return;
   }
-  localStorage.setItem('poke_pro_session', u);
+  localStorage.setItem('poke_pro_session_v2', u);
   loginUser(u);
 }
 
@@ -480,12 +1165,12 @@ function doRegister() {
 
   if(u.length < 3 || p.length < 4) {
     msg.className = "auth-msg err";
-    msg.textContent = "✕ Datos demasiado cortos.";
+    msg.textContent = "ERROR: Longitud insuficiente en campos.";
     return;
   }
   if(DB.users[u]) {
     msg.className = "auth-msg err";
-    msg.textContent = "✕ El entrenador ya existe.";
+    msg.textContent = "ERROR: ID de Entrenador ya ocupado.";
     return;
   }
 
@@ -494,10 +1179,13 @@ function doRegister() {
     id: starterData.id,
     name: starterData.name,
     level: 5,
-    hp: 45,
-    maxHp: 45,
+    hp: starterData.hp,
+    maxHp: starterData.maxHp,
+    atk: starterData.atk,
+    xp: 0,
+    maxXp: 100,
     shiny: false,
-    moves: ["Placaje", "Gruñido"]
+    moves: starterData.moves
   };
 
   DB.users[u] = {
@@ -505,13 +1193,13 @@ function doRegister() {
     password: p,
     trainerId: selectedRegTrainer,
     money: 3000,
-    items: { pokeballs: 5, potions: 5 },
+    items: { pokeballs: 5, greatballs: 0, ultraballs: 0, potions: 5, superpotions: 0 },
     team: [initialPokemon],
     pc: []
   };
   
   saveDB();
-  localStorage.setItem('poke_pro_session', u);
+  localStorage.setItem('poke_pro_session_v2', u);
   loginUser(u);
 }
 
@@ -523,18 +1211,18 @@ function loginUser(username) {
 }
 
 function doLogout() {
-  localStorage.removeItem('poke_pro_session');
+  localStorage.removeItem('poke_pro_session_v2');
   currentUser = null;
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
   switchTab('login');
 }
 
-// ─── RENDERIZADO DEL DASHBOARD PRINCIPAL ───
+// --- ACTUALIZACIÓN DE ESTADOS ---
 function updateDashboard() {
   const data = DB.users[currentUser];
   document.getElementById('top-name').textContent = data.username;
-  document.getElementById('top-money').textContent = `🪙 $${data.money}`;
+  document.getElementById('top-money').textContent = `CREDITOS: $${data.money}`;
   document.getElementById('card-name').textContent = data.username;
   document.getElementById('card-money').textContent = `$${data.money}`;
   document.getElementById('card-pc-count').textContent = data.pc.length;
@@ -544,45 +1232,43 @@ function updateDashboard() {
 
   const tGrid = document.getElementById('team-grid');
   tGrid.innerHTML = "";
-  data.team.forEach((p, idx) => {
+  data.team.forEach((p) => {
     const hpPct = (p.hp / p.maxHp) * 100;
+    const xpPct = (p.xp / p.maxXp) * 100;
     const div = document.createElement('div');
     div.className = "slot";
     div.innerHTML = `
       <img src="${getPokemonSprite(p.id, p.shiny)}">
-      <div class="pname">${p.name}${p.shiny ? '✨' : ''}</div>
-      <div class="plv">Lv. ${p.level}</div>
+      <div class="pname">${p.name} ${p.shiny ? '[S]' : ''}</div>
+      <div class="plv">NIVEL ${p.level}</div>
       <div class="hp-bar-wrap">
         <div class="hp-bar" style="width: ${hpPct}%; background: ${hpPct > 50 ? '#44dd44' : hpPct > 20 ? '#f5c842' : '#cc2222'}"></div>
       </div>
-      <div style="font-size:5px; color:#fff; margin-top:2px;">${p.hp}/${p.maxHp} HP</div>
+      <div style="font-size:5px; color:#fff; margin-top:3px;">HP: ${p.hp}/${p.maxHp}</div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar" style="width: ${xpPct}%;"></div>
+      </div>
     `;
     tGrid.appendChild(div);
   });
 }
 
-// ─── CONTROLADORES DE MODALES GENÉRICOS ───
 function openModal(id) {
+  if(id === 'shop-modal') renderShop();
   document.getElementById(id).classList.add('open');
 }
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// ─── INTERRUPTOR CHEAT RATIO SHINY ───
 function toggleCheatShiny() {
   cheatShinyActive = !cheatShinyActive;
   const btn = document.getElementById('cheat-btn');
   btn.classList.toggle('active', cheatShinyActive);
-  btn.textContent = cheatShinyActive ? "✨ SHINY ACTIVADO" : "✨ SHINY x4000";
+  btn.textContent = cheatShinyActive ? "PROB. SHINY COMPRIMIDA AL MAXIMO" : "PROB. SHINY AUMENTADA";
 }
 
-// ─── SISTEMA DE TIENDA POKÉMON ───
-const SHOP_ITEMS = [
-  { id: "pokeballs", name: "Poké Ball", price: 200, icon: "🔴", desc: "Permite capturar Pokémon" },
-  { id: "potions", name: "Poción Básica", price: 300, icon: "🧪", desc: "Cura 50 HP a un Pokémon" }
-];
-
+// --- LOGICA DE LA TIENDA RETRO ---
 function renderShop() {
   const container = document.getElementById('shop-body');
   container.innerHTML = "";
@@ -591,15 +1277,15 @@ function renderShop() {
     div.className = "shop-item";
     div.innerHTML = `
       <div class="item-info">
-        <div class="item-icon">${item.icon}</div>
+        <div class="item-text-icon">${item.iconText}</div>
         <div class="item-text">
           <h4>${item.name}</h4>
           <p>${item.desc}</p>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:12px;">
         <span class="shop-price">$${item.price}</span>
-        <button class="top-btn" onclick="buyItem('${item.id}', ${item.price})">COMPRAR</button>
+        <button class="top-btn" onclick="buyItem('${item.id}', ${item.price})">ADQUIRIR</button>
       </div>
     `;
     container.appendChild(div);
@@ -609,7 +1295,7 @@ function renderShop() {
 function buyItem(itemId, price) {
   const user = DB.users[currentUser];
   if (user.money < price) {
-    alert("¡No tienes suficientes Pokédólares!");
+    alert("CREDITOS INSUFICIENTES");
     return;
   }
   user.money -= price;
@@ -619,11 +1305,7 @@ function buyItem(itemId, price) {
   renderShop();
 }
 
-document.addEventListener('click', (e) => {
-  if(e.target.matches('[onclick*="shop-modal"]')) renderShop();
-});
-
-// ─── SISTEMA DE LA BOLSA Y CURACIÓN ───
+// --- GESTIÓN DE BOLSA ---
 function openBagModal() {
   renderBag();
   openModal('bag-modal');
@@ -635,8 +1317,11 @@ function renderBag() {
   container.innerHTML = "";
 
   const itemsArray = [
-    { id: "pokeballs", name: "Poké Balls", qty: user.items.pokeballs || 0, icon: "🔴", usable: false },
-    { id: "potions", name: "Pociones", qty: user.items.potions || 0, icon: "🧪", usable: true }
+    { id: "pokeballs", name: "Poke Ball Comun", qty: user.items.pokeballs || 0, iconText: "[BALL]", usable: false },
+    { id: "greatballs", name: "Super Ball", qty: user.items.greatballs || 0, iconText: "[S-BALL]", usable: false },
+    { id: "ultraballs", name: "Ultra Ball", qty: user.items.ultraballs || 0, iconText: "[U-BALL]", usable: false },
+    { id: "potions", name: "Pocion Estandar", qty: user.items.potions || 0, iconText: "[POTION]", usable: true, heal: 50 },
+    { id: "superpotions", name: "Super Pocion", qty: user.items.superpotions || 0, iconText: "[S-POT]", usable: true, heal: 150 }
   ];
 
   itemsArray.forEach(item => {
@@ -644,24 +1329,24 @@ function renderBag() {
     div.className = "bag-item";
     div.innerHTML = `
       <div class="item-info">
-        <div class="item-icon">${item.icon}</div>
+        <div class="item-text-icon">${item.iconText}</div>
         <div class="item-text">
           <h4>${item.name}</h4>
-          <p>Cantidad: x${item.qty}</p>
+          <p>Disponibles: x${item.qty}</p>
         </div>
       </div>
       <div>
-        ${item.usable && item.qty > 0 ? `<button class="top-btn" onclick="showBagCureTargets()">USAR</button>` : ''}
+        ${item.usable && item.qty > 0 ? `<button class="top-btn" onclick="showBagHealTargets('${item.id}', ${item.heal})">APLICAR</button>` : ''}
       </div>
     `;
     container.appendChild(div);
   });
 }
 
-function showBagCureTargets() {
+function showBagHealTargets(itemId, healAmount) {
   const user = DB.users[currentUser];
   const container = document.getElementById('bag-body');
-  container.innerHTML = `<div style="font-size:7px; color:var(--gold); margin-bottom:8px;">¿A qué Pokémon deseas curar?</div>`;
+  container.innerHTML = `<div style="font-size:7px; color:var(--gold); margin-bottom:10px;">SELECCIONE OBJETIVO DE RESTAURACIÓN:</div>`;
   
   user.team.forEach((p, idx) => {
     const div = document.createElement('div');
@@ -669,31 +1354,32 @@ function showBagCureTargets() {
     div.style.cursor = "pointer";
     div.onclick = () => {
       if (p.hp >= p.maxHp) {
-        alert("¡Este Pokémon ya tiene la vida al máximo!");
+        alert("SALUD COMPLETA EN ESTE OBJETIVO");
         return;
       }
-      user.items.potions--;
-      p.hp = Math.min(p.maxHp, p.hp + 50);
+      user.items[itemId]--;
+      p.hp = Math.min(p.maxHp, p.hp + healAmount);
       saveDB();
       updateDashboard();
       openBagModal();
     };
     div.innerHTML = `
       <div class="item-info">
-        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:30px;height:30px;">
+        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:36px;height:36px;">
         <div class="item-text"><h4>${p.name}</h4><p>HP: ${p.hp}/${p.maxHp}</p></div>
       </div>
     `;
     container.appendChild(div);
   });
+  
   const cancelBtn = document.createElement('button');
   cancelBtn.className = "auth-btn";
-  cancelBtn.textContent = "VOLVER";
+  cancelBtn.textContent = "REGRESAR";
   cancelBtn.onclick = renderBag;
   container.appendChild(cancelBtn);
 }
 
-// ─── SISTEMA DE PC DE BILL (GESTIÓN DE CAJAS) ───
+// --- LOGICA PC DE BILL ---
 function openPCModal() {
   renderPC();
   openModal('pc-modal');
@@ -702,28 +1388,25 @@ function openPCModal() {
 function renderPC() {
   const user = DB.users[currentUser];
   
-  // Lista del equipo en el PC
   const teamList = document.getElementById('pc-team-list');
   teamList.innerHTML = "";
   user.team.forEach((p, idx) => {
     const div = document.createElement('div');
-    div.className = "friend-row";
-    div.style.padding = "4px 8px";
+    div.className = "pc-team-row";
     div.innerHTML = `
-      <div style="display:flex; align-items:center; gap:6px;">
-        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:28px; height:28px; image-rendering:pixelated;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:32px; height:32px; image-rendering:pixelated;">
         <span style="font-size:6px; color:#fff;">${p.name} (Lv.${p.level})</span>
       </div>
-      ${user.team.length > 1 ? `<button class="fr-btn remove" onclick="moveTeamToPC(${idx})">AL PC</button>` : ''}
+      ${user.team.length > 1 ? `<button class="top-btn" style="border-color:var(--red); color:#fff;" onclick="moveTeamToPC(${idx})">RETIRAR</button>` : ''}
     `;
     teamList.appendChild(div);
   });
 
-  // Rejilla de la Caja del PC
   const boxGrid = document.getElementById('pc-box-grid');
   boxGrid.innerHTML = "";
   if (user.pc.length === 0) {
-    boxGrid.innerHTML = `<div style="grid-column: span 4; color:#556688; font-size:6px; text-align:center; padding:20px;">PC VACÍO</div>`;
+    boxGrid.innerHTML = `<div style="grid-column: span 4; color:#556688; font-size:7px; text-align:center; padding:24px;">BANCO DE DATOS VACIO</div>`;
   } else {
     user.pc.forEach((p, idx) => {
       const div = document.createElement('div');
@@ -731,7 +1414,7 @@ function renderPC() {
       div.onclick = () => movePCToTeam(idx);
       div.innerHTML = `
         <img src="${getPokemonSprite(p.id, p.shiny)}" title="${p.name}">
-        <div style="font-size:4.5px; color:#88aadd;">Lv.${p.level}</div>
+        <div style="font-size:5px; color:#88aadd;">Lv.${p.level}</div>
       `;
       boxGrid.appendChild(div);
     });
@@ -750,7 +1433,7 @@ function moveTeamToPC(idx) {
 function movePCToTeam(idx) {
   const user = DB.users[currentUser];
   if (user.team.length >= 6) {
-    alert("¡Tu equipo actual ya está lleno! (Máximo 6 Pokémon)");
+    alert("EQUIPO COMPLETO EN MANO (MAXIMO 6)");
     return;
   }
   const p = user.pc.splice(idx, 1)[0];
@@ -760,56 +1443,54 @@ function movePCToTeam(idx) {
   renderPC();
 }
 
-// ─── MOTOR DE COMBATE WILD (COMPLETAMENTE ABIERTO Y GIGANTE) ───
+// --- LOGICA DE BATALLA Y SISTEMA RPG DE NIVELES ---
 async function initWildCombat() {
   const user = DB.users[currentUser];
   
-  // Buscar el primer pokémon vivo del equipo
   currentAlly = user.team.find(p => p.hp > 0);
   if (!currentAlly) {
-    alert("¡Todos tus Pokémon están debilitados! Úsa una Poción desde tu Bolsa.");
+    alert("ERROR: No posees especimenes activos. Aplica una pocion.");
     return;
   }
 
-  document.getElementById('battle-log').innerHTML = "<p>¡Buscando en la hierba alta...</p>";
+  document.getElementById('battle-log').innerHTML = "<p>Rastreando señales en la zona...</p>";
   document.getElementById('battle-actions').innerHTML = "";
   document.getElementById('combat-window').style.display = 'flex';
   battleActive = true;
 
-  // Selección de CUALQUIER Pokémon del número 1 al 1010 libremente
-  const randomId = Math.floor(Math.random() * 1010) + 1;
-  
-  // Determinación Shiny según botón Cheat
-  const isShiny = cheatShinyActive ? (Math.random() < 0.33) : (Math.random() < 0.00024);
+  const randomId = Math.floor(Math.random() * 649) + 1; // Limitado a Gen 5 estable para rendimiento de retro-sprites
+  const isShiny = cheatShinyActive ? (Math.random() < 0.40) : (Math.random() < 0.001);
 
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
     const pokeData = await res.json();
     
+    const baseHp = pokeData.stats[0].base_stat;
+    const baseAtk = pokeData.stats[1].base_stat;
+    const generatedLevel = Math.floor(Math.random() * 25) + currentAlly.level;
+
     currentEnemy = {
       id: randomId,
       name: pokeData.name.toUpperCase(),
-      level: Math.floor(Math.random() * 40) + 15,
-      hp: pokeData.stats[0].base_stat + 30,
-      maxHp: pokeData.stats[0].base_stat + 30,
+      level: generatedLevel,
+      hp: baseHp + (generatedLevel * 2),
+      maxHp: baseHp + (generatedLevel * 2),
+      atk: baseAtk + generatedLevel,
       shiny: isShiny
     };
 
-    // Actualizar interfaz del combate
-    document.getElementById('e-name').textContent = currentEnemy.name + (isShiny ? " ✨" : "");
+    document.getElementById('e-name').textContent = currentEnemy.name + (isShiny ? " [S]" : "");
     document.getElementById('e-lv').textContent = `Lv.${currentEnemy.level}`;
     document.getElementById('e-sprite').src = getPokemonSprite(currentEnemy.id, isShiny);
-    document.getElementById('e-hp-bar').style.width = "100%";
-    document.getElementById('e-hp-bar').style.background = "#44dd44";
-
+    updateEnemyBattleUI();
     updateAllyBattleUI();
 
-    document.getElementById('battle-log').innerHTML = `<p>¡Un <b>${currentEnemy.name}</b> salvaje apareció!</p>`;
+    document.getElementById('battle-log').innerHTML = `<p>¡Un especimen <b>${currentEnemy.name}</b> salvaje fue interceptado!</p>`;
     showBattleMenu();
 
   } catch (err) {
-    document.getElementById('battle-log').innerHTML = "<p class='red'>Error de conexión con la Pokédex. Inténtalo de nuevo.</p>";
-    closeCombat();
+    document.getElementById('battle-log').innerHTML = "<p style='color:var(--red);'>Fallo de sincronizacion de datos de red.</p>";
+    setTimeout(closeCombat, 1500);
   }
 }
 
@@ -823,118 +1504,161 @@ function updateAllyBattleUI() {
   document.getElementById('p-hp-text').textContent = `${currentAlly.hp}/${currentAlly.maxHp}`;
 }
 
+function updateEnemyBattleUI() {
+  const hpPct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
+  document.getElementById('e-hp-bar').style.width = `${hpPct}%`;
+  document.getElementById('e-hp-bar').style.background = hpPct > 50 ? '#44dd44' : hpPct > 20 ? '#f5c842' : '#cc2222';
+  document.getElementById('e-hp-text').textContent = `${currentEnemy.hp}/${currentEnemy.maxHp}`;
+}
+
 function showBattleMenu() {
   const actions = document.getElementById('battle-actions');
   actions.innerHTML = `
-    <button class="ba-btn atk" onclick="executeAttack()">⚔️ ATACAR</button>
-    <button class="ba-btn ball" onclick="executeThrowBall()">🔴 LANZAR BALL</button>
-    <button class="ba-btn run" onclick="closeCombat()">🏃 HUIR</button>
+    <button class="ba-btn atk" onclick="triggerMove(0)">${currentAlly.moves[0] || 'Ataque 1'}</button>
+    <button class="ba-btn atk" onclick="triggerMove(1)">${currentAlly.moves[1] || 'Ataque 2'}</button>
+    <button class="ba-btn ball" onclick="openBallSelection()">RETENER (BALL)</button>
+    <button class="ba-btn run" onclick="closeCombat()">HUIR</button>
   `;
 }
 
-function executeAttack() {
+function triggerMove(moveIdx) {
   if(!battleActive) return;
 
-  // Ataque de tu Pokémon
-  const dmgToEnemy = Math.floor(Math.random() * 20) + 10;
-  currentEnemy.hp = Math.max(0, currentEnemy.hp - dmgToEnemy);
-  const eHpPct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
-  document.getElementById('e-hp-bar').style.width = `${eHpPct}%`;
-  document.getElementById('e-hp-bar').style.background = eHpPct > 50 ? '#44dd44' : eHpPct > 20 ? '#f5c842' : '#cc2222';
+  const moveName = currentAlly.moves[moveIdx] || "Ataque Base";
+  const userAtk = currentAlly.atk || 40;
+  const rawDmg = Math.floor(( (2 * currentAlly.level / 5 + 2) * userAtk * 40 / currentEnemy.atk ) / 50) + 5;
+  const finalDmg = Math.floor(rawDmg * (Math.random() * (1 - 0.85) + 0.85));
 
-  let logText = `<p>¡${currentAlly.name} usó un movimiento y causó ${dmgToEnemy} de daño!</p>`;
+  currentEnemy.hp = Math.max(0, currentEnemy.hp - finalDmg);
+  updateEnemyBattleUI();
+
+  let log = `<p>¡${currentAlly.name} uso ${moveName} y causo ${finalDmg} de daño!</p>`;
 
   if (currentEnemy.hp <= 0) {
-    const goldGained = currentEnemy.level * 15;
-    DB.users[currentUser].money += goldGained;
+    const rewardMoney = currentEnemy.level * 45;
+    const gainedXp = currentEnemy.level * 20;
+    
+    DB.users[currentUser].money += rewardMoney;
+    
+    log += `<p style="color:#44ff88;">¡Especimen salvaje colapsó! Ganaste $${rewardMoney}.</p>`;
+    log += `<p style="color:#3a9eee;">¡${currentAlly.name} adquirió ${gainedXp} puntos XP!</p>`;
+    
+    currentAlly.xp += gainedXp;
+    if(currentAlly.xp >= currentAlly.maxXp) {
+      currentAlly.level += 1;
+      currentAlly.xp = 0;
+      currentAlly.maxXp = Math.floor(currentAlly.maxXp * 1.5);
+      currentAlly.maxHp = Math.floor(currentAlly.maxHp * 1.15);
+      currentAlly.atk = Math.floor(currentAlly.atk * 1.12);
+      currentAlly.hp = currentAlly.maxHp;
+      log += `<p style="color:var(--gold);">¡RESTRUCTURACIÓN DE DATOS: Subio a Nivel ${currentAlly.level}!</p>`;
+    }
+
     saveDB();
     updateDashboard();
-    
-    logText += `<p style="color:#44ff88;">¡El ${currentEnemy.name} salvaje se ha debilitado! Ganaste $${goldGained}.</p>`;
-    document.getElementById('battle-log').innerHTML = logText;
+    document.getElementById('battle-log').innerHTML = log;
     endBattleState();
     return;
   }
 
-  // Contraataque enemigo
-  const dmgToAlly = Math.floor(Math.random() * 15) + 5;
-  currentAlly.hp = Math.max(0, currentAlly.hp - dmgToAlly);
-  saveDB();
-  updateDashboard();
-  updateAllyBattleUI();
+  // TURNO DEL OPONENTE
+  setTimeout(() => {
+    const enemyAtk = currentEnemy.atk || 35;
+    const rawEnemyDmg = Math.floor(( (2 * currentEnemy.level / 5 + 2) * enemyAtk * 35 / (currentAlly.atk || 40) ) / 50) + 4;
+    const finalEnemyDmg = Math.floor(rawEnemyDmg * (Math.random() * (1 - 0.85) + 0.85));
 
-  logText += `<p style="color:#ff5544;">¡El ${currentEnemy.name} salvaje contraatacó con ${dmgToAlly} de daño!</p>`;
-  
-  if (currentAlly.hp <= 0) {
-    logText += `<p style="color:#cc2222;">¡Tu Pokémon se ha debilitado!</p>`;
-    document.getElementById('battle-log').innerHTML = logText;
-    endBattleState();
-    return;
-  }
+    currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
+    saveDB();
+    updateDashboard();
+    updateAllyBattleUI();
 
-  document.getElementById('battle-log').innerHTML = logText;
+    log += `<p style="color:#ff5544;">¡El ${currentEnemy.name} respondio ejerciendo ${finalEnemyDmg} de daño!</p>`;
+    document.getElementById('battle-log').innerHTML = log;
+
+    if (currentAlly.hp <= 0) {
+      log += `<p style="color:var(--red);">¡Tu especimen base ha quedado fuera de servicio!</p>`;
+      document.getElementById('battle-log').innerHTML = log;
+      endBattleState();
+    }
+  }, 600);
 }
 
-function executeThrowBall() {
+function openBallSelection() {
+  const actions = document.getElementById('battle-actions');
   const user = DB.users[currentUser];
-  if ((user.items.pokeballs || 0) <= 0) {
-    alert("¡No te quedan Poké Balls! Cómpralas en la tienda.");
-    return;
-  }
+  
+  actions.innerHTML = `
+    <button class="ba-btn ball" onclick="throwBall('pokeballs', 1.0)" ${(!user.items.pokeballs)?'disabled':''}>PokeBall (x${user.items.pokeballs})</button>
+    <button class="ba-btn ball" onclick="throwBall('greatballs', 1.5)" ${(!user.items.greatballs)?'disabled':''}>SuperBall (x${user.items.greatballs})</button>
+    <button class="ba-btn ball" onclick="throwBall('ultraballs', 2.0)" ${(!user.items.ultraballs)?'disabled':''}>UltraBall (x${user.items.ultraballs})</button>
+    <button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>
+  `;
+}
 
-  user.items.pokeballs--;
+function throwBall(ballType, rateModifier) {
+  const user = DB.users[currentUser];
+  if (!user.items[ballType]) return;
+
+  user.items[ballType]--;
   saveDB();
-  renderBag();
 
-  const catchRate = 1 - (currentEnemy.hp / currentEnemy.maxHp);
+  const hpFactor = (1 - (currentEnemy.hp / currentEnemy.maxHp));
+  const finalCatchProbability = hpFactor * rateModifier;
   const roll = Math.random();
 
-  if (roll < catchRate + 0.25) {
-    // CAPTURADO
-    const caughtPokemon = {
+  if (roll < finalCatchProbability + 0.15) {
+    const caught = {
       id: currentEnemy.id,
       name: currentEnemy.name,
       level: currentEnemy.level,
       hp: currentEnemy.maxHp,
       maxHp: currentEnemy.maxHp,
+      atk: currentEnemy.atk,
+      xp: 0,
+      maxXp: 100 * currentEnemy.level,
       shiny: currentEnemy.shiny,
-      moves: ["Placaje"]
+      moves: ["Placaje", "Mordisco"]
     };
 
     if (user.team.length < 6) {
-      user.team.push(caughtPokemon);
-      document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡Ya está! ¡El ${currentEnemy.name} salvaje fue atrapado y enviado a tu equipo!</p>`;
+      user.team.push(caught);
+      document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡CONTENCION EXITOSA! El espécimen se integro a tu Squad.</p>`;
     } else {
-      user.pc.push(caughtPokemon);
-      document.getElementById('battle-log').innerHTML = `<p style="color:#00ffcc;">¡Ya está! ¡El ${currentEnemy.name} salvaje fue atrapado y transferido al PC de Bill!</p>`;
+      user.pc.push(caught);
+      document.getElementById('battle-log').innerHTML = `<p style="color:#00ffcc;">¡CONTENCION EXITOSA! Enviado a Almacenamiento PC Bill.</p>`;
     }
     
     saveDB();
     updateDashboard();
     endBattleState();
   } else {
-    // ESCAPÓ DE LA BALL
-    let logText = `<p>¡Nooo! El Pokémon se liberó de la Poké Ball.</p>`;
-    const dmgToAlly = Math.floor(Math.random() * 12) + 4;
-    currentAlly.hp = Math.max(0, currentAlly.hp - dmgToAlly);
+    let log = `<p>¡Fallo de fijacion! El objetivo logro zafarse del modulo.</p>`;
+    
+    const enemyAtk = currentEnemy.atk || 35;
+    const finalEnemyDmg = Math.floor((Math.random() * 10) + (enemyAtk * 0.1));
+    currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
+    
     saveDB();
     updateDashboard();
     updateAllyBattleUI();
 
-    logText += `<p style="color:#ff5544;">¡El ${currentEnemy.name} salvaje aprovechó para golpear con ${dmgToAlly} de daño!</p>`;
+    log += `<p style="color:#ff5544;">¡El espécimen aprovecho el fallo golpeando con ${finalEnemyDmg} de daño!</p>`;
+    document.getElementById('battle-log').innerHTML = log;
     
     if (currentAlly.hp <= 0) {
-      logText += `<p style="color:#cc2222;">¡Tu Pokémon cayó debilitado!</p>`;
+      log += `<p style="color:var(--red);">¡Squad destruido!</p>`;
+      document.getElementById('battle-log').innerHTML = log;
       endBattleState();
+    } else {
+      showBattleMenu();
     }
-    document.getElementById('battle-log').innerHTML = logText;
   }
 }
 
 function endBattleState() {
   battleActive = false;
   document.getElementById('battle-actions').innerHTML = `
-    <button class="ba-btn nxt" onclick="closeCombat()">ENTENDIDO</button>
+    <button class="ba-btn nxt" onclick="closeCombat()">PROCESAR LOG DE OPERACIONES</button>
   `;
 }
 
