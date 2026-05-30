@@ -30,9 +30,9 @@ body{
   position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;
   align-items:center;justify-content:center;z-index:9999;gap:16px;
 }
-#loading-screen .lball{font-size:40px;animation:spin 1s linear infinite;text-shadow:0 0 10px rgba(255,255,255,.4);}
+#loading-screen .lball{font-size:40px;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-#loading-screen p{color:var(--gold);font-size:8px;letter-spacing:2px;text-shadow:2px 2px #000;}
+#loading-screen p{color:var(--gold);font-size:8px;letter-spacing:2px;}
 
 /* ── AUTH ── */
 #auth-screen{
@@ -43,17 +43,17 @@ body{
   display:none;
 }
 .auth-header{background:#060e33;border-bottom:4px solid var(--gold);padding:20px;text-align:center;}
-.auth-header h1{color:var(--gold);font-size:clamp(10px,2.5vw,15px);letter-spacing:2px;margin-bottom:6px;text-shadow:3px 3px #000;}
+.auth-header h1{color:var(--gold);font-size:clamp(10px,2.5vw,15px);letter-spacing:2px;margin-bottom:6px;}
 .auth-header p{color:#8899ff;font-size:clamp(6px,1.5vw,9px);letter-spacing:1px;}
 .auth-tabs{display:flex;border-bottom:3px solid var(--gold);}
 .auth-tab{flex:1;padding:12px;text-align:center;cursor:pointer;color:#8899ff;font-size:clamp(6px,1.4vw,9px);letter-spacing:1px;background:#0a0e2a;transition:background .15s,color .15s;border:none;font-family:var(--px);}
-.auth-tab.active{background:var(--navy);color:var(--gold);font-weight:bold;}
+.auth-tab.active{background:var(--navy);color:var(--gold);}
 .auth-body{padding:22px;}
 .auth-field{margin-bottom:14px;}
 .auth-field label{display:block;color:#8899ff;font-size:6.5px;letter-spacing:1px;margin-bottom:5px;}
 .auth-field input{width:100%;background:#060e33;border:2px solid #2244aa;border-radius:5px;color:#fff;font-family:var(--vt);font-size:20px;padding:9px 11px;outline:none;transition:border-color .15s;}
 .auth-field input:focus{border-color:var(--gold);}
-.auth-btn{width:100%;background:#1a2fa8;border:3px solid var(--gold);border-radius:6px;color:var(--gold);font-family:var(--px);font-size:8px;padding:12px;cursor:pointer;letter-spacing:1px;transition:background .15s,transform .1s;margin-top:4px;box-shadow:3px 3px #000;}
+.auth-btn{width:100%;background:#1a2fa8;border:3px solid var(--gold);border-radius:6px;color:var(--gold);font-family:var(--px);font-size:8px;padding:12px;cursor:pointer;letter-spacing:1px;transition:background .15s,transform .1s;margin-top:4px;}
 .auth-btn:hover{background:#253fcc;transform:translateY(-2px);}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 .auth-msg{margin-top:10px;font-family:var(--vt);font-size:18px;text-align:center;min-height:22px;}
@@ -61,8 +61,9 @@ body{
 .auth-msg.ok{color:#44ff88;}
 .auth-note{margin-top:14px;padding:10px;background:#060e33;border-radius:5px;border:1px solid #1a2a66;color:#556688;font-family:var(--vt);font-size:14px;line-height:1.7;}
 
-/* ── APP SCREEN ── */
+/* ── APP ── */
 #app-screen{display:none;width:100%;max-width:1200px;}
+
 #top-bar{background:var(--navy);border:3px solid var(--gold);border-radius:8px 8px 0 0;padding:9px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
 .top-user{color:var(--gold);font-size:clamp(6px,1.1vw,9px);display:flex;align-items:center;gap:8px;}
 .top-streak{color:#44ff88;font-size:clamp(5px,1vw,8px);}
@@ -72,12 +73,12 @@ body{
 .top-btn.logout{border-color:#cc2222;color:#ff7766;}
 .top-btn.friends-btn{border-color:#44ff88;color:#44ff88;}
 .top-btn.challenges-btn{border-color:#f5c842;color:#f5c842;position:relative;}
-.notif-badge{position:absolute;top:-6px;right:-6px;background:#cc2222;color:#fff;font-size:6px;padding:2px 4px;border-radius:10px;min-width:16px;text-align:center;box-shadow:1px 1px 2px #000;border:1px solid #fff;}
+.notif-badge{position:absolute;top:-6px;right:-6px;background:#cc2222;color:#fff;font-size:6px;padding:2px 4px;border-radius:10px;min-width:16px;text-align:center;}
 
 .card{background:var(--blue);border:5px solid var(--gold);border-top:none;border-radius:0 0 12px 12px;box-shadow:0 0 0 3px #000,12px 12px 0 rgba(0,0,0,.5);overflow:hidden;animation:cardIn .5s .1s both;}
 .card-body{display:grid;grid-template-columns:clamp(170px,24%,290px) 1fr;}
 .left{background:linear-gradient(160deg,#1833bb,#0a1266);border-right:3px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;padding:18px 10px 14px;gap:12px;}
-.avatar-frame{width:clamp(110px,17vw,210px);height:clamp(110px,17vw,210px);border:4px solid var(--gold);border-radius:8px;background:#0e1a77;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 12px #000,3px 3px 0 rgba(0,0,0,.3);flex-shrink:0;}
+.avatar-frame{width:clamp(110px,17vw,210px);height:clamp(110px,17vw,210px);border:4px solid var(--gold);border-radius:8px;background:#0e1a77;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .avatar-frame img{width:100%;height:100%;object-fit:contain;}
 .stats{width:100%}
 .stat-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.12);padding:5px 3px;font-size:clamp(5px,.85vw,8.5px);}
@@ -85,20 +86,20 @@ body{
 .right{padding:16px 12px 18px;display:flex;flex-direction:column;gap:10px;}
 .team-lbl{color:var(--gold);font-size:clamp(7px,1.1vw,11px);letter-spacing:1px;display:flex;align-items:center;justify-content:space-between;}
 .team-lbl-txt::before{content:'▶';color:#fff;margin-right:5px;}
-.shop-btn-top{background:#000;border:2px solid var(--gold);color:var(--gold);padding:3px 8px;font-family:var(--px);font-size:6px;cursor:pointer;border-radius:4px;}
+.shop-btn-top{background:#000;border:2px solid var(--gold);color:var(--gold);padding:3px 6px;font-family:var(--px);font-size:6px;cursor:pointer;border-radius:4px;}
 .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;flex:1;}
 .card-footer{background:var(--navy);border-top:4px solid var(--gold);padding:9px 18px;display:flex;justify-content:space-between;align-items:center;}
 .card-footer .ftag{color:#8899ff;font-size:clamp(5px,.75vw,7.5px);}
 .card-footer .fid{color:var(--gold);font-size:clamp(5px,.75vw,7.5px);}
 
 /* ── SLOTS ── */
-.slot{background:#0a1d44;border:2px solid #1e44aa;border-radius:7px;display:flex;flex-direction:column;align-items:center;padding:9px 5px 7px;cursor:pointer;position:relative;transition:border-color .15s,transform .15s,background .15s;box-shadow:3px 3px 0 rgba(0,0,0,.3);}
+.slot{background:#0a1d44;border:2px solid #1e44aa;border-radius:7px;display:flex;flex-direction:column;align-items:center;padding:9px 5px 7px;cursor:pointer;position:relative;transition:border-color .15s,transform .15s,background .15s;}
 .slot:hover{border-color:var(--gold);background:#142a66;transform:translateY(-4px)}
-.slot img{width:clamp(56px,8.5vw,105px);height:clamp(56px,8.5vw,105px);object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));}
-.slot .pname{color:#cce0ff;font-size:clamp(4.5px,.75vw,8px);text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-shadow:1px 1px #000;}
+.slot img{width:clamp(56px,8.5vw,105px);height:clamp(56px,8.5vw,105px);object-fit:contain;image-rendering:pixelated;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.7));}
+.slot .pname{color:#cce0ff;font-size:clamp(4.5px,.75vw,8px);text-align:center;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
 .slot .plv{color:#88aadd;font-size:clamp(4px,.6vw,6.5px);margin-top:2px}
 .types{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;justify-content:center}
-.tb{font-size:clamp(4px,.55vw,6.5px);padding:2px 4px;border-radius:3px;color:#fff;text-transform:uppercase;font-weight:bold;text-shadow:1px 1px #000;box-shadow:1px 1px #000;}
+.tb{font-size:clamp(4px,.55vw,6.5px);padding:2px 4px;border-radius:3px;color:#fff;text-transform:uppercase;}
 .t-water{background:#3a7eee}.t-grass{background:#3da820}.t-ground{background:#b07a30}
 .t-fire{background:#e85010}.t-ice{background:#3dbcbc}.t-electric{background:#c8a800}
 .t-bug{background:#7a9a10}.t-rock{background:#887832}.t-ghost{background:#5c3a88}
@@ -126,7 +127,7 @@ body{
 /* DETALLES POKEMON MODAL */
 .pdetail-layout{display:flex;flex-direction:column;gap:12px;color:#fff;}
 .pdetail-top{display:flex;gap:12px;align-items:center;background:#061133;padding:10px;border-radius:6px;border:1px solid #1a2fa8;}
-.pdetail-top img{width:80px;height:80px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 2px 4px #000);}
+.pdetail-top img{width:80px;height:80px;object-fit:contain;image-rendering:pixelated;}
 .pdetail-info{flex:1;}
 .pdetail-name{color:var(--gold);font-size:12px;margin-bottom:4px;}
 .pdetail-meta{font-size:7px;color:#8899ff;line-height:1.6;}
@@ -138,9 +139,9 @@ body{
 .pdetail-moves-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .pdetail-move-card{background:#0a1d44;border:1px solid #2244aa;padding:6px;border-radius:4px;font-size:6px;}
 .pdetail-move-name{color:#fff;font-size:7px;margin-bottom:2px;}
-.pdetail-move-type{display:inline-block;padding:1px 3px;border-radius:2px;color:#fff;font-size:5px;text-transform:uppercase;margin-top:2px;font-weight:bold;}
+.pdetail-move-type{display:inline-block;padding:1px 3px;border-radius:2px;color:#fff;font-size:5px;text-transform:uppercase;margin-top:2px;}
 
-/* TIENDA MODAL */
+/* TIENDA */
 .shop-grid{display:grid;grid-template-columns:1fr;gap:6px;}
 .shop-item{background:#0a1d44;border:2px solid #2244aa;border-radius:6px;padding:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .shop-item-left{display:flex;align-items:center;gap:10px;}
@@ -151,23 +152,7 @@ body{
 .shop-buy-btn{background:#1a2fa8;border:1px solid var(--gold);color:var(--gold);padding:4px 8px;border-radius:4px;font-family:var(--px);font-size:6px;cursor:pointer;}
 .shop-buy-btn:hover{background:#2244cc;}
 
-/* LISTAS DE AMIGOS Y RETOS */
-.add-friend-row{display:flex;gap:6px;margin-bottom:12px;}
-.add-friend-row input{flex:1;background:#060e33;border:2px solid #2244aa;border-radius:4px;color:#fff;font-family:var(--vt);font-size:18px;padding:5px 8px;outline:none;}
-.add-friend-row button{background:var(--blue);border:2px solid var(--gold);color:var(--gold);font-family:var(--px);font-size:6px;padding:0 10px;cursor:pointer;border-radius:4px;}
-.friend-row, .search-result-row, .challenge-box{background:#0a1438;border:2px solid #1a2fa8;border-radius:6px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.fname{color:#fff;font-size:8px;}
-.fr-btn{font-family:var(--px);font-size:6px;padding:4px 8px;cursor:pointer;border-radius:4px;border:none;}
-.fr-btn.challenge{background:#cc2222;color:#fff;border:1px solid #ff7766;}
-.fr-btn.add-btn{background:#7cb836;color:#fff;}
-.challenge-box{border-color:var(--gold);flex-direction:column;gap:8px;align-items:stretch;}
-.ch-info{font-size:7px;color:#fff;line-height:1.4;}
-.ch-actions{display:flex;gap:6px;}
-.ch-btn{flex:1;font-family:var(--px);font-size:6px;padding:6px;border-radius:4px;cursor:pointer;border:none;text-align:center;}
-.ch-btn.accept{background:#7cb836;color:#fff;}
-.ch-btn.decline{background:#cc2222;color:#fff;}
-
-/* COMBATE PRINCIPAL PANEL */
+/* COMBATE */
 #combat-btn{position:fixed;bottom:24px;left:24px;z-index:200;background:#0d1244;border:3px solid #44ff88;border-radius:6px;color:#44ff88;font-family:var(--px);font-size:8px;padding:9px 13px;cursor:pointer;box-shadow:3px 3px 0 rgba(0,0,0,.5),0 0 10px rgba(68,255,136,.2);transition:background .15s;letter-spacing:1px;}
 #combat-btn:hover{background:#1a2fa8}
 #combat-window{position:fixed;bottom:68px;left:24px;z-index:199;width:440px;max-width:calc(100vw - 48px);background:#0a0e2a;border:4px solid #44ff88;border-radius:8px;box-shadow:0 0 0 2px #000,6px 6px 0 rgba(0,0,0,.7);font-family:var(--px);display:none;max-height:88vh;overflow-y:auto;}
@@ -199,23 +184,8 @@ body{
 .ctrl-btn{flex:1;background:#111;border:2px solid #444;color:#aaa;font-family:var(--px);font-size:5px;padding:6px;cursor:pointer;text-align:center;border-radius:4px;}
 .ctrl-btn:hover{border-color:#fff;color:#fff;}
 
-/* PVP WINDOW ORIGINAL */
+/* PVP WINDOW */
 #pvp-window{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;width:450px;max-width:calc(100vw - 28px);background:#0a0e2a;border:4px solid #f5c842;border-radius:10px;box-shadow:0 0 0 3px #000,10px 10px 0 rgba(0,0,0,.7);font-family:var(--px);display:none;max-height:90vh;overflow-y:auto;}
-.pvp-hdr{background:#060e33;border-bottom:3px solid var(--gold);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
-.pvp-body{padding:14px;display:flex;flex-direction:column;gap:12px;}
-.pvp-arena{background:linear-gradient(180deg,#142466,#070d2b);border:2px solid #2244aa;border-radius:6px;padding:12px;display:flex;justify-content:space-between;align-items:center;min-height:110px;}
-.pvp-slot{text-align:center;color:#fff;font-size:6px;width:45%;}
-.pvp-slot img{width:64px;height:64px;object-fit:contain;image-rendering:pixelated;}
-.pvp-slot .hp{margin-top:4px;background:#000;height:4px;border-radius:2px;overflow:hidden;}
-.pvp-slot .hp-fill{height:100%;background:#44ff88;}
-.vs-sign{font-size:14px;color:var(--gold);font-style:italic;}
-.pvp-log{background:#000;border:2px solid #2244aa;border-radius:6px;padding:8px;font-family:var(--vt);font-size:16px;color:#44ff88;min-height:60px;max-height:90px;overflow-y:auto;}
-.pvp-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.pvp-btn{background:#0d1c54;border:2px solid var(--gold);color:var(--gold);padding:8px;font-family:var(--px);font-size:6px;cursor:pointer;border-radius:4px;}
-.pvp-btn:hover{background:#162f8c;}
-
-/* RETRO ALERT CUSTOM */
-.retro-alert{position:fixed;top:20px;right:20px;background:var(--navy);border:3px solid var(--gold);padding:12px 16px;border-radius:6px;color:#fff;font-family:var(--px);font-size:7px;z-index:99999;box-shadow:4px 4px 0 #000;animation:popIn .3s ease both;max-width:300px;line-height:1.4;}
 
 @media(max-width:580px){
   .card-body{grid-template-columns:1fr}
@@ -229,11 +199,9 @@ body{
 </head>
 <body>
 
-<div id="alert-container"></div>
-
 <div id="loading-screen">
   <div class="lball">⚪</div>
-  <p>CONECTANDO CON LA RED...</p>
+  <p>CONECTANDO...</p>
 </div>
 
 <div id="auth-screen">
@@ -287,7 +255,6 @@ body{
         <div class="stats">
           <div class="stat-row"><span class="k">NOMBRE</span><span class="v gold" id="card-name">---</span></div>
           <div class="stat-row"><span class="k">REGIÓN</span><span class="v" id="card-region">---</span></div>
-          <div class="stat-row"><span class="k">RACHA</span><span class="v gold" id="card-streak">0 🔥</span></div>
           <div class="stat-row"><span class="k">DINERO</span><span class="v gold" id="card-money">$3000</span></div>
           <div class="stat-row"><span class="k">HORA</span><span class="v" id="st-hours">--:--</span></div>
           <div class="stat-row"><span class="k">DÍA</span><span class="v" id="st-day">---</span></div>
@@ -305,30 +272,6 @@ body{
       <span class="ftag" id="footer-tag">POKÉMON · BASAURI</span>
       <span class="fid" id="footer-id">★ --- ★</span>
     </div>
-  </div>
-</div>
-
-<div id="pvp-window">
-  <div class="pvp-hdr">
-    <span style="color:var(--gold);font-size:7px;">⚔️ COMBATE PVP EN DIRECTO</span>
-    <button class="modal-x" onclick="leavePVP()">RENDIRSE</button>
-  </div>
-  <div class="pvp-body">
-    <div class="pvp-arena">
-      <div class="pvp-slot" id="pvp-player-slot">
-        <img id="pvp-p-img" src="" alt="tupoke">
-        <div id="pvp-p-name">---</div>
-        <div class="hp"><div class="hp-fill" id="pvp-p-hp" style="width:100%;"></div></div>
-      </div>
-      <div class="vs-sign">VS</div>
-      <div class="pvp-slot" id="pvp-enemy-slot">
-        <img id="pvp-e-img" src="" alt="enemypoke">
-        <div id="pvp-e-name">---</div>
-        <div class="hp"><div class="hp-fill" id="pvp-e-hp" style="width:100%;"></div></div>
-      </div>
-    </div>
-    <div class="pvp-log" id="pvp-log">Esperando acciones...</div>
-    <div class="pvp-actions" id="pvp-actions-container"></div>
   </div>
 </div>
 
@@ -413,31 +356,7 @@ body{
 </div>
 
 <script>
-// Configuración ficticia de Firebase (lista para conectar credenciales reales de la consola)
-const firebaseConfig = {
-  apiKey: "AIzaSyDemoConfigFicticia_ParaUsoLocal_V3",
-  authDomain: "poketrainer-basauri.firebaseapp.com",
-  projectId: "poketrainer-basauri",
-  storageBucket: "poketrainer-basauri.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:1234:web:abcd"
-};
-
-// Inicialización condicional para evitar crashes locales
-let firestoreEnabled = false;
-let fdb = null;
-try {
-  if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("DemoConfig")) {
-    firebase.initializeApp(firebaseConfig);
-    fdb = firebase.firestore();
-    firestoreEnabled = true;
-    console.log("🔥 Firebase Firestore conectado con éxito.");
-  }
-} catch (e) {
-  console.warn("⚠️ Ejecutando en modo simulación local (LocalStorage).", e);
-}
-
-// LÓGICA DE BASE DE DATOS LOCAL SINCRO MULTI-PESTAÑA
+// Backend simulado
 const DB_KEY = 'pokétrainer_db_v3';
 function loadLocalDB(){
   try { return JSON.parse(localStorage.getItem(DB_KEY)) || {users:{},challenges:[]}; }
@@ -451,10 +370,10 @@ function saveLocalDB(db){
 let DB = loadLocalDB();
 try {
   const bc = new BroadcastChannel('pokétrainer');
-  bc.onmessage = () => { DB = loadLocalDB(); updateAppUI(); checkActivePVPGame(); };
+  bc.onmessage = () => { DB = loadLocalDB(); updateAppUI(); };
 } catch {}
 
-// Generador de Sprites GIF / PNG Dinámicos de la 5ª generación (PokeAPI Black/White animated)
+// Sincronización de Sprites GIF animados de la 5ª generación (PokeAPI Black/White animated)
 function getSpr(id, anim=true, shiny=false){
   if(anim){
     const b = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated`;
@@ -463,27 +382,28 @@ function getSpr(id, anim=true, shiny=false){
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${shiny?'shiny/':''}${id}.png`;
 }
 
-// Catálogo Expandido de Ataques Oficiales con Atributos
+// Catálogo de Ataques oficiales con sus atributos
 const MOVES_DATABASE = {
-  "Cascada": { name: "Cascada", power: 80, type: "water" },
-  "Terremoto": { name: "Terremoto", power: 100, type: "ground" },
-  "Puño Hielo": { name: "Puño Hielo", power: 75, type: "ice" },
-  "Relajo": { name: "Relajo", power: 0, type: "normal", heal: true },
-  "Energibola": { name: "Energibola", power: 90, type: "grass" },
-  "Tóxico": { name: "Tóxico", power: 0, type: "poison" },
-  "Protección": { name: "Protección", power: 0, type: "normal" },
-  "Trueno": { name: "Trueno", power: 110, type: "electric" },
-  "Zumbido": { name: "Zumbido", power: 90, type: "bug" },
-  "Lanzallamas": { name: "Lanzallamas", power: 90, type: "fire" },
-  "Bola Sombra": { name: "Bola Sombra", power: 80, type: "ghost" },
-  "Psicocorte": { name: "Psicocorte", power: 70, type: "psychic" },
-  "Desarme": { name: "Desarme", power: 65, type: "dark" },
-  "Rayo": { name: "Rayo", power: 90, type: "electric" },
-  "Hidrobomba": { name: "Hidrobomba", power: 110, type: "water" },
-  "Hoja Afilada": { name: "Hoja Afilada", power: 55, type: "grass" }
+  "Cascada": { name: "Cascada", power: 80, accuracy: 100, type: "water" },
+  "Terremoto": { name: "Terremoto", power: 100, accuracy: 100, type: "ground" },
+  "Puño Hielo": { name: "Puño Hielo", power: 75, accuracy: 100, type: "ice" },
+  "Relajo": { name: "Relajo", power: 0, accuracy: 100, type: "normal", heal: true },
+  "Energibola": { name: "Energibola", power: 90, accuracy: 100, type: "grass" },
+  "Tóxico": { name: "Tóxico", power: 0, accuracy: 90, type: "poison" },
+  "Protección": { name: "Protección", power: 0, accuracy: 100, type: "normal" },
+  "Trueno": { name: "Trueno", power: 110, accuracy: 70, type: "electric" },
+  "Zumbido": { name: "Zumbido", power: 90, accuracy: 100, type: "bug" },
+  "Lanzallamas": { name: "Lanzallamas", power: 90, accuracy: 100, type: "fire" },
+  "Bola Sombra": { name: "Bola Sombra", power: 80, accuracy: 100, type: "ghost" },
+  "Psicocorte": { name: "Psicocorte", power: 70, accuracy: 100, type: "psychic" },
+  "Desarme": { name: "Desarme", power: 65, accuracy: 100, type: "dark" },
+  "Tajo Umbrío": { name: "Tajo Umbrío", power: 70, accuracy: 100, type: "dark" },
+  "Rayo": { name: "Rayo", power: 90, accuracy: 100, type: "electric" },
+  "Hidrobomba": { name: "Hidrobomba", power: 110, accuracy: 80, type: "water" },
+  "Hoja Afilada": { name: "Hoja Afilada", power: 55, accuracy: 95, type: "grass" }
 };
 
-// Base de Datos Oficial de Artículos de Tienda con Sprites Pokémon de Game Freak
+// Base de Datos Estática de Objetos Oficiales de la Tienda con Sprites clásicos
 const SHOP_ITEMS = [
   { id: "poke-ball", name: "Poké Ball", type: "ball", price: 200, icon: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png", desc: "Dispositivo básico para capturar Pokémon salvajes." },
   { id: "super-ball", name: "Super Ball", type: "ball", price: 600, icon: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png", desc: "Balón de alto rendimiento. Mayor ratio que Poké Ball." },
@@ -515,17 +435,7 @@ const WILD_POOL = [
   { name: "VENUSAUR", id: 3, types: ["grass", "poison"], moves: ["Hoja Afilada"], ability: "Espesura", hp: 150, stats: { hp: 80, atk: 82, def: 83, spatk: 100, spdef: 100, speed: 80 } }
 ];
 
-// Alertas retro flotantes heredadas
-function spawnAlert(msg){
-  const box = document.getElementById('alert-container');
-  const div = document.createElement('div');
-  div.className = 'retro-alert';
-  div.innerHTML = `🔔 ${msg}`;
-  box.appendChild(div);
-  setTimeout(() => div.remove(), 4000);
-}
-
-// ─── ENGINE DE COMBATE PVE (SALVAJE) REAL ───
+// ─── ENGINE DE COMBATE REAL ───
 let combatActive = false;
 let currentEnemy = null;
 let activePlayerIndex = 0;
@@ -544,9 +454,13 @@ function toggleCombat(){
 
 function startWildBattle(){
   combatActive = true;
+  // Encontrar el primer Pokémon vivo
   activePlayerIndex = TEAM.findIndex(p => p.hp > 0);
-  if(activePlayerIndex === -1) activePlayerIndex = 0;
+  if(activePlayerIndex === -1){
+    activePlayerIndex = 0;
+  }
   
+  // Generar salvaje aleatorio
   const template = WILD_POOL[Math.floor(Math.random() * WILD_POOL.length)];
   currentEnemy = {
     name: template.name,
@@ -561,7 +475,7 @@ function startWildBattle(){
     src: getSpr(template.id, true)
   };
 
-  document.getElementById('bat-log').innerHTML = `<p>¡Un ${currentEnemy.name} salvaje apareció!</p>`;
+  document.getElementById('bat-log').innerHTML = `<p class="gr">¡Un ${currentEnemy.name} salvaje apareció!</p>`;
   updateBattleHUDs();
   renderBattleActions();
 }
@@ -569,6 +483,7 @@ function startWildBattle(){
 function updateBattleHUDs(){
   const playerPoke = TEAM[activePlayerIndex];
   
+  // Player Update
   document.getElementById('bat-player-name').textContent = playerPoke.name;
   document.getElementById('bat-player-lv').textContent = `Lv.${playerPoke.level}`;
   const pPct = (playerPoke.hp / playerPoke.maxHp) * 100;
@@ -578,6 +493,7 @@ function updateBattleHUDs(){
   document.getElementById('bat-player-hp-text').textContent = `${playerPoke.hp}/${playerPoke.maxHp} PS`;
   document.getElementById('bat-player-img').src = playerPoke.src;
 
+  // Enemy Update
   document.getElementById('bat-enemy-name').textContent = currentEnemy.name;
   document.getElementById('bat-enemy-lv').textContent = `Lv.${currentEnemy.level}`;
   const ePct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
@@ -594,15 +510,15 @@ function renderBattleActions(){
   container.innerHTML = '';
 
   if(playerPoke.hp <= 0){
-    container.innerHTML = `<p style="color:#cc2222; font-size:6px; grid-column: 1/3;">Tu Pokémon está debilitado. ¡Huye!</p>`;
+    container.innerHTML = `<p style="color:#cc2222; font-size:6px; grid-column: 1/3;">Tu Pokémon se ha debilitado. ¡Debes huir!</p>`;
     return;
   }
 
   playerPoke.moves.forEach(mName => {
-    const m = MOVES_DATABASE[mName] || { name: mName, power: 40, type: "normal" };
+    const m = MOVES_DATABASE[mName] || { name: mName, power: 40, type: "normal", accuracy: 100 };
     const btn = document.createElement('button');
     btn.className = 'ba-btn';
-    btn.innerHTML = `${m.name}<br><span style="font-size:4px; opacity:0.7;">TIPO: ${m.type.toUpperCase()} POW: ${m.power || 0}</span>`;
+    btn.innerHTML = `${m.name}<br><span style="font-size:4px; opacity:0.7;">TIPO: ${m.type.toUpperCase()} POW: ${m.power}</span>`;
     btn.onclick = () => executeBattleTurn(m);
     container.appendChild(btn);
   });
@@ -613,26 +529,34 @@ function executeBattleTurn(playerMove){
   const log = document.getElementById('bat-log');
   log.innerHTML = '';
 
+  // Determinar orden por velocidad
   const pSpeed = playerPoke.stats.speed;
   const eSpeed = currentEnemy.stats.speed;
 
   if(pSpeed >= eSpeed){
+    // Jugador ataca primero
     playerAttack(playerMove);
-    if(currentEnemy.hp > 0) enemyAttack();
+    if(currentEnemy.hp > 0){
+      enemyAttack();
+    }
   } else {
+    // Enemigo ataca primero
     enemyAttack();
-    if(playerPoke.hp > 0) playerAttack(playerMove);
+    if(playerPoke.hp > 0){
+      playerAttack(playerMove);
+    }
   }
 
+  // Comprobaciones de fin de turno
   if(currentEnemy.hp <= 0){
-    log.innerHTML += `<p style="color:#44ff88;">¡El ${currentEnemy.name} enemigo se debilitó!</p>`;
-    DB.users[currentUser].money += 200;
+    log.innerHTML += `<p class="hl">¡El ${currentEnemy.name} salvaje se ha debilitado! ¡Has ganado!</p>`;
+    DB.users[currentUser].money += 150;
     DB.users[currentUser].streak += 1;
     saveLocalDB(DB);
     updateAppUI();
-    setTimeout(() => toggleCombat(), 2000);
+    setTimeout(() => toggleCombat(), 2500);
   } else if(playerPoke.hp <= 0){
-    log.innerHTML += `<p style="color:#ff5544;">¡${playerPoke.name} ha caído!</p>`;
+    log.innerHTML += `<p style="color:#ff5544;">¡Tu ${playerPoke.name} se ha debilitated!</p>`;
     DB.users[currentUser].streak = 0;
     saveLocalDB(DB);
     updateAppUI();
@@ -647,21 +571,27 @@ function executeBattleTurn(playerMove){
 function playerAttack(move){
   const playerPoke = TEAM[activePlayerIndex];
   const log = document.getElementById('bat-log');
+  
   log.innerHTML += `<p>¡${playerPoke.name} usó ${move.name}!</p>`;
 
   if(move.heal){
     const healAmt = Math.floor(playerPoke.maxHp * 0.5);
     playerPoke.hp = Math.min(playerPoke.maxHp, playerPoke.hp + healAmt);
-    log.innerHTML += `<p>¡Recuperó salud con éxito!</p>`;
+    log.innerHTML += `<p class="gr">¡Recuperó PS!</p>`;
     return;
   }
 
+  // Cálculo básico de Daño Fórmula Pokémon Oficial adaptada
   let dmg = Math.floor((2 * playerPoke.level / 5 + 2) * move.power * (playerPoke.stats.atk / currentEnemy.stats.def) / 50) + 2;
+  
+  // Crítico aleatorio (10%)
   if(Math.random() < 0.1){
     dmg = Math.floor(dmg * 1.5);
-    log.innerHTML += `<p style="color:var(--gold);">¡Golpe Crítico!</p>`;
+    log.innerHTML += `<p style="color:var(--gold);">¡Un golpe crítico!</p>`;
   }
+
   currentEnemy.hp = Math.max(0, currentEnemy.hp - dmg);
+  log.innerHTML += `<p>Causó ${dmg} de daño al enemigo.</p>`;
 }
 
 function enemyAttack(){
@@ -670,21 +600,25 @@ function enemyAttack(){
   const eMoveName = currentEnemy.moves[Math.floor(Math.random() * currentEnemy.moves.length)];
   const move = MOVES_DATABASE[eMoveName] || { name: "Placaje", power: 40, type: "normal" };
 
-  log.innerHTML += `<p style="color:#ffaa88;">¡${currentEnemy.name} salvaje usó ${move.name}!</p>`;
+  log.innerHTML += `<p style="color:#ffaa88;">¡El ${currentEnemy.name} salvaje usó ${move.name}!</p>`;
+
   let dmg = Math.floor((2 * currentEnemy.level / 5 + 2) * move.power * (currentEnemy.stats.atk / playerPoke.stats.def) / 50) + 2;
   playerPoke.hp = Math.max(0, playerPoke.hp - dmg);
+  log.innerHTML += `<p>¡${playerPoke.name} recibió ${dmg} de daño!</p>`;
 }
 
 function runFromBattle(){
-  document.getElementById('bat-log').innerHTML = `<p>¡Escapaste sano y salvo!</p>`;
+  const log = document.getElementById('bat-log');
+  log.innerHTML = `<p>¡Escapaste sin problemas!</p>`;
   setTimeout(() => toggleCombat(), 1000);
 }
 
-// ─── MODAL DE TIENDA Y DETALLES AVANZADOS ───
+// ─── INTERFAZ DE TIENDA Y DETALLES ───
 function openShop(){
   document.getElementById('shop-modal').classList.add('open');
   const body = document.getElementById('shop-body');
   body.innerHTML = '';
+
   SHOP_ITEMS.forEach(item => {
     const row = document.createElement('div');
     row.className = 'shop-item';
@@ -709,12 +643,12 @@ function buyItem(id, price){
   const user = DB.users[currentUser];
   if(user.money >= price){
     user.money -= price;
-    spawnAlert(`¡Compraste 1x ${id.toUpperCase()} con éxito!`);
+    alert(`¡Compraste el objeto con éxito!`);
     saveLocalDB(DB);
     updateAppUI();
-    openShop();
+    openShop(); // refrescar
   } else {
-    alert("¡Fondos insuficientes en tu cuenta!");
+    alert("¡No tienes suficiente dinero disponible!");
   }
 }
 
@@ -752,7 +686,7 @@ function showPokemonDetails(idx){
         }).join('')}
       </div>
 
-      <div style="font-size:7px; color:var(--gold); margin-top:4px;">MOVIMIENTOS APRENDIDOS</div>
+      <div style="font-size:7px; color:var(--gold); margin-top:4px;">MOVIMIENTOS DE COMBATE</div>
       <div class="pdetail-moves-grid">
         ${p.moves.map(mName => {
           const m = MOVES_DATABASE[mName] || { name: mName, power: 40, type: "normal" };
@@ -769,248 +703,7 @@ function showPokemonDetails(idx){
   `;
 }
 
-// ─── SISTEMA PVP ORIGINAL RESTAURADO POR COMPLETO ───
-let pvpPollingInterval = null;
-function checkActivePVPGame(){
-  if(!currentUser) return;
-  const game = DB.challenges.find(c => (c.sender === currentUser || c.receiver === currentUser) && c.status === 'active');
-  const win = document.getElementById('pvp-window');
-  
-  if(game){
-    if(win.style.display !== 'block') {
-      win.style.display = 'block';
-      spawnAlert("¡El combate PVP ha comenzado!");
-    }
-    renderPVPGame(game);
-  } else {
-    if(win.style.display === 'block') {
-      win.style.display = 'none';
-    }
-  }
-}
-
-function renderPVPGame(game){
-  const isSender = game.sender === currentUser;
-  const myName = isSender ? game.sender : game.receiver;
-  const opName = isSender ? game.receiver : game.sender;
-
-  const myPoke = isSender ? game.p1Poke : game.p2Poke;
-  const opPoke = isSender ? game.p2Poke : game.p1Poke;
-
-  document.getElementById('pvp-p-name').textContent = `${myName} (${myPoke.name})`;
-  document.getElementById('pvp-e-name').textContent = `${opName} (${opPoke.name})`;
-
-  document.getElementById('pvp-p-img').src = getSpr(myPoke.id, true);
-  document.getElementById('pvp-e-img').src = getSpr(opPoke.id, true);
-
-  document.getElementById('pvp-p-hp').style.width = `${(myPoke.hp / myPoke.maxHp)*100}%`;
-  document.getElementById('pvp-e-hp').style.width = `${(opPoke.hp / opPoke.maxHp)*100}%`;
-
-  const logBox = document.getElementById('pvp-log');
-  logBox.innerHTML = game.logs.map(l => `• ${l}`).join('<br>');
-  logBox.scrollTop = logBox.scrollHeight;
-
-  const actionsBox = document.getElementById('pvp-actions-container');
-  actionsBox.innerHTML = '';
-
-  const alreadyMoved = isSender ? game.p1Move !== null : game.p2Move !== null;
-  if(alreadyMoved){
-    actionsBox.innerHTML = `<div style="color:var(--gold);font-size:6px;grid-column:1/3;text-align:center;">Esperando la decisión de tu oponente...</div>`;
-  } else if(myPoke.hp <= 0) {
-    actionsBox.innerHTML = `<div style="color:#cc2222;font-size:6px;grid-column:1/3;text-align:center;">Tu Pokémon se ha debilitado...</div>`;
-  } else {
-    myPoke.moves.forEach((move, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'pvp-btn';
-      btn.textContent = move.toUpperCase();
-      btn.onclick = () => sendPVPAction(game.id, idx);
-      actionsBox.appendChild(btn);
-    });
-  }
-}
-
-function sendPVPAction(gameId, moveIndex){
-  const game = DB.challenges.find(c => c.id === gameId);
-  if(!game) return;
-  const isSender = game.sender === currentUser;
-
-  if(isSender) game.p1Move = moveIndex;
-  else game.p2Move = moveIndex;
-
-  if(game.p1Move !== null && game.p2Move !== null){
-    processPVPRound(game);
-  }
-
-  saveLocalDB(DB);
-  checkActivePVPGame();
-}
-
-function processPVPRound(game){
-  const p1 = game.p1Poke;
-  const p2 = game.p2Poke;
-  const m1 = p1.moves[game.p1Move];
-  const m2 = p2.moves[game.p2Move];
-
-  game.logs.push(`⚡ ${game.sender} ordenó ${m1}.`);
-  game.logs.push(`⚡ ${game.receiver} ordenó ${m2}.`);
-
-  // Simulación sincrona rápida de velocidad o azar
-  if(Math.random() > 0.5){
-    p2.hp = Math.max(0, p2.hp - 45);
-    game.logs.push(`💥 ¡El golpe de ${game.sender} infligió 45 de daño!`);
-    if(p2.hp > 0) {
-      p1.hp = Math.max(0, p1.hp - 35);
-      game.logs.push(`💥 ¡El contraataque de ${game.receiver} causó 35 de daño!`);
-    }
-  } else {
-    p1.hp = Math.max(0, p1.hp - 45);
-    game.logs.push(`💥 ¡El golpe de ${game.receiver} infligió 45 de daño!`);
-    if(p1.hp > 0) {
-      p2.hp = Math.max(0, p2.hp - 35);
-      game.logs.push(`💥 ¡El contraataque de ${game.sender} causó 35 de daño!`);
-    }
-  }
-
-  game.p1Move = null;
-  game.p2Move = null;
-
-  if(p1.hp <= 0 || p2.hp <= 0){
-    const winner = p1.hp > 0 ? game.sender : game.receiver;
-    game.status = 'finished';
-    game.logs.push(`🏆 ¡El combate terminó! El ganador es: ${winner.toUpperCase()}`);
-    DB.users[winner].money += 1000;
-    DB.users[winner].streak += 1;
-    const loser = p1.hp > 0 ? game.receiver : game.sender;
-    DB.users[loser].streak = 0;
-    
-    setTimeout(() => {
-      alert(`¡Combate finalizado! Ganador: ${winner}`);
-      DB.challenges = DB.challenges.filter(c => c.id !== game.id);
-      saveLocalDB(DB);
-      updateAppUI();
-      checkActivePVPGame();
-    }, 2000);
-  }
-}
-
-function leavePVP(){
-  const game = DB.challenges.find(c => (c.sender === currentUser || c.receiver === currentUser) && c.status === 'active');
-  if(!game) return;
-  if(confirm("¿Seguro que deseas huir? Perderás tu racha actual")){
-    game.status = 'finished';
-    const opponent = game.sender === currentUser ? game.receiver : game.sender;
-    DB.users[opponent].money += 500;
-    DB.users[currentUser].streak = 0;
-    DB.challenges = DB.challenges.filter(c => c.id !== game.id);
-    saveLocalDB(DB);
-    updateAppUI();
-    checkActivePVPGame();
-  }
-}
-
-// ─── GESTIÓN DE AMIGOS Y NOTIFICACIONES ORIGINAL ───
-function openFriends(){ document.getElementById('friends-modal').classList.add('open'); renderFriends(); }
-function closeFriends(){ closeModal('friends-modal'); }
-function openChallenges(){ document.getElementById('challenges-modal').classList.add('open'); renderChallenges(); }
-function closeChallenges(){ closeModal('challenges-modal'); }
-
-function searchUsers(){
-  const val = document.getElementById('friend-search-input').value.trim();
-  const res = document.getElementById('search-results');
-  res.innerHTML = '';
-  if(!val) return;
-  if(DB.users[val] && val !== currentUser){
-    res.innerHTML = `
-      <div class="search-result-row">
-        <span class="fname">👤 ${val} (${DB.users[val].region})</span>
-        <button class="fr-btn add-btn" onclick="challengePlayer('${val}')">RETAR</button>
-      </div>`;
-  } else {
-    res.innerHTML = `<div style="font-size:6px;color:#ff5544;padding:4px;">Entrenador no encontrado o desconectado</div>`;
-  }
-}
-
-function challengePlayer(target){
-  if(DB.challenges.some(c => c.sender === currentUser && c.receiver === target && c.status === 'pending')){
-    return alert("Ya has enviado una solicitud pendiente a este entrenador.");
-  }
-  const myPokes = DB.users[currentUser].team || getDefaultTeam();
-  const opPokes = DB.users[target].team || getDefaultTeam();
-
-  const newChallenge = {
-    id: 'ch_' + Date.now(),
-    sender: currentUser,
-    receiver: target,
-    status: 'pending',
-    p1Poke: JSON.parse(JSON.stringify(myPokes[0])),
-    p2Poke: JSON.parse(JSON.stringify(opPokes[0])),
-    p1Move: null,
-    p2Move: null,
-    logs: ['¡Comienza el duelo! Elige tu primer ataque.']
-  };
-
-  DB.challenges.push(newChallenge);
-  saveLocalDB(DB);
-  spawnAlert(`¡Reto enviado a ${target}!`);
-  closeFriends();
-}
-
-function renderFriends(){
-  const container = document.getElementById('friends-list');
-  container.innerHTML = '';
-  let count = 0;
-  Object.keys(DB.users).forEach(u => {
-    if(u === currentUser) return;
-    count++;
-    const row = document.createElement('div');
-    row.className = 'friend-row';
-    row.innerHTML = `<span class="fname">🟢 ${u}</span> <button class="fr-btn challenge" onclick="challengePlayer('${u}')">RETAR</button>`;
-    container.appendChild(row);
-  });
-  document.getElementById('friends-count').textContent = `(${count})`;
-}
-
-function renderChallenges(){
-  const body = document.getElementById('challenges-body');
-  body.innerHTML = '';
-  const myReqs = DB.challenges.filter(c => c.receiver === currentUser && c.status === 'pending');
-
-  if(myReqs.length === 0){
-    body.innerHTML = `<div style="color:#8899ff;font-size:6px;text-align:center;padding:12px;">No tienes retos de combate pendientes...</div>`;
-    return;
-  }
-
-  myReqs.forEach(ch => {
-    const box = document.createElement('div');
-    box.className = 'challenge-box';
-    box.innerHTML = `
-      <div class="ch-info">⚔️ ¡El entrenador <strong>${ch.sender}</strong> te desafía a un duelo oficial!</div>
-      <div class="ch-actions">
-        <button class="ch-btn accept" onclick="acceptChallenge('${ch.id}')">ACEPTAR</button>
-        <button class="ch-btn decline" onclick="declineChallenge('${ch.id}')">RECHAZAR</button>
-      </div>
-    `;
-    body.appendChild(box);
-  });
-}
-
-function acceptChallenge(id){
-  const ch = DB.challenges.find(c => c.id === id);
-  if(!ch) return;
-  ch.status = 'active';
-  saveLocalDB(DB);
-  closeChallenges();
-  checkActivePVPGame();
-}
-
-function declineChallenge(id){
-  DB.challenges = DB.challenges.filter(c => c.id !== id);
-  saveLocalDB(DB);
-  renderChallenges();
-  updateAppUI();
-}
-
-// ─── AUTENTICACIÓN Y CICLO ORIGINAL RESTAURADO ───
+// ─── LOGIN & ESTRUCTURA CORE ORIGINAL SINCRO ───
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
@@ -1066,7 +759,7 @@ function doRegister(){
     team: getDefaultTeam()
   };
   saveLocalDB(DB);
-  alert("¡Entrenador registrado con éxito!");
+  alert("¡Entrenador registrado! Ya puedes iniciar sesión.");
   switchTab('login');
 }
 
@@ -1074,7 +767,6 @@ function showApp(){
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'block';
   updateAppUI();
-  checkActivePVPGame();
 }
 
 function updateAppUI(){
@@ -1087,24 +779,14 @@ function updateAppUI(){
   document.getElementById('card-region').textContent = data.region;
   document.getElementById('top-streak').textContent = `🔥 ${data.streak}`;
   document.getElementById('card-streak').textContent = `${data.streak} 🔥`;
-  document.getElementById('streak-display').textContent = `Racha: ${data.streak}`;
   
   const mStr = `$${data.money || 0}`;
   document.getElementById('top-money').textContent = `💰 ${mStr}`;
   document.getElementById('card-money').textContent = mStr;
+  
   document.getElementById('footer-id').textContent = `★ ${currentUser.toUpperCase()} ★`;
 
-  const pendingCount = DB.challenges.filter(c => c.receiver === currentUser && c.status === 'pending').length;
-  const badge = document.getElementById('retos-badge');
-  if(pendingCount > 0){
-    badge.style.display = 'block';
-    badge.textContent = pendingCount;
-  } else {
-    badge.style.display = 'none';
-  }
-
   renderTeamGrid();
-  renderFriends();
 }
 
 function renderTeamGrid(){
@@ -1142,14 +824,34 @@ function closeModal(id){
   document.getElementById(id).classList.remove('open');
 }
 
-// Listeners de cierre heredados originales
-['friends-modal','challenges-modal','log-modal'].forEach(id=>{
-  const overlay = document.getElementById(id);
-  if(overlay){
-    overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(id); });
+function openFriends(){ document.getElementById('friends-modal').classList.add('open'); renderFriends(); }
+function closeFriends(){ closeModal('friends-modal'); }
+function openChallenges(){ document.getElementById('challenges-modal').classList.add('open'); }
+function closeChallenges(){ closeModal('challenges-modal'); }
+
+function renderFriends(){
+  const container = document.getElementById('friends-list');
+  container.innerHTML = '';
+  Object.keys(DB.users).forEach(u => {
+    if(u === currentUser) return;
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+    row.innerHTML = `<span class="fname">${u}</span> <button class="fr-btn challenge">RETAR</button>`;
+    container.appendChild(row);
+  });
+}
+
+function searchUsers(){
+  const val = document.getElementById('friend-search-input').value.trim();
+  const res = document.getElementById('search-results');
+  res.innerHTML = '';
+  if(!val) return;
+  if(DB.users[val] && val !== currentUser){
+    res.innerHTML = `<div class="search-result-row"><span>${val}</span><button class="add-btn">AÑADIR</button></div>`;
+  } else {
+    res.innerHTML = `<div style="font-size:6px;color:#ff5544;padding:4px;">No encontrado</div>`;
   }
-});
-document.getElementById('friend-search-input').addEventListener('keydown', e => { if(e.key === 'Enter') searchUsers(); });
+}
 
 function updateClock(){
   const n = new Date();
