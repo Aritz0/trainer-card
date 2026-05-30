@@ -568,7 +568,6 @@ body {
   gap: 12px;
 }
 
-/* REDISEÑO CON IMÁGENES RETRO EN LUGAR DE TEXTO */
 .item-img-wrapper {
   background: var(--dark);
   border: 2px solid var(--gold);
@@ -1150,7 +1149,7 @@ body {
 </div>
 
 <script>
-// --- NUEVA CLEAN DB V4 POR CAMBIOS GRÁFICOS ---
+// --- DATOS GLOBALES ---
 const DB_KEY = 'poketrainer_pro_db_v4';
 let DB = JSON.parse(localStorage.getItem(DB_KEY)) || { users: {} };
 
@@ -1161,7 +1160,7 @@ const TRAINERS = [
   { id: "lucas", name: "Lucas", url: "https://play.pokemonshowdown.com/sprites/trainers/lucas.png" },
   { id: "hilbert", name: "Hilbert", url: "https://play.pokemonshowdown.com/sprites/trainers/hilbert.png" },
   { id: "nate", name: "Nate", url: "https://play.pokemonshowdown.com/sprites/trainers/nate.png" },
- Calem", url: "https://play.pokemonshowdown.com/sprites/trainers/calem.png" },
+  { id: "calem", name: "Calem", url: "https://play.pokemonshowdown.com/sprites/trainers/calem.png" },
   { id: "ghetsis", name: "Ghetsis", url: "https://play.pokemonshowdown.com/sprites/trainers/ghetsis.png" }
 ];
 
@@ -1178,7 +1177,6 @@ const STARTERS = [
   { id: 258, name: "MUDKIP", hp: 50, maxHp: 50, atk: 70, moves: ["Placaje", "Pistola Agua"] }
 ];
 
-// DATA SHOP MODIFICADA CON URL DE SPRITES OFICIALES DE LAS POKEBALLS
 const SHOP_ITEMS = [
   { id: "pokeballs", name: "Poke Ball Comun", price: 200, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png", desc: "Captura estandar de especimenes." },
   { id: "greatballs", name: "Super Ball", price: 600, imgUrl: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png", desc: "Mejor ratio de contencion de campo." },
@@ -1219,34 +1217,40 @@ window.addEventListener('load', () => {
 
 function buildRegisterGrids() {
   const tGrid = document.getElementById('reg-trainer-grid');
-  tGrid.innerHTML = "";
-  TRAINERS.forEach(t => {
-    const div = document.createElement('div');
-    div.className = `grid-item ${t.id === selectedRegTrainer ? 'selected' : ''}`;
-    div.onclick = () => { selectedRegTrainer = t.id; buildRegisterGrids(); };
-    div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
-    tGrid.appendChild(div);
-  });
+  if(tGrid) {
+    tGrid.innerHTML = "";
+    TRAINERS.forEach(t => {
+      const div = document.createElement('div');
+      div.className = `grid-item ${t.id === selectedRegTrainer ? 'selected' : ''}`;
+      div.onclick = () => { selectedRegTrainer = t.id; buildRegisterGrids(); };
+      div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
+      tGrid.appendChild(div);
+    });
+  }
 
   const sGrid = document.getElementById('reg-starter-grid');
-  sGrid.innerHTML = "";
-  STARTERS.forEach(s => {
-    const div = document.createElement('div');
-    div.className = `grid-item ${s.id === selectedRegStarter ? 'selected' : ''}`;
-    div.onclick = () => { selectedRegStarter = s.id; buildRegisterGrids(); };
-    div.innerHTML = `<img src="${getPokemonSprite(s.id)}"><p>${s.name}</p>`;
-    sGrid.appendChild(div);
-  });
+  if(sGrid) {
+    sGrid.innerHTML = "";
+    STARTERS.forEach(s => {
+      const div = document.createElement('div');
+      div.className = `grid-item ${s.id === selectedRegStarter ? 'selected' : ''}`;
+      div.onclick = () => { selectedRegStarter = s.id; buildRegisterGrids(); };
+      div.innerHTML = `<img src="${getPokemonSprite(s.id)}"><p>${s.name}</p>`;
+      sGrid.appendChild(div);
+    });
+  }
 
   const innerGrid = document.getElementById('inner-trainer-grid');
-  innerGrid.innerHTML = "";
-  TRAINERS.forEach(t => {
-    const div = document.createElement('div');
-    div.className = "grid-item";
-    div.onclick = () => { DB.users[currentUser].trainerId = t.id; saveDB(); updateDashboard(); closeModal('avatar-modal'); };
-    div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
-    innerGrid.appendChild(div);
-  });
+  if(innerGrid) {
+    innerGrid.innerHTML = "";
+    TRAINERS.forEach(t => {
+      const div = document.createElement('div');
+      div.className = "grid-item";
+      div.onclick = () => { DB.users[currentUser].trainerId = t.id; saveDB(); updateDashboard(); closeModal('avatar-modal'); };
+      div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
+      innerGrid.appendChild(div);
+    });
+  }
 }
 
 function switchTab(tab) {
@@ -1293,7 +1297,7 @@ function doRegister() {
     user: u,
     pass: p,
     trainerId: selectedRegTrainer,
-    money: 5000, // EMPALME REQUERIDO DE 5000 POKEDOLARES
+    money: 5000,
     team: [initialStarter],
     pc: [],
     bag: { pokeballs: 5, greatballs: 1, ultraballs: 0, potions: 3, superpotions: 0 },
