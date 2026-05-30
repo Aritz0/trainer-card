@@ -572,10 +572,18 @@ body {
   background: var(--dark);
   border: 1px solid var(--gold);
   color: var(--gold);
-  font-size: 8px;
-  padding: 6px;
+  padding: 2px;
   border-radius: 4px;
-  font-family: var(--px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-text-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .item-text h4 {
@@ -595,7 +603,7 @@ body {
   font-family: var(--px);
 }
 
-/* SISTEMA PC DE BILL */
+/* SISTEMA PC DE BILL CO cajas */
 .pc-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -607,8 +615,13 @@ body {
   border: 2px solid var(--gold);
   border-radius: 6px;
   padding: 10px;
+  min-height: 240px;
   max-height: 280px;
   overflow-y: auto;
+  background-size: cover;
+  background-position: center;
+  image-rendering: pixelated;
+  transition: background 0.3s;
 }
 
 .pc-title {
@@ -627,7 +640,7 @@ body {
 }
 
 .pc-slot {
-  background: #0a1444;
+  background: rgba(10, 20, 68, 0.75);
   border: 1px solid #2244aa;
   border-radius: 4px;
   padding: 4px;
@@ -637,7 +650,7 @@ body {
 
 .pc-slot:hover {
   border-color: var(--gold);
-  background: #142a66;
+  background: rgba(20, 42, 102, 0.9);
 }
 
 .pc-slot img {
@@ -656,6 +669,32 @@ body {
   border-radius: 4px;
   padding: 6px;
   margin-bottom: 4px;
+}
+
+/* BOX NAV STYLES */
+.box-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  background: var(--navy);
+  padding: 4px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+}
+.box-nav-btn {
+  background: var(--blue);
+  color: #fff;
+  border: 1px solid var(--gold);
+  font-family: var(--px);
+  font-size: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+.box-nav-title {
+  font-size: 7px;
+  color: var(--gold);
+  text-align: center;
 }
 
 /* CHEAT MODES */
@@ -888,12 +927,10 @@ body {
         <label>SELECCIÓN DE AVATAR BASE</label>
         <div class="grid-select" id="reg-trainer-grid"></div>
       </div>
-
       <div class="auth-field">
         <label>SELECCIÓN DE COMPAÑERO INICIAL</label>
         <div class="grid-select" id="reg-starter-grid"></div>
       </div>
-
       <button class="auth-btn" onclick="doRegister()">CREAR CUENTA E INICIAR</button>
     </div>
     <div class="auth-msg" id="auth-msg"></div>
@@ -980,8 +1017,13 @@ body {
           <div id="pc-team-list" style="display:flex; flex-direction:column; gap:6px;"></div>
         </div>
         <div>
+          <div class="box-navigation">
+            <button class="box-nav-btn" onclick="changeBox(-1)">&lt;</button>
+            <div class="box-nav-title" id="box-menu-title">CAJA 1</div>
+            <button class="box-nav-btn" onclick="changeBox(1)">&gt;</button>
+          </div>
           <div class="pc-title">BANCO DE ALMACENAMIENTO</div>
-          <div class="pc-box">
+          <div class="pc-box" id="pc-box-bg-container">
             <div class="pc-grid" id="pc-box-grid"></div>
           </div>
         </div>
@@ -1022,9 +1064,21 @@ body {
 </div>
 
 <script>
-// --- MOTOR DE BASE DE DATOS Y OBJETOS GLOBALES ---
-const DB_KEY = 'poketrainer_pro_db_v2';
+// --- NUEVA BASE DE DATOS ACTUALIZADA CON CAJAS ---
+const DB_KEY = 'poketrainer_pro_db_v3_pkmn';
 let DB = JSON.parse(localStorage.getItem(DB_KEY)) || { users: {} };
+
+let currentBoxIndex = 0;
+const BOX_BACKGROUNDS = [
+  "url('https://play.pokemonshowdown.com/fx/bg-forest.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-volcano.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-beach.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-desert.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-cave.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-meadow.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-sea.jpg')",
+  "url('https://play.pokemonshowdown.com/fx/bg-sky.jpg')"
+];
 
 const TRAINERS = [
   { id: "red", name: "Red", url: "https://play.pokemonshowdown.com/sprites/trainers/red.png" },
@@ -1051,11 +1105,11 @@ const STARTERS = [
 ];
 
 const SHOP_ITEMS = [
-  { id: "pokeballs", name: "Poke Ball Comun", price: 200, iconText: "[BALL]", desc: "Captura estandar de especimenes." },
-  { id: "greatballs", name: "Super Ball", price: 600, iconText: "[S-BALL]", desc: "Mejor ratio de contencion de campo." },
-  { id: "ultraballs", name: "Ultra Ball", price: 1200, iconText: "[U-BALL]", desc: "Dispositivo de captura de alta gama." },
-  { id: "potions", name: "Pocion Estandar", price: 250, iconText: "[POTION]", desc: "Restaura 50 puntos de salud." },
-  { id: "superpotions", name: "Super Pocion", price: 700, iconText: "[S-POT]", desc: "Restaura 150 puntos de salud." }
+  { id: "pokeballs", name: "Poke Ball Comun", price: 200, iconText: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png", desc: "Captura estandar de especimenes." },
+  { id: "greatballs", name: "Super Ball", price: 600, iconText: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png", desc: "Mejor ratio de contencion de campo." },
+  { id: "ultraballs", name: "Ultra Ball", price: 1200, iconText: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png", desc: "Dispositivo de captura de alta gama." },
+  { id: "potions", name: "Pocion Estandar", price: 250, iconText: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png", desc: "Restaura 50 puntos de salud." },
+  { id: "superpotions", name: "Super Pocion", price: 700, iconText: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/super-potion.png", desc: "Restaura 150 puntos de salud." }
 ];
 
 let currentUser = null;
@@ -1074,11 +1128,10 @@ function getPokemonSprite(id, shiny = false) {
   return shiny ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
-// --- DESPLIEGUE Y LOGIN ---
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('loading-screen').style.display = 'none';
-    const saved = localStorage.getItem('poke_pro_session_v2');
+    const saved = localStorage.getItem('poke_pro_session_v3');
     if (saved && DB.users[saved]) {
       loginUser(saved);
     } else {
@@ -1114,12 +1167,7 @@ function buildRegisterGrids() {
   TRAINERS.forEach(t => {
     const div = document.createElement('div');
     div.className = "grid-item";
-    div.onclick = () => {
-      DB.users[currentUser].trainerId = t.id;
-      saveDB();
-      updateDashboard();
-      closeModal('avatar-modal');
-    };
+    div.onclick = () => { DB.users[currentUser].trainerId = t.id; saveDB(); updateDashboard(); closeModal('avatar-modal'); };
     div.innerHTML = `<img src="${t.url}"><p>${t.name}</p>`;
     innerGrid.appendChild(div);
   });
@@ -1138,12 +1186,19 @@ function doLogin() {
   const p = document.getElementById('login-pass').value;
   const msg = document.getElementById('auth-msg');
 
-  if (!DB.users[u] || DB.users[u].pass !== p) {
+  if (!u || !p) {
     msg.className = "auth-msg err";
-    msg.textContent = "ID o Clave incorrectos.";
+    msg.textContent = "Faltan credenciales.";
     return;
   }
-  loginUser(u);
+  if (DB.users[u] && DB.users[u].pass === p) {
+    msg.className = "auth-msg ok";
+    msg.textContent = "Acceso concedido.";
+    setTimeout(() => { loginUser(u); }, 600);
+  } else {
+    msg.className = "auth-msg err";
+    msg.textContent = "ID o Clave errónea.";
+  }
 }
 
 function doRegister() {
@@ -1151,33 +1206,28 @@ function doRegister() {
   const p = document.getElementById('reg-pass').value;
   const msg = document.getElementById('auth-msg');
 
-  if (u.length < 3 || u.length > 12) {
+  if (u.length < 3 || p.length < 4) {
     msg.className = "auth-msg err";
-    msg.textContent = "ID debe tener entre 3 y 12 caracteres.";
-    return;
-  }
-  if (p.length < 4) {
-    msg.className = "auth-msg err";
-    msg.textContent = "Clave insegura (Mínimo 4).";
+    msg.textContent = "Usuario mìn. 3 y clave mín. 4 car.";
     return;
   }
   if (DB.users[u]) {
     msg.className = "auth-msg err";
-    msg.textContent = "El ID ya está registrado.";
+    msg.textContent = "ID ya registrado.";
     return;
   }
 
-  const baseStarter = STARTERS.find(s => s.id === selectedRegStarter);
-  const companion = {
-    id: baseStarter.id,
-    name: baseStarter.name,
-    hp: baseStarter.hp,
-    maxHp: baseStarter.maxHp,
-    atk: baseStarter.atk,
-    lv: 5,
+  const stData = STARTERS.find(s => s.id === selectedRegStarter);
+  const firstPkmn = {
+    id: stData.id,
+    name: stData.name,
+    level: 5,
     xp: 0,
-    shiny: false,
-    moves: [...baseStarter.moves]
+    hp: stData.hp,
+    maxHp: stData.maxHp,
+    atk: stData.atk,
+    moves: [...stData.moves],
+    shiny: false
   };
 
   DB.users[u] = {
@@ -1185,32 +1235,111 @@ function doRegister() {
     pass: p,
     trainerId: selectedRegTrainer,
     money: 3000,
-    team: [companion],
+    team: [firstPkmn],
     pc: [],
-    bag: { pokeballs: 5, greatballs: 0, ultraballs: 0, potions: 2, superpotions: 0 }
+    bag: { pokeballs: 5, potions: 2, greatballs: 0, ultraballs: 0, superpotions: 0 }
   };
 
   saveDB();
-  loginUser(u);
+  msg.className = "auth-msg ok";
+  msg.textContent = "Cuenta creada con éxito.";
+  setTimeout(() => { loginUser(u); }, 600);
 }
 
 function loginUser(username) {
   currentUser = username;
-  localStorage.setItem('poke_pro_session_v2', username);
+  localStorage.setItem('poke_pro_session_v3', username);
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'block';
-  buildRegisterGrids();
   updateDashboard();
 }
 
 function doLogout() {
   currentUser = null;
-  localStorage.removeItem('poke_pro_session_v2');
+  localStorage.removeItem('poke_pro_session_v3');
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
   document.getElementById('login-user').value = "";
   document.getElementById('login-pass').value = "";
   document.getElementById('auth-msg').textContent = "";
+  buildRegisterGrids();
+}
+
+function updateDashboard() {
+  if (!currentUser) return;
+  const u = DB.users[currentUser];
+  
+  if(!u.pc) u.pc = [];
+
+  document.getElementById('top-name').textContent = u.user;
+  document.getElementById('top-money').textContent = `CREDITOS: $${u.money}`;
+  document.getElementById('card-name').textContent = u.user;
+  document.getElementById('card-pc-count').textContent = u.pc.length;
+  document.getElementById('card-money').textContent = `$${u.money}`;
+
+  const trainerData = TRAINERS.find(t => t.id === u.trainerId) || TRAINERS[0];
+  document.getElementById('card-avatar').src = trainerData.url;
+
+  const grid = document.getElementById('team-grid');
+  grid.innerHTML = "";
+
+  for (let i = 0; i < 6; i++) {
+    const p = u.team[i];
+    const slot = document.createElement('div');
+    slot.className = "slot";
+
+    if (p) {
+      const pct = Math.min(100, Math.max(0, (p.hp / p.maxHp) * 100));
+      let hpColor = "#44dd44";
+      if (pct < 20) hpColor = "#ff4433";
+      else if (pct < 50) hpColor = "#ffaa00";
+
+      const xpPct = Math.min(100, (p.xp / (p.level * 100)) * 100);
+
+      slot.innerHTML = `
+        <img src="${getPokemonSprite(p.id, p.shiny)}" alt="${p.name}">
+        <div class="pname">${p.shiny ? '★ ' : ''}${p.name}</div>
+        <div class="plv">Lv. ${p.level} [${p.hp}/${p.maxHp}]</div>
+        <div class="hp-bar-wrap"><div class="hp-bar" style="width:${pct}%; background:${hpColor};"></div></div>
+        <div class="xp-bar-wrap"><div class="xp-bar" style="width:${xpPct}%;"></div></div>
+      `;
+      slot.onclick = () => { healSquadSlot(i); };
+    } else {
+      slot.innerHTML = `
+        <div style="flex:1; display:flex; align-items:center; justify-content:center; border:2px dashed rgba(255,255,255,0.15); width:100%; border-radius:6px;">
+          <span style="font-size:18px; color:rgba(255,255,255,0.2); font-family:var(--px);">+</span>
+        </div>
+      `;
+    }
+    grid.appendChild(slot);
+  }
+}
+
+function healSquadSlot(idx) {
+  const u = DB.users[currentUser];
+  const p = u.team[idx];
+  if (!p) return;
+  if (p.hp >= p.maxHp) {
+    alert(`${p.name} ya se encuentra al máximo de energía.`);
+    return;
+  }
+  if (u.bag.potions > 0) {
+    if(confirm(`¿Utilizar Poción Estándar en ${p.name}?`)) {
+      u.bag.potions--;
+      p.hp = Math.min(p.maxHp, p.hp + 50);
+      saveDB();
+      updateDashboard();
+    }
+  } else if (u.bag.superpotions > 0) {
+    if(confirm(`¿Utilizar Súper Poción en ${p.name}?`)) {
+      u.bag.superpotions--;
+      p.hp = Math.min(p.maxHp, p.hp + 150);
+      saveDB();
+      updateDashboard();
+    }
+  } else {
+    alert("No tienes pociones disponibles en la bolsa.");
+  }
 }
 
 function toggleCheatShiny() {
@@ -1219,66 +1348,24 @@ function toggleCheatShiny() {
   btn.classList.toggle('active', cheatShinyActive);
 }
 
-// --- ACTUALIZACIONES DE INTERFAZ GENERAL ---
-function updateDashboard() {
-  if (!currentUser) return;
-  const user = DB.users[currentUser];
-  const tObj = TRAINERS.find(t => t.id === user.trainerId) || TRAINERS[0];
-
-  document.getElementById('top-name').textContent = user.user.toUpperCase();
-  document.getElementById('top-money').textContent = `CREDITOS: $${user.money}`;
-  document.getElementById('card-name').textContent = user.user;
-  document.getElementById('card-pc-count').textContent = user.pc.length;
-  document.getElementById('card-money').textContent = `$${user.money}`;
-  document.getElementById('card-avatar').src = tObj.url;
-
-  const grid = document.getElementById('team-grid');
-  grid.innerHTML = "";
-
-  for (let i = 0; i < 6; i++) {
-    const pk = user.team[i];
-    const slot = document.createElement('div');
-    slot.className = "slot";
-
-    if (pk) {
-      const pct = (pk.hp / pk.maxHp) * 100;
-      const hpColor = pct > 50 ? '#44ff88' : pct > 20 ? '#ffcc00' : '#ff4433';
-      const xpPct = (pk.xp / 100) * 100;
-
-      slot.innerHTML = `
-        <img src="${getPokemonSprite(pk.id, pk.shiny)}" class="${pk.shiny ? 'shiny-anim' : ''}">
-        <p class="pname" style="${pk.shiny ? 'color:var(--gold);' : ''}">${pk.name}</p>
-        <p class="plv">Nivel ${pk.lv}</p>
-        <div class="hp-bar-wrap"><div class="hp-bar" style="width:${pct}%; background:${hpColor}"></div></div>
-        <div class="xp-bar-wrap"><div class="xp-bar" style="width:${xpPct}%"></div></div>
-      `;
-      slot.onclick = () => healWithPotionIndex(i);
-    } else {
-      slot.innerHTML = `<p class="pname" style="color:#445588; margin: auto;">VACÍO</p>`;
-    }
-    grid.appendChild(slot);
-  }
-}
-
 function openModal(id) {
   document.getElementById(id).classList.add('open');
-  if (id === 'shop-modal') renderShop();
+  if (id === 'shop-modal') buildShop();
 }
 
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// --- TIENDA Y LOGICA DE INVENTARIO ---
-function renderShop() {
+function buildShop() {
   const body = document.getElementById('shop-body');
   body.innerHTML = "";
   SHOP_ITEMS.forEach(item => {
-    const div = document.createElement('div');
-    div.className = "shop-item";
-    div.innerHTML = `
+    const row = document.createElement('div');
+    row.className = "shop-item";
+    row.innerHTML = `
       <div class="item-info">
-        <div class="item-text-icon">${item.iconText}</div>
+        <div class="item-text-icon"><img src="${item.iconText}"></div>
         <div class="item-text">
           <h4>${item.name}</h4>
           <p>${item.desc}</p>
@@ -1286,425 +1373,326 @@ function renderShop() {
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span class="shop-price">$${item.price}</span>
-        <button class="top-btn" onclick="buyItem('${item.id}', ${item.price})">COMPRAR</button>
+        <button class="top-btn" style="border-color:var(--gold); color:var(--gold);" onclick="buyItem('${item.id}')">ADQUIRIR</button>
       </div>
     `;
-    body.appendChild(div);
+    body.appendChild(row);
   });
 }
 
-function buyItem(itemId, price) {
-  const user = DB.users[currentUser];
-  if (user.money < price) {
+function buyItem(itemId) {
+  const u = DB.users[currentUser];
+  const item = SHOP_ITEMS.find(i => i.id === itemId);
+  if (u.money >= item.price) {
+    u.money -= item.price;
+    u.bag[itemId] = (u.bag[itemId] || 0) + 1;
+    saveDB();
+    updateDashboard();
+    buildShop();
+  } else {
     alert("Créditos insuficientes.");
-    return;
   }
-  user.money -= price;
-  user.bag[itemId] = (user.bag[itemId] || 0) + 1;
-  saveDB();
-  updateDashboard();
-  renderShop();
 }
 
 function openBagModal() {
   openModal('bag-modal');
   const body = document.getElementById('bag-body');
   body.innerHTML = "";
-  const user = DB.users[currentUser];
+  const u = DB.users[currentUser];
+  let empty = true;
 
-  let total = 0;
-  Object.keys(user.bag).forEach(k => {
-    const qty = user.bag[k];
+  SHOP_ITEMS.forEach(item => {
+    const qty = u.bag[item.id] || 0;
     if (qty > 0) {
-      total++;
-      const sObj = SHOP_ITEMS.find(s => s.id === k);
-      const div = document.createElement('div');
-      div.className = "bag-item";
-      div.innerHTML = `
+      empty = false;
+      const row = document.createElement('div');
+      row.className = "bag-item";
+      row.innerHTML = `
         <div class="item-info">
-          <div class="item-text-icon">${sObj ? sObj.iconText : '[INV]'}</div>
+          <div class="item-text-icon"><img src="${item.iconText}"></div>
           <div class="item-text">
-            <h4>${sObj ? sObj.name : k.toUpperCase()}</h4>
-            <p>Cantidad en bolsa: x${qty}</p>
+            <h4>${item.name}</h4>
+            <p>Unidades en posesión: ${qty}</p>
           </div>
         </div>
       `;
-      body.appendChild(div);
+      body.appendChild(row);
     }
   });
-  if (total === 0) body.innerHTML = `<p style="color:#6677aa; text-align:center; font-size:10px;">Tu mochila está completamente vacía.</p>`;
-}
-
-function healWithPotionIndex(index) {
-  const user = DB.users[currentUser];
-  const pk = user.team[index];
-  if (!pk) return;
-
-  if (pk.hp >= pk.maxHp) {
-    alert(`${pk.name} ya tiene la salud al máximo.`);
-    return;
-  }
-
-  if (user.bag.potions > 0) {
-    if (confirm(`¿Utilizar Poción Estándar en ${pk.name}?`)) {
-      user.bag.potions--;
-      pk.hp = Math.min(pk.maxHp, pk.hp + 50);
-      saveDB();
-      updateDashboard();
-    }
-  } else if (user.bag.superpotions > 0) {
-    if (confirm(`¿Utilizar Súper Poción en ${pk.name}?`)) {
-      user.bag.superpotions--;
-      pk.hp = Math.min(pk.maxHp, pk.hp + 150);
-      saveDB();
-      updateDashboard();
-    }
-  } else {
-    alert("No dispones de medicinas de restauración en la bolsa.");
+  if (empty) {
+    body.innerHTML = `<p style="text-align:center; font-size:10px; color:#88aadd; padding:20px;">Tu mochila está completamente vacía.</p>`;
   }
 }
 
-// --- TERMINAL PC DE BILL MÓDULO INTEGRAL ---
+/* --- MANEJO DE CAJAS DEL PC --- */
+function changeBox(direction) {
+  currentBoxIndex = (currentBoxIndex + direction + 8) % 8;
+  document.getElementById('box-menu-title').textContent = `CAJA ${currentBoxIndex + 1}`;
+  updatePCBoxUI();
+}
+
 function openPCModal() {
+  currentBoxIndex = 0;
+  document.getElementById('box-menu-title').textContent = `CAJA 1`;
   openModal('pc-modal');
-  updatePCUI();
+  updatePCBoxUI();
 }
 
-function updatePCUI() {
-  const user = DB.users[currentUser];
-  const tList = document.getElementById('pc-team-list');
-  tList.innerHTML = "";
+function updatePCBoxUI() {
+  const u = DB.users[currentUser];
+  const teamList = document.getElementById('pc-team-list');
+  teamList.innerHTML = "";
 
-  user.team.forEach((pk, idx) => {
+  u.team.forEach((p, idx) => {
     const row = document.createElement('div');
     row.className = "pc-team-row";
     row.innerHTML = `
-      <div style="display:flex; align-items:center; gap:6px;">
-        <img src="${getPokemonSprite(pk.id, pk.shiny)}" style="width:32px; height:32px; image-rendering:pixelated;">
-        <span style="font-size:7px; color:#fff;">${pk.name} (Lv.${pk.lv})</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <img src="${getPokemonSprite(p.id, p.shiny)}" style="width:30px; height:30px; image-rendering:pixelated;">
+        <span style="font-size:7px; color:#fff;">${p.name} (Nivel ${p.level})</span>
       </div>
-      ${user.team.length > 1 ? `<button class="top-btn" onclick="moveTeamToPC(${idx})" style="padding:2px 6px; border-color:var(--red); color:#ff8888;">DEPOSITAR</button>` : ''}
+      <button class="top-btn" style="padding:2px 6px; font-size:6px; border-color:var(--gold);" onclick="moveTeamToPC(${idx})">ALMACENAR</button>
     `;
-    tList.appendChild(row);
+    teamList.appendChild(row);
   });
 
-  const bGrid = document.getElementById('pc-box-grid');
-  bGrid.innerHTML = "";
-  user.pc.forEach((pk, idx) => {
-    const slot = document.createElement('div');
-    slot.className = "pc-slot";
-    slot.innerHTML = `<img src="${getPokemonSprite(pk.id, pk.shiny)}" title="${pk.name} Lv.${pk.lv}">`;
-    slot.onclick = () => movePCToTeam(idx);
-    bGrid.appendChild(slot);
-  });
+  const boxGrid = document.getElementById('pc-box-grid');
+  boxGrid.innerHTML = "";
+  
+  const containerBg = document.getElementById('pc-box-bg-container');
+  containerBg.style.backgroundImage = BOX_BACKGROUNDS[currentBoxIndex];
 
-  for (let i = user.pc.length; i < 16; i++) {
+  if (!u.pc) u.pc = [];
+  
+  const currentBoxPokemon = u.pc.filter(p => p.boxIndex === currentBoxIndex || (p.boxIndex === undefined && currentBoxIndex === 0));
+
+  for (let i = 0; i < 20; i++) {
     const slot = document.createElement('div');
     slot.className = "pc-slot";
-    slot.style.opacity = "0.2";
-    slot.innerHTML = `<div style="width:40px; height:40px;"></div>`;
-    bGrid.appendChild(slot);
+    const p = currentBoxPokemon[i];
+
+    if (p) {
+      const globalIdx = u.pc.indexOf(p);
+      slot.innerHTML = `<img src="${getPokemonSprite(p.id, p.shiny)}" title="${p.name} Lv.${p.level}">`;
+      slot.onclick = () => { movePCToTeam(globalIdx); };
+    } else {
+      slot.innerHTML = `<div style="height:40px; width:40px;"></div>`;
+    }
+    boxGrid.appendChild(slot);
   }
 }
 
 function moveTeamToPC(idx) {
-  const user = DB.users[currentUser];
-  if (user.team.length <= 1) return;
-  const p = user.team.splice(idx, 1)[0];
-  user.pc.push(p);
-  saveDB();
-  updateDashboard();
-  updatePCUI();
-}
-
-function movePCToTeam(idx) {
-  const user = DB.users[currentUser];
-  if (user.team.length >= 6) {
-    alert("El Squad activo está completo (Máx 6).");
+  const u = DB.users[currentUser];
+  if (u.team.length <= 1) {
+    alert("No puedes quedarte sin integrantes en tu equipo activo.");
     return;
   }
-  const p = user.pc.splice(idx, 1)[0];
-  user.team.push(p);
+  const p = u.team.splice(idx, 1)[0];
+  p.boxIndex = currentBoxIndex; 
+  u.pc.push(p);
   saveDB();
   updateDashboard();
-  updatePCUI();
+  updatePCBoxUI();
 }
 
-// --- ENGINE DE ENCUENTROS Y LOGICA DE COMBATE COMPLETA ---
+function movePCToTeam(globalIdx) {
+  const u = DB.users[currentUser];
+  if (u.team.length >= 6) {
+    alert("Tu equipo activo ya tiene 6 integrantes.");
+    return;
+  }
+  const p = u.pc.splice(globalIdx, 1)[0];
+  delete p.boxIndex; 
+  u.team.push(p);
+  saveDB();
+  updateDashboard();
+  updatePCBoxUI();
+}
+
+/* --- SISTEMA DE COMBATE ESTILO POKÉMON --- */
 function initWildCombat() {
   if (battleActive) return;
-  const user = DB.users[currentUser];
+  const u = DB.users[currentUser];
   
-  // Buscar primer miembro vivo
-  currentAlly = user.team.find(p => p.hp > 0);
+  let highestLevel = 1;
+  u.team.forEach(p => {
+    if(p.level > highestLevel) highestLevel = p.level;
+  });
+
+  currentAlly = u.team.find(p => p.hp > 0);
   if (!currentAlly) {
-    alert("¡Todos tus Pokémon están debilitados! Cúralos antes de combatir.");
+    alert("Todos tus Pokémon se encuentran debilitados. ¡Cúralos primero!");
     return;
   }
 
-  battleActive = true;
-  document.getElementById('combat-window').style.display = 'flex';
-
-  // Pool salvaje extendida de especies
-  const ids = [1,4,7,25,133,143,147,152,155,158,252,255,258,382,383,384];
-  const randId = ids[Math.floor(Math.random() * ids.length)];
-  const poolNames = ["BULBASAUR", "CHARMANDER", "SQUIRTLE", "PIKACHU", "EEVEE", "SNORLAX", "DRATINI", "CHIKORITA", "CYNDAQUIL", "TOTODILE", "TRECKO", "TORCHIC", "MUDKIP", "KYOGRE", "GROUDON", "RAYQUAZA"];
-  const nameChosen = poolNames[ids.indexOf(randId)];
-
-  let isShiny = false;
-  if (cheatShinyActive) {
-    isShiny = Math.random() < 0.65;
-  } else {
-    isShiny = Math.random() < 0.08;
-  }
-
-  const lvRand = Math.floor(Math.random() * 15) + 5;
-  const baseHp = 45 + (lvRand * 3);
+  const randId = Math.floor(Math.random() * 250) + 1;
+  const randomLevel = highestLevel + Math.floor(Math.random() * 6); 
+  const isShiny = cheatShinyActive ? (Math.random() < 0.4) : (Math.random() < 0.02);
 
   currentEnemy = {
     id: randId,
-    name: nameChosen,
-    lv: lvRand,
-    hp: baseHp,
-    maxHp: baseHp,
-    atk: 30 + (lvRand * 2),
+    name: "SPECIMEN-" + randId,
+    level: randomLevel,
+    hp: 45 + (randomLevel * 3),
+    maxHp: 45 + (randomLevel * 3),
+    atk: 30 + (randomLevel * 2),
     shiny: isShiny
   };
 
-  updateAllyBattleUI();
+  const checkStarter = STARTERS.find(s => s.id === randId);
+  if(checkStarter) currentEnemy.name = checkStarter.name;
+
+  battleActive = true;
+  document.getElementById('combat-window').style.display = 'flex';
   
-  // Render Enemigo
-  document.getElementById('e-name').textContent = currentEnemy.name + (currentEnemy.shiny ? "★" : "");
-  document.getElementById('e-lv').textContent = `Lv.${currentEnemy.lv}`;
+  document.getElementById('p-name').textContent = currentAlly.name;
+  document.getElementById('p-lv').textContent = `Lv.${currentAlly.level}`;
+  document.getElementById('p-sprite').src = getPokemonSprite(currentAlly.id, currentAlly.shiny);
+  
+  document.getElementById('e-name').textContent = (currentEnemy.shiny ? '★ ' : '') + currentEnemy.name;
+  document.getElementById('e-lv').textContent = `Lv.${currentEnemy.level}`;
   document.getElementById('e-sprite').src = getPokemonSprite(currentEnemy.id, currentEnemy.shiny);
-  if (currentEnemy.shiny) {
-    document.getElementById('e-name').style.color = "var(--gold)";
-  } else {
-    document.getElementById('e-name').style.color = "#fff";
-  }
 
-  updateEnemyBattleHP();
-
-  document.getElementById('battle-log').innerHTML = `<p>¡Un <span style="${currentEnemy.shiny ? 'color:var(--gold);' : 'color:#cce0ff;'}">${currentEnemy.name}</span> salvaje ha aparecido!</p>`;
+  document.getElementById('battle-log').innerHTML = `<p>¡Un ${currentEnemy.name} salvaje apareció de repente!</p>`;
+  updateBattleUI();
   showBattleMenu();
 }
 
-function updateAllyBattleUI() {
-  document.getElementById('p-name').textContent = currentAlly.name + (currentAlly.shiny ? "★" : "");
-  document.getElementById('p-lv').textContent = `Lv.${currentAlly.lv}`;
-  document.getElementById('p-sprite').src = getPokemonSprite(currentAlly.id, currentAlly.shiny);
-  
-  const pct = (currentAlly.hp / currentAlly.maxHp) * 100;
-  const bar = document.getElementById('p-hp-bar');
-  bar.style.width = `${pct}%`;
-  bar.style.background = pct > 50 ? '#44dd44' : pct > 20 ? '#ffcc00' : '#ff4433';
+function updateBattleUI() {
+  const pPct = Math.min(100, (currentAlly.hp / currentAlly.maxHp) * 100);
+  const pBar = document.getElementById('p-hp-bar');
+  pBar.style.width = `${pPct}%`;
+  pBar.style.background = pPct < 20 ? '#ff4433' : pPct < 50 ? '#ffaa00' : '#44dd44';
   document.getElementById('p-hp-text').textContent = `${currentAlly.hp}/${currentAlly.maxHp}`;
-}
 
-function updateEnemyBattleHP() {
-  const pct = (currentEnemy.hp / currentEnemy.maxHp) * 100;
-  const bar = document.getElementById('e-hp-bar');
-  bar.style.width = `${pct}%`;
-  bar.style.background = pct > 50 ? '#44dd44' : pct > 20 ? '#ffcc00' : '#ff4433';
+  const ePct = Math.min(100, (currentEnemy.hp / currentEnemy.maxEnemyHp || (currentEnemy.hp / currentEnemy.maxHp) * 100));
+  const eBar = document.getElementById('e-hp-bar');
+  eBar.style.width = `${ePct}%`;
+  eBar.style.background = ePct < 20 ? '#ff4433' : ePct < 50 ? '#ffaa00' : '#44dd44';
   document.getElementById('e-hp-text').textContent = `${currentEnemy.hp}/${currentEnemy.maxHp}`;
 }
 
 function showBattleMenu() {
-  const acts = document.getElementById('battle-actions');
-  acts.innerHTML = `
-    <button class="ba-btn atk" onclick="executeAllyAttack()">ATACAR</button>
-    <button class="ba-btn ball" onclick="openCaptureModule()">CAPTURAR</button>
-    <button class="ba-btn" style="border-color:#ffcc00; color:#ffcc00;" onclick="useItemInBattle()">MEDICINA</button>
-    <button class="ba-btn run" onclick="executeRun()">HUIR</button>
+  const actions = document.getElementById('battle-actions');
+  actions.innerHTML = `
+    <button class="ba-btn atk" onclick="executeTurn('attack')">ATACAR</button>
+    <button class="ba-btn ball" onclick="executeTurn('catch')">POKÉ BALL</button>
+    <button class="ba-btn run" onclick="executeTurn('run')">HUIR</button>
   `;
 }
 
-function executeAllyAttack() {
-  const baseDmg = Math.floor((currentAlly.atk * 0.2) + (Math.random() * 8) + 2);
-  currentEnemy.hp = Math.max(0, currentEnemy.hp - baseDmg);
-  updateEnemyBattleHP();
+function executeTurn(actionType) {
+  const log = document.getElementById('battle-log');
+  
+  if (actionType === 'run') {
+    if (Math.random() > 0.3) {
+      log.innerHTML = `<p>¡Lograste escapar sin problemas!</p>`;
+      setNextButton(endBattleState);
+    } else {
+      log.innerHTML = `<p>¡No lograste escapar!</p>`;
+      setNextButton(enemyTurn);
+    }
+    return;
+  }
 
-  let log = `<p>¡Tu ${currentAlly.name} asesta un golpe crítico de ${baseDmg} de daño!</p>`;
-  document.getElementById('battle-log').innerHTML = log;
-
-  if (currentEnemy.hp <= 0) {
-    log += `<p style="color:#44ff88;">¡El ${currentEnemy.name} enemigo ha sido derrotado!</p>`;
-    
-    // Otorgar Créditos y Experiencia
-    const earnedMoney = 150 + (currentEnemy.lv * 15);
-    const earnedXp = 25 + (currentEnemy.lv * 3);
-    
-    const user = DB.users[currentUser];
-    user.money += earnedMoney;
-    currentAlly.xp += earnedXp;
-
-    log += `<p style="color:var(--gold);">+ $${earnedMoney} Créditos / + ${earnedXp} EXP obtenidos.</p>`;
-
-    if (currentAlly.xp >= 100) {
-      currentAlly.lv++;
-      currentAlly.xp -= 100;
-      currentAlly.maxHp += 6;
-      currentAlly.hp = currentAlly.maxHp;
-      currentAlly.atk += 4;
-      log += `<p style="color:#00ffcc; font-weight:bold;">¡Subida de Rango! ${currentAlly.name} alcanzó el Nivel ${currentAlly.lv}!</p>`;
+  if (actionType === 'catch') {
+    const u = DB.users[currentUser];
+    if (u.bag.pokeballs <= 0 && u.bag.greatballs <= 0 && u.bag.ultraballs <= 0) {
+      log.innerHTML = `<p style="color:#ff5544;">¡No dispones de Poké Balls en el inventario!</p>`;
+      return;
     }
 
-    document.getElementById('battle-log').innerHTML = log;
-    saveDB();
-    updateDashboard();
-    setNextState();
-  } else {
-    // Turno del Enemigo
-    setTimeout(executeEnemyCounter, 1200);
+    let ballUsed = 'pokeballs';
+    let catchChance = 0.4;
+    if (u.bag.ultraballs > 0) { ballUsed = 'ultraballs'; catchChance = 0.75; u.bag.ultraballs--; }
+    else if (u.bag.greatballs > 0) { ballUsed = 'greatballs'; catchChance = 0.55; u.bag.greatballs--; }
+    else { u.bag.pokeballs--; }
+
+    log.innerHTML = `<p>Lanzaste una Poké Ball...</p>`;
+    
+    setTimeout(() => {
+      if (Math.random() < catchChance) {
+        log.innerHTML = `<p style="color:#44ff88;">¡CONTENCION EXITOSA! El espécimen se integró a tu equipo.</p>`;
+        const caught = { ...currentEnemy, xp: 0, maxHp: currentEnemy.maxHp, moves: ["Placaje", "Mordisco"] };
+        
+        if (u.team.length < 6) {
+          u.team.push(caught);
+        } else {
+          caught.boxIndex = currentBoxIndex; 
+          u.pc.push(caught);
+        }
+        saveDB();
+        updateDashboard();
+        setNextButton(endBattleState);
+      } else {
+        log.innerHTML = `<p>¡Fallo de fijación! El objetivo logró zafarse de la Poké Ball.</p>`;
+        setNextButton(enemyTurn);
+      }
+    }, 1000);
+    return;
+  }
+
+  if (actionType === 'attack') {
+    const allyDmg = Math.floor((Math.random() * 12) + (currentAlly.atk * 0.15));
+    currentEnemy.hp = Math.max(0, currentEnemy.hp - allyDmg);
+    log.innerHTML = `<p>¡Tu Pokémon asestó un golpe causando ${allyDmg} de daño!</p>`;
+    updateBattleUI();
+
+    if (currentEnemy.hp <= 0) {
+      log.innerHTML += `<p style="color:#44ff88;">¡El enemigo fue neutralizado!</p>`;
+      currentAlly.xp += 60;
+      if (currentAlly.xp >= currentAlly.level * 100) {
+        currentAlly.level++;
+        currentAlly.xp = 0;
+        currentAlly.maxHp += 5;
+        currentAlly.atk += 3;
+        log.innerHTML += `<p style="color:var(--gold);">¡Subida de nivel! Ahora es nivel ${currentAlly.level}.</p>`;
+      }
+      saveDB();
+      updateDashboard();
+      setNextButton(endBattleState);
+    } else {
+      setNextButton(enemyTurn);
+    }
   }
 }
 
-function executeEnemyCounter() {
-  if (currentEnemy.hp <= 0) return;
-
+function enemyTurn() {
+  const log = document.getElementById('battle-log');
   const enemyAtk = currentEnemy.atk || 35;
   const finalEnemyDmg = Math.floor((Math.random() * 10) + (enemyAtk * 0.1));
   currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
   
+  log.innerHTML = `<p style="color:#ff5544;">¡El espécimen salvaje contraataca infligiendo ${finalEnemyDmg} de daño!</p>`;
+  updateBattleUI();
   saveDB();
   updateDashboard();
-  updateAllyBattleUI();
-
-  let log = `<p style="color:#ff5544;">¡El ${currentEnemy.name} salvaje contraataca causando ${finalEnemyDmg} de daño!</p>`;
-  document.getElementById('battle-log').innerHTML = log;
 
   if (currentAlly.hp <= 0) {
-    log += `<p style="color:var(--red);">¡Tu Pokémon activo se ha debilitado!</p>`;
-    document.getElementById('battle-log').innerHTML = log;
-    setNextState();
+    log.innerHTML += `<p style="color:var(--red);">¡Tu Pokémon se ha debilitado!</p>`;
+    setNextButton(endBattleState);
   } else {
-    showBattleMenu();
+    setNextButton(showBattleMenu);
   }
 }
 
-function openCaptureModule() {
-  const acts = document.getElementById('battle-actions');
-  const user = DB.users[currentUser];
-
-  acts.innerHTML = `
-    <button class="ba-btn ball" onclick="launchBall('pokeballs')" ${(!user.bag.pokeballs) ? 'disabled' : ''}>POKÉ BALL (x${user.bag.pokeballs})</button>
-    <button class="ba-btn ball" style="border-color:#3a7eee;" onclick="launchBall('greatballs')" ${(!user.bag.greatballs) ? 'disabled' : ''}>SUPER BALL (x${user.bag.greatballs})</button>
-    <button class="ba-btn ball" style="border-color:var(--gold);" onclick="launchBall('ultraballs')" ${(!user.bag.ultraballs) ? 'disabled' : ''}>ULTRA BALL (x${user.bag.ultraballs})</button>
-    <button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>
-  `;
+function setNextButton(callbackAction) {
+  const actions = document.getElementById('battle-actions');
+  actions.innerHTML = `<button class="ba-btn nxt" id="btn-next-step">CONTINUAR...</button>`;
+  document.getElementById('btn-next-step').onclick = () => { callbackAction(); };
 }
 
-function launchBall(type) {
-  const user = DB.users[currentUser];
-  if (!user.bag[type] || user.bag[type] <= 0) return;
-
-  user.bag[type]--;
-  document.getElementById('battle-log').innerHTML = `<p>¡Has lanzado una ${type === 'pokeballs' ? 'Poké Ball' : type === 'greatballs' ? 'Super Ball' : 'Ultra Ball'} de campo!</p>`;
-
-  let bonus = type === 'pokeballs' ? 1.0 : type === 'greatballs' ? 1.5 : 2.2;
-  const hpRatio = (currentEnemy.hp / currentEnemy.maxHp);
-  const catchProb = (1 - (hpRatio * 0.65)) * 0.45 * bonus;
-
-  if (Math.random() < catchProb) {
-    // CAPTURA EXITOSA
-    const caught = {
-      id: currentEnemy.id,
-      name: currentEnemy.name,
-      hp: currentEnemy.hp || 20,
-      maxHp: currentEnemy.maxHp,
-      atk: currentEnemy.atk,
-      lv: currentEnemy.lv,
-      xp: 0,
-      shiny: currentEnemy.shiny,
-      moves: ["Placaje", "Ataque Furia"]
-    };
-
-    if (user.team.length < 6) {
-      user.team.push(caught);
-      document.getElementById('battle-log').innerHTML = `<p style="color:#44ff88;">¡CONTENCION EXITOSA! El espécimen se integro a tu Squad.</p>`;
-    } else {
-      user.pc.push(caught);
-      document.getElementById('battle-log').innerHTML = `<p style="color:#00ffcc;">¡CONTENCION EXITOSA! Enviado a Almacenamiento PC Bill.</p>`;
-    }
-    
-    saveDB();
-    updateDashboard();
-    setNextState();
-  } else {
-    // ESCAPÓ DE LA BALL
-    let log = `<p>¡Fallo de fijacion! El objetivo logro zafarse del modulo.</p>`;
-    
-    const enemyAtk = currentEnemy.atk || 35;
-    const finalEnemyDmg = Math.floor((Math.random() * 10) + (enemyAtk * 0.1));
-    currentAlly.hp = Math.max(0, currentAlly.hp - finalEnemyDmg);
-    
-    saveDB();
-    updateDashboard();
-    updateAllyBattleUI();
-
-    log += `<p style="color:#ff5544;">¡El espécimen aprovecho el fallo golpeando con ${finalEnemyDmg} de daño!</p>`;
-    document.getElementById('battle-log').innerHTML = log;
-    
-    if (currentAlly.hp <= 0) {
-      log += `<p style="color:var(--red);">¡Squad destruido!</p>`;
-      document.getElementById('battle-log').innerHTML = log;
-      setNextState();
-    } else {
-      showBattleMenu();
-    }
-  }
-}
-
-function useItemInBattle() {
-  const acts = document.getElementById('battle-actions');
-  const user = DB.users[currentUser];
-
-  acts.innerHTML = `
-    <button class="ba-btn" style="border-color:#ffcc00;" onclick="applyBattleHeal('potions')" ${(!user.bag.potions) ? 'disabled' : ''}>POCION (x${user.bag.potions})</button>
-    <button class="ba-btn" style="border-color:#ffcc00;" onclick="applyBattleHeal('superpotions')" ${(!user.bag.superpotions) ? 'disabled' : ''}>SUPER POCION (x${user.bag.superpotions})</button>
-    <button class="ba-btn run" onclick="showBattleMenu()">VOLVER</button>
-  `;
-}
-
-function applyBattleHeal(type) {
-  const user = DB.users[currentUser];
-  if (!user.bag[type] || user.bag[type] <= 0) return;
-
-  user.bag[type]--;
-  const healAmount = type === 'potions' ? 50 : 150;
-  currentAlly.hp = Math.min(currentAlly.maxHp, currentAlly.hp + healAmount);
-  
-  saveDB();
-  updateDashboard();
-  updateAllyBattleUI();
-
-  document.getElementById('battle-log').innerHTML = `<p>¡Utilizaste ${type === 'potions' ? 'Poción' : 'Súper Poción'}! Restaurados ${healAmount} PS.</p>`;
-  
-  setTimeout(executeEnemyCounter, 1200);
-}
-
-function executeRun() {
-  if (Math.random() < 0.6) {
-    document.getElementById('battle-log').innerHTML = `<p>¡Huida exitosa del entorno de conflicto!</p>`;
-    setNextState();
-  } else {
-    document.getElementById('battle-log').innerHTML = `<p>¡No has podido escapar! El enemigo bloquea la salida.</p>`;
-    setTimeout(executeEnemyCounter, 1200);
-  }
-}
-
-function setNextState() {
-  const acts = document.getElementById('battle-actions');
-  acts.innerHTML = `<button class="ba-btn nxt" onclick="closeCombat()">FINALIZAR ENCUENTRO</button>`;
+function endBattleState() {
+  battleActive = false;
+  document.getElementById('combat-window').style.display = 'none';
 }
 
 function closeCombat() {
-  battleActive = false;
-  currentEnemy = null;
-  document.getElementById('combat-window').style.display = 'none';
-  updateDashboard();
+  if(confirm("¿Seguro que deseas forzar la retirada? El enemigo atacará libremente.")) {
+    enemyTurn();
+  }
 }
 </script>
-
 </body>
 </html>
